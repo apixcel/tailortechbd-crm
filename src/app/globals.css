@@ -1,0 +1,193 @@
+/* === GOOGLE FONTS === */
+@import url("https://fonts.googleapis.com/css2?family=Source+Sans+Pro:ital,wght@0,400;0,700;1,400;1,900&display=swap");
+
+@import "tailwindcss";
+
+/* === CUSTOM FONTS === */
+@font-face {
+  font-family: "Roboto";
+  src: url("/fonts/Roboto-VariableFont_wdth,wght.ttf") format("truetype");
+  font-weight: 100 900;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Segoe UI";
+  src: url("/fonts/SegoeUIVF.ttf") format("truetype");
+  font-weight: 100 900;
+  font-style: normal;
+}
+
+/* === ROOT VARIABLES === */
+:root {
+  --background: #f2f2f2;
+  --primary: #101949;
+  --secondary: #e93a3c;
+  --tertiary: #e9e9e9;
+  --quaternary: #cccccc;
+  --info: #868585;
+  --info-light: #f7efef;
+  --danger: #dc3545;
+  --font-primary: "Source Sans Pro", sans-serif;
+  --primary-foreground: #000;
+  --border-main: #ced4da;
+  --border-muted: #00000020;
+  --strong: #212529;
+  --muted: #6f6f6f;
+  --solid-slab: #e9ecef;
+  --success: #23c57a;
+  --dashboard: #101949;
+  --skeleton: #e5e7eb;
+}
+
+/* === CUSTOM THEME === */
+@theme inline {
+  --color-primary-foreground: var(--primary-foreground);
+  --color-background: var(--background);
+  --color-primary: var(--primary);
+  --color-secondary: var(--secondary);
+  --color-tertiary: var(--tertiary);
+  --color-quaternary: var(--quaternary);
+  --color-info: var(--info);
+  --color-info-light: var(--info-light);
+  --color-danger: var(--danger);
+  --font-primary: var(--font-primary);
+  --color-border-main: var(--border-main);
+  --color-strong: var(--strong);
+  --color-muted: var(--muted);
+  --color-border-muted: var(--border-muted);
+  --color-solid-slab: var(--solid-slab);
+  --color-success: var(--success);
+  --color-dashboard: var(--dashboard);
+  --color-skeleton: var(--skeleton);
+}
+
+/* === BASE STYLES === */
+@layer base {
+  body {
+    @apply bg-background text-black;
+    font-family: var(--font-primary);
+  }
+}
+
+/* === COMPONENTS (if needed) === */
+@layer components {
+  .main_container {
+    @apply mx-auto max-w-[1780px] px-[16px] sm:px-[12px];
+  }
+
+  .center {
+    @apply flex items-center justify-center;
+  }
+
+  .position_center {
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  .specialBtn {
+    box-shadow: inset 0px 0px 0px var(--primary);
+    transition: all 0.3s ease-in-out;
+  }
+
+  .specialBtn:hover {
+    box-shadow: inset 210px 0px 0px var(--primary);
+    color: white;
+  }
+
+  .checkoutBtn {
+    box-shadow: inset 0px 110px 0px var(--primary);
+    transition: all 0.3s ease-in-out;
+    color: white;
+  }
+
+  .checkoutBtn:hover {
+    box-shadow: inset 0px 0px 0px var(--primary);
+    color: var(--primary);
+  }
+}
+
+/* === UTILITIES === */
+@layer utilities {
+  .clip-path {
+    clip-path: polygon(0 0, 85% 0, 95% 100%, 0% 100%);
+  }
+
+  .scrollbar-hide {
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE/Edge */
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none; /* Chrome/Safari */
+  }
+
+  .gridResponsive {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(246px, 279px));
+  }
+
+  .hover_underline {
+    position: relative;
+  }
+
+  .hover_underline::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background-color: var(--primary);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.3s ease-in-out;
+  }
+
+  .hover_underline:hover::after {
+    transform: scaleX(1);
+  }
+
+  /* Number Input Cleanup */
+  input[type="number"]::-webkit-inner-spin-button,
+  input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  input[type="number"] {
+    appearance: textfield;
+    -moz-appearance: textfield;
+  }
+
+  /* Quill Editor Fix */
+  .ql-container {
+    height: calc(100% - 42.8px) !important;
+  }
+
+  /* Marquee Animation */
+  @keyframes marquee {
+    0% {
+      transform: translateX(100%);
+    }
+    100% {
+      transform: translateX(-50%);
+    }
+  }
+
+  .animate-marquee {
+    animation: marquee 25s linear infinite;
+  }
+}
+
+/* === RESPONSIVE FIXES === */
+@media screen and (max-width: 768px) {
+  .widget-visible > iframe {
+    bottom: 63px !important;
+  }
+
+  iframe[title="chat-widget"] {
+    inset: auto 20px 133px auto !important;
+  }
+}
