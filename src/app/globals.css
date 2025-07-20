@@ -106,6 +106,14 @@
     box-shadow: inset 0px 0px 0px var(--primary);
     color: var(--primary);
   }
+
+  .recharts-wrapper:focus {
+    outline: none !important;
+  }
+
+  .recharts-wrapper *:focus {
+    outline: none !important;
+  }
 }
 
 /* === UTILITIES === */
