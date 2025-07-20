@@ -1,13 +1,12 @@
 "use client";
 
-import { MdOutlineAttachMoney, MdOutlineInventory2 } from "react-icons/md";
-import { RiBarcodeLine, RiUserSettingsLine } from "react-icons/ri";
-import { TbTruckDelivery } from "react-icons/tb";
-
-import { HiOutlineUsers } from "react-icons/hi";
-import { GiReceiveMoney } from "react-icons/gi";
 import { BsTruck } from "react-icons/bs";
 import { VscGraphLine } from "react-icons/vsc";
+import { HiOutlineUsers } from "react-icons/hi";
+import { GiReceiveMoney } from "react-icons/gi";
+import { TbTruckDelivery } from "react-icons/tb";
+import { RiBarcodeLine, RiUserSettingsLine } from "react-icons/ri";
+import { MdOutlineAttachMoney, MdOutlineShoppingCart } from "react-icons/md";
 
 export interface INavLinks {
   label: string;
@@ -24,33 +23,30 @@ export const admin: INavLinks[] = [
     path: "/",
   },
   {
-    label: "Purchases",
-    icon: MdOutlineInventory2,
+    label: "Purchase Management",
+    icon: MdOutlineShoppingCart,
     children: [
       {
         label: "Purchase Report",
         path: "/purchase-report",
       },
       {
-        label: "Purchase Management",
-        path: "/purchase-management",
+        label: "Purchase List",
+        path: "/purchase-list",
+      },
+      {
+        label: "Create Purchase",
+        path: "/create-purchase",
       },
     ],
   },
+
   {
-    label: "Costing & Expenses",
+    label: "Costing Report",
     icon: MdOutlineAttachMoney,
-    children: [
-      {
-        label: "Costing Report",
-        path: "/costing-report",
-      },
-      {
-        label: "Expense Tracking",
-        path: "/expense-tracking",
-      },
-    ],
+    path: "/costing-report",
   },
+
   {
     label: "Suppliers",
     icon: HiOutlineUsers,
@@ -98,16 +94,16 @@ export const admin: INavLinks[] = [
     ],
   },
   {
-    label: "User Management",
+    label: "Admin Management",
     icon: RiUserSettingsLine,
     children: [
       {
-        label: "Admins",
+        label: "Admin",
         path: "/manage-admins",
       },
       {
-        label: "Customers",
-        path: "/manage-customers",
+        label: "Super Admin",
+        path: "/manage-super-admin",
       },
     ],
   },

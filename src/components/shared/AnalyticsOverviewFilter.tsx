@@ -7,13 +7,13 @@ interface Option {
   label: string;
 }
 
-interface SalesOverviewFilterProps {
+interface AnalyticsOverviewFilterProps {
   options: Option[];
   selected: Option;
   onChange: (option: Option) => void;
 }
 
-const SalesOverviewFilter = ({ options, selected, onChange }: SalesOverviewFilterProps) => {
+const AnalyticsOverviewFilter = ({ options, selected, onChange }: AnalyticsOverviewFilterProps) => {
   const [open, setOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -59,4 +59,4 @@ const SalesOverviewFilter = ({ options, selected, onChange }: SalesOverviewFilte
   );
 };
 
-export default SalesOverviewFilter;
+export default AnalyticsOverviewFilter;
