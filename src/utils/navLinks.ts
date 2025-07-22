@@ -1,11 +1,10 @@
 "use client";
 
-import { BsTruck } from "react-icons/bs";
 import { VscGraphLine } from "react-icons/vsc";
 import { HiOutlineUsers } from "react-icons/hi";
 import { GiReceiveMoney } from "react-icons/gi";
 import { TbTruckDelivery } from "react-icons/tb";
-import { RiBarcodeLine, RiUserSettingsLine } from "react-icons/ri";
+import { RiUserSettingsLine } from "react-icons/ri";
 import { MdOutlineAttachMoney, MdOutlineShoppingCart } from "react-icons/md";
 
 export interface INavLinks {
@@ -40,31 +39,24 @@ export const admin: INavLinks[] = [
       },
     ],
   },
-
   {
     label: "Costing Report",
     icon: MdOutlineAttachMoney,
     path: "/costing-report",
   },
-
   {
-    label: "Suppliers",
+    label: "Suppliers Management",
     icon: HiOutlineUsers,
     children: [
       {
-        label: "Supplier Management",
-        path: "/supplier-management",
+        label: "Supplier List",
+        path: "/supplier-list",
       },
       {
-        label: "Purchase Orders",
-        path: "/purchase-order",
+        label: "Create Supplier",
+        path: "/create-supplier",
       },
     ],
-  },
-  {
-    label: "Barcode Management",
-    icon: RiBarcodeLine,
-    path: "/barcode-generator",
   },
   {
     label: "Courier Service",
@@ -106,11 +98,6 @@ export const admin: INavLinks[] = [
         path: "/manage-super-admin",
       },
     ],
-  },
-  {
-    icon: BsTruck,
-    label: "Shipping & Tracking",
-    path: "/shipping-tracking",
   },
 ];
 

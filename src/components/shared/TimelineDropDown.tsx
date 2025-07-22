@@ -23,7 +23,7 @@ interface IProps {
   onSelect: (item: { label: string; value: string }) => void;
 }
 
-const PurchaseTimelineDropDown: React.FC<IProps> = ({ onSelect }) => {
+const TimelineDropDown: React.FC<IProps> = ({ onSelect }) => {
   return (
     <div className="flex w-[200px] flex-col gap-[5px]">
       <span className="text-[12px] font-[700] text-primary">Timeline</span>
@@ -37,4 +37,4 @@ const PurchaseTimelineDropDown: React.FC<IProps> = ({ onSelect }) => {
   );
 };
 
-export default PurchaseTimelineDropDown;
+export default TimelineDropDown;
