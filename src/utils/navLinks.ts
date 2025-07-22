@@ -59,11 +59,6 @@ export const admin: INavLinks[] = [
     ],
   },
   {
-    label: "Courier Service",
-    icon: TbTruckDelivery,
-    path: "/courier",
-  },
-  {
     label: "Partner Finance",
     icon: GiReceiveMoney,
     children: [

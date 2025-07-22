@@ -38,3 +38,4 @@ export { default as AddSupplierOnPurchase } from "./create-supplier/AddSupplierO
 // supplier list
 export { default as SupplierListTable } from "./supplier-list/SupplierListTable";
 export { default as ViewSupplier } from "./supplier-list/ViewSupplier";
+export { default as EditSupplierView } from "./supplier-list/EditSupplierView";

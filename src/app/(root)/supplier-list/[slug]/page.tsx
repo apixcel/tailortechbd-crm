@@ -1,4 +1,4 @@
-// import { EditSupplierView } from "@/components";
+import { EditSupplierView } from "@/components";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -8,8 +8,7 @@ export const metadata: Metadata = {
 
 const UpdateSupplier = async ({ params }: { params: Promise<{ slug: string }> }) => {
   const { slug } = await params;
-  // return <EditSupplierView slug={slug} />;
-  return <div>UpdateSupplier {slug}</div>;
+  return <EditSupplierView slug={slug} />;
 };
 
 export default UpdateSupplier;
