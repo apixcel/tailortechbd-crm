@@ -1,9 +1,8 @@
 "use client";
 
 import { useDebounce } from "@/hooks";
-import dateUtils from "@/utils/date";
 import { useEffect, useState } from "react";
-import { IPurchase } from "@/types";
+import { ISupplier } from "@/types";
 import Link from "next/link";
 
 import { RxMagnifyingGlass } from "react-icons/rx";
@@ -14,16 +13,16 @@ import HorizontalLine from "../ui/HorizontalLine";
 import TableSkeleton from "../ui/TableSkeleton";
 import Pagination from "../ui/Pagination";
 import TimelineDropDown from "../shared/TimelineDropDown";
-import ViewPurchase from "./ViewPurchase";
-import DeletePurchaseById from "./DeletePurchaseById";
-import { mockPurchases } from "@/constants/purchaseData";
+import { mockSuppliers } from "@/constants/supplierData";
+import DeleteSupplierById from "./DeleteSupplierById";
+import ViewSupplier from "./ViewSupplier";
 
 const tableHead = [
-  { label: "Supplier Info", field: "companyInfo" },
-  { label: "Purchase Title", field: "name" },
-  { label: "Purchased Qty", field: "quantityPurchased" },
+  { label: "Supplier Name", field: "companyInfo" },
+  { label: "Address", field: "" },
+  { label: "Contacts", field: "name" },
+  { label: "Total Qty", field: "quantityPurchased" },
   { label: "Total Amount", field: "totalAmount" },
-  { label: "Date", field: "createdAt" },
   { label: "Actions", field: "" },
 ];
 
@@ -34,31 +33,31 @@ const PurchaseListTable = () => {
     day_count: "",
   });
 
-  const [isViewPurchase, setIsViewPurchase] = useState(false);
-  const [purchaseItemView, setPurchaseItemView] = useState<IPurchase | null>(null);
+  const [isViewSupplier, setIsViewSupplier] = useState(false);
+  const [supplierItemView, setSupplierItemView] = useState<ISupplier | null>(null);
 
   const isLoading = false;
   const data = {
-    data: mockPurchases,
+    data: mockSuppliers,
     meta: {
-      totalDoc: mockPurchases.length,
+      totalDoc: mockSuppliers.length,
       page: 1,
     },
   };
 
-  const purchaseData = data?.data || [];
+  const supplierData = data?.data || [];
   const metaData = data?.meta || { totalDoc: 0, page: 1 };
 
-  const handlePurchaseView = (purchase: IPurchase) => {
-    setPurchaseItemView(purchase);
-    setIsViewPurchase(true);
-    history.pushState({ viewPurchase: true }, "", location.href);
+  const handleSupplierView = (supplier: ISupplier) => {
+    setSupplierItemView(supplier);
+    setIsViewSupplier(true);
+    history.pushState({ viewSupplier: true }, "", location.href);
   };
 
   useEffect(() => {
     const handlePopState = () => {
-      setIsViewPurchase(false);
-      setPurchaseItemView(null);
+      setIsViewSupplier(false);
+      setSupplierItemView(null);
     };
 
     window.addEventListener("popstate", handlePopState);
@@ -67,14 +66,14 @@ const PurchaseListTable = () => {
 
   return (
     <>
-      {!isViewPurchase ? (
+      {!isViewSupplier ? (
         <div className="flex flex-col gap-[10px]">
           <div className="flex flex-col gap-[15px] bg-white p-4">
             <div className="flex flex-col gap-[5px]">
-              <h1 className="text-[16px] font-[600]">Purchase List</h1>
+              <h1 className="text-[16px] font-[600]">Supplier List</h1>
               <p className="text-[12px] text-muted md:text-[14px]">
-                Displaying All the available purchases in your store. There is total{" "}
-                <span className="font-bold text-dashboard">{metaData.totalDoc}</span> purchases.
+                Displaying All the available suppliers in your store. There is total{" "}
+                <span className="font-bold text-dashboard">{metaData.totalDoc}</span> suppliers.
               </p>
             </div>
             <HorizontalLine className="my-[10px]" />
@@ -121,72 +120,56 @@ const PurchaseListTable = () => {
                   {isLoading ? (
                     <TableSkeleton columns={tableHead.length} />
                   ) : (
-                    purchaseData.map((purchase) => (
-                      <tr key={purchase._id} className="hover:bg-gray-50">
+                    supplierData.map((supplier) => (
+                      <tr key={supplier._id} className="hover:bg-gray-50">
+                        {/* name */}
                         <td className="px-6 py-4">
-                          <div className="text-sm font-medium text-gray-900">
-                            {purchase.supplier.name}
-                          </div>
-                          <div className="text-sm text-gray-500">
-                            {purchase.supplier.phoneNumber}
-                          </div>
+                          <div className="text-sm font-medium text-gray-900">{supplier.name}</div>
                         </td>
+                        {/* address */}
                         <td className="px-6 py-4">
                           <div className="flex items-center gap-3">
-                            <span className="text-sm">{purchase.purchaseTitle}</span>
+                            <span className="text-sm">{supplier.address}</span>
                           </div>
                         </td>
-                        {/* Total Quantity */}
-                        <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
-                          {purchase.purchasedProducts.reduce(
-                            (sum, item) =>
-                              sum +
-                              item.colors.reduce(
-                                (sum, c) =>
-                                  sum + c.sizes.reduce((s, sz) => s + Number(sz.quantity || 0), 0),
-                                0
-                              ),
-                            0
-                          )}{" "}
-                          pcs
+                        {/* contacts */}
+                        <td className="px-6 py-4">
+                          <div className="flex flex-col gap-2">
+                            <Link
+                              href={`tel:${supplier.phoneNumber}`}
+                              className="text-sm hover:underline"
+                            >
+                              {supplier.phoneNumber}
+                            </Link>
+                            <Link
+                              href={`mailto:${supplier.email}`}
+                              className="text-sm hover:underline"
+                            >
+                              {supplier.email}
+                            </Link>
+                          </div>
                         </td>
-                        {/* Total Amount */}
-                        <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
-                          {purchase.purchasedProducts.reduce(
-                            (sum, item) =>
-                              sum +
-                              item.price *
-                                item.colors.reduce(
-                                  (colorSum, color) =>
-                                    colorSum +
-                                    color.sizes.reduce(
-                                      (sizeSum, size) => sizeSum + Number(size.quantity || 0),
-                                      0
-                                    ),
-                                  0
-                                ),
-                            0
-                          )}{" "}
-                          BDT
+                        <td className="px-6 py-4">
+                          <div className="text-sm">100 pcs</div>
                         </td>
-                        <td className="px-6 py-4 text-sm text-gray-500">
-                          {dateUtils.formateCreateOrUpdateDate(purchase.createdAt)}
+                        <td className="px-6 py-4">
+                          <div className="text-sm">1000000 BDT</div>
                         </td>
                         <td className="px-6 py-4">
                           <div className="flex items-center gap-[8px]">
                             <Link
-                              href={`/purchase-list/${purchase._id}`}
+                              href={`/supplier-list/${supplier._id}`}
                               className="center aspect-square w-[30px] cursor-pointer rounded-full border-[1px] border-dashboard bg-dashboard/5 text-dashboard"
-                              title="Edit Purchase"
+                              title="Edit Supplier"
                             >
                               <GoPencil />
                             </Link>
-                            <DeletePurchaseById
-                              // purchaseId={purchase._id}
-                              purchaseName={purchase.purchaseTitle}
+                            <DeleteSupplierById
+                              // supplierId={supplier._id}
+                              supplierName={supplier.name}
                             />
                             <button
-                              onClick={() => handlePurchaseView(purchase as IPurchase)}
+                              onClick={() => handleSupplierView(supplier as ISupplier)}
                               className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-full border border-dashboard/20 text-dashboard transition-all duration-200 hover:border-dashboard/40 hover:bg-dashboard/10 hover:text-dashboard/80"
                               title="View Details"
                             >
@@ -200,7 +183,7 @@ const PurchaseListTable = () => {
                 </tbody>
               </table>
 
-              {!purchaseData.length && (
+              {!supplierData.length && (
                 <div className="py-12 text-center">
                   <div className="text-lg text-gray-500">No orders found</div>
                   <p className="mt-2 text-gray-400">Try changing your search criteria</p>
@@ -215,8 +198,8 @@ const PurchaseListTable = () => {
             onPageChange={(page) => setPage(page)}
           />
         </div>
-      ) : purchaseItemView ? (
-        <ViewPurchase setIsViewPurchase={setIsViewPurchase} purchaseItem={purchaseItemView} />
+      ) : supplierItemView ? (
+        <ViewSupplier setIsViewSupplier={setIsViewSupplier} supplierItem={supplierItemView} />
       ) : null}
     </>
   );
