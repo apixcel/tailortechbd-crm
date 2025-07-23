@@ -99,7 +99,16 @@ const ImageUploader: React.FC<IProps> = ({
     event.preventDefault();
     const droppedFiles = Array.from(event.dataTransfer.files);
     const types = ["image/jpeg", "image/png", "image/gif", "image/webp", "image/jpg"];
-    const validFiles = droppedFiles.filter((file) => types.includes(file.type));
+    const validFiles = droppedFiles.filter((file) => {
+      const isValid = types.includes(file.type);
+      const isUnder4MB = file.size <= 4 * 1024 * 1024;
+  
+      if (!isUnder4MB) {
+        toast.error(`"${file.name}" exceeds the 4MB size limit.`);
+      }
+  
+      return isValid && isUnder4MB;
+    });
 
     const newFiles = validFiles.map((file) => ({ file, id: crypto.randomUUID() }));
 
@@ -120,7 +129,17 @@ const ImageUploader: React.FC<IProps> = ({
 
   const handleImageChange = (event: ChangeEvent<HTMLInputElement>) => {
     const inputFiles = Array.from(event.target.files || []);
-    const newFiles = inputFiles.map((file) => ({ file, id: crypto.randomUUID() }));
+    const validFiles = inputFiles.filter((file) => {
+      const isUnder4MB = file.size <= 4 * 1024 * 1024;
+  
+      if (!isUnder4MB) {
+        toast.error(`"${file.name}" exceeds the 4MB size limit.`);
+      }
+  
+      return isUnder4MB;
+    });
+
+    const newFiles = validFiles.map((file) => ({ file, id: crypto.randomUUID() }));
 
     if (mode === "single" && newFiles.length > 0) {
       setFiles([newFiles[0]]);
