@@ -32,7 +32,7 @@ const ViewSupplier = ({ setIsViewSupplier, supplierItem }: ViewSupplierProps) =>
 
       {/* Supplier Information */}
       <div className="rounded-md border border-border-muted bg-white p-6">
-        <h2 className="lg:mb-0 mb-4 text-xl font-semibold text-dashboard">Supplier Information</h2>
+        <h2 className="mb-4 text-xl font-semibold text-dashboard lg:mb-0">Supplier Information</h2>
         <div className="flex flex-col items-center gap-6">
           <div className="h-25 w-25 overflow-hidden rounded-full border border-border-muted object-cover object-center">
             <Image
@@ -43,43 +43,43 @@ const ViewSupplier = ({ setIsViewSupplier, supplierItem }: ViewSupplierProps) =>
             />
           </div>
 
-          <div className="flex gap-6 flex-wrap xl:justify-start justify-center">
-            <div className="flex flex-col gap-2 items-center">
-            <p>
-              <span className="text-[14px] font-[700] text-primary">Name: </span>
-              {supplierItem?.name}
-            </p>
-            <p>
-              <span className="text-[14px] font-[700] text-primary">Address: </span>
-              {supplierItem?.address || "N/A"}
-            </p>
+          <div className="flex flex-wrap justify-center gap-6 xl:justify-start">
+            <div className="flex flex-col items-center gap-2">
+              <p>
+                <span className="text-[14px] font-[700] text-primary">Name: </span>
+                {supplierItem?.name}
+              </p>
+              <p>
+                <span className="text-[14px] font-[700] text-primary">Address: </span>
+                {supplierItem?.address || "N/A"}
+              </p>
             </div>
 
-            <div className="flex flex-col gap-2 items-center">
-            <p>
-              <span className="text-[14px] font-[700] text-primary">Phone: </span>
-              <Link className="hover:underline" href={`tel:${supplierItem?.phoneNumber}`}>
-                {supplierItem?.phoneNumber || "N/A"}
-              </Link>
-            </p>
-            <p>
-              <span className="text-[14px] font-[700] text-primary">Email: </span>
-              <Link className="hover:underline" href={`mailto:${supplierItem?.email}`}>
-                {supplierItem?.email || "N/A"}
-              </Link>
-            </p>
+            <div className="flex flex-col items-center gap-2">
+              <p>
+                <span className="text-[14px] font-[700] text-primary">Phone: </span>
+                <Link className="hover:underline" href={`tel:${supplierItem?.phoneNumber}`}>
+                  {supplierItem?.phoneNumber || "N/A"}
+                </Link>
+              </p>
+              <p>
+                <span className="text-[14px] font-[700] text-primary">Email: </span>
+                <Link className="hover:underline" href={`mailto:${supplierItem?.email}`}>
+                  {supplierItem?.email || "N/A"}
+                </Link>
+              </p>
             </div>
 
-            <div className="flex flex-col gap-2 items-center">
-            <p>
-              <span className="text-[14px] font-[700] text-primary">Total Qty Purchased: </span>
-              100 pcs
-            </p>
-            <p>
-              <span className="text-[14px] font-[700] text-primary">Total Amount: </span>
-              1000000 BDT
-            </p>
-          </div>
+            <div className="flex flex-col items-center gap-2">
+              <p>
+                <span className="text-[14px] font-[700] text-primary">Total Qty Purchased: </span>
+                100 pcs
+              </p>
+              <p>
+                <span className="text-[14px] font-[700] text-primary">Total Amount: </span>
+                1000000 BDT
+              </p>
+            </div>
           </div>
         </div>
       </div>
