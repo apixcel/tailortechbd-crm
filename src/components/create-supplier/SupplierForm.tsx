@@ -72,16 +72,6 @@ const SupplierForm = ({
                   <Field as={Input} name="address" placeholder="Supplier address" />
                   <ErrorMessage name="address" component="div" className="text-sm text-danger" />
                 </div>
-
-                {/* <div className="flex w-full flex-col gap-[5px]">
-                  <label className={labelClass}>Invoice Number</label>
-                  <Field as={Input} name="supplier.invoiceNumber" placeholder="Invoice number" />
-                  <ErrorMessage
-                    name="supplier.invoiceNumber"
-                    component="div"
-                    className="text-sm text-danger"
-                  />
-                </div> */}
               </div>
 
               {/* phone number and email */}

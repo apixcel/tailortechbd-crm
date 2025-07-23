@@ -1,10 +1,8 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 
 import { useUploadSingleFileMutation } from "@/redux/features/upload/upload.api";
 import { ChangeEvent, DragEvent, useEffect, useRef, useState } from "react";
 import Image from "next/image";
-
 import { CgSpinnerTwo } from "react-icons/cg";
 import { MdOutlineFileUpload } from "react-icons/md";
 import { toast } from "sonner";
@@ -15,8 +13,9 @@ interface IProps {
   children?: React.ReactNode;
   inputId?: string;
   labelStyle?: string;
-  mode?: "single" | "multiple"; // NEW: single = one image, multiple = many
+  mode?: "single" | "multiple";
   title?: string;
+  acceptPDF?: boolean; // <-- NEW
 }
 
 const ImageDisplay = ({
@@ -30,6 +29,11 @@ const ImageDisplay = ({
 }) => {
   const [uploadSingleFile, { isLoading }] = useUploadSingleFileMutation(undefined);
   const hasUploaded = useRef(false);
+
+  const isPDF =
+    typeof preview === "string"
+      ? preview.toLowerCase().endsWith(".pdf")
+      : preview.type === "application/pdf";
 
   useEffect(() => {
     const handleSaveImages = async () => {
@@ -46,7 +50,7 @@ const ImageDisplay = ({
 
         onUploaded?.(url);
       } catch {
-        toast.error("Something went wrong while uploading your image.");
+        toast.error("Something went wrong while uploading your file.");
       }
     };
 
@@ -54,15 +58,21 @@ const ImageDisplay = ({
   }, []);
 
   return (
-    <div className="center relative h-[80px] w-[80px] shrink-0 rounded-[8px] border-[1px] border-border-muted">
-      {(typeof preview === "string" ? preview : preview instanceof File) && (
-        <Image
-          width={150}
-          height={150}
-          src={typeof preview === "string" ? preview : URL.createObjectURL(preview)}
-          alt="uploaded image"
-          className="h-auto max-h-full w-full rounded-lg object-cover shadow-md"
-        />
+    <div className="center relative h-[80px] w-[80px] shrink-0 overflow-hidden rounded-[8px] border-[1px] border-border-muted">
+      {isPDF ? (
+        <div className="center h-full w-full flex-col text-center">
+          <span className="text-xs text-muted">PDF</span>
+        </div>
+      ) : (
+        (typeof preview === "string" || preview instanceof File) && (
+          <Image
+            width={150}
+            height={150}
+            src={typeof preview === "string" ? preview : URL.createObjectURL(preview)}
+            alt="uploaded"
+            className="h-auto max-h-full w-full rounded-lg object-cover shadow-md"
+          />
+        )
       )}
 
       {isLoading && (
@@ -75,7 +85,7 @@ const ImageDisplay = ({
         type="button"
         onClick={onRemove}
         className="absolute top-1 right-1 z-[2] h-[16px] w-[16px] cursor-pointer rounded-full bg-danger text-xs text-white"
-        title="Remove image"
+        title="Remove"
       >
         &times;
       </button>
@@ -89,25 +99,35 @@ const ImageUploader: React.FC<IProps> = ({
   defaultImages = [],
   inputId,
   labelStyle,
-  mode = "multiple", // default to multiple
-  title = "Upload Product Image",
+  mode = "multiple",
+  title = "Upload File",
+  acceptPDF = false,
 }) => {
   const [files, setFiles] = useState<{ file: File; id: string }[]>([]);
   const [savedImages, setSavedImages] = useState<string[]>(defaultImages);
 
+  const acceptedTypes = [
+    "image/jpeg",
+    "image/png",
+    "image/gif",
+    "image/webp",
+    "image/jpg",
+    ...(acceptPDF ? ["application/pdf"] : []),
+  ];
+
   const handleDrop = (event: DragEvent<HTMLDivElement>) => {
     event.preventDefault();
     const droppedFiles = Array.from(event.dataTransfer.files);
-    const types = ["image/jpeg", "image/png", "image/gif", "image/webp", "image/jpg"];
+
     const validFiles = droppedFiles.filter((file) => {
-      const isValid = types.includes(file.type);
+      const isValidType = acceptedTypes.includes(file.type);
       const isUnder4MB = file.size <= 4 * 1024 * 1024;
 
       if (!isUnder4MB) {
         toast.error(`"${file.name}" exceeds the 4MB size limit.`);
       }
 
-      return isValid && isUnder4MB;
+      return isValidType && isUnder4MB;
     });
 
     const newFiles = validFiles.map((file) => ({ file, id: crypto.randomUUID() }));
@@ -130,13 +150,14 @@ const ImageUploader: React.FC<IProps> = ({
   const handleImageChange = (event: ChangeEvent<HTMLInputElement>) => {
     const inputFiles = Array.from(event.target.files || []);
     const validFiles = inputFiles.filter((file) => {
+      const isValidType = acceptedTypes.includes(file.type);
       const isUnder4MB = file.size <= 4 * 1024 * 1024;
 
       if (!isUnder4MB) {
         toast.error(`"${file.name}" exceeds the 4MB size limit.`);
       }
 
-      return isUnder4MB;
+      return isValidType && isUnder4MB;
     });
 
     const newFiles = validFiles.map((file) => ({ file, id: crypto.randomUUID() }));
@@ -164,7 +185,7 @@ const ImageUploader: React.FC<IProps> = ({
 
       <div onDrop={handleDrop} onDragOver={handleDragOver}>
         <label
-          htmlFor={inputId || "image-uploader"}
+          htmlFor={inputId || "file-uploader"}
           className={`center mt-[20px] h-[150px] cursor-pointer flex-col border-[2px] border-dashed border-dashboard/50 bg-dashboard/10 md:h-[200px] lg:h-[270px] ${labelStyle}`}
         >
           <MdOutlineFileUpload className="size-7 text-[50px] text-muted md:size-10" />
@@ -172,17 +193,17 @@ const ImageUploader: React.FC<IProps> = ({
             Click to upload or drag and drop
           </span>
           <span className="text-[12px] font-[400] text-muted sm:text-[14px]">
-            PNG / JPG / JPEG / GIF / WEBP
+            {acceptPDF ? "Images or PDF (Max 4MB)" : "PNG / JPG / JPEG / GIF / WEBP (max 4MB)"}
           </span>
         </label>
       </div>
 
       <input
-        id={inputId || "image-uploader"}
+        id={inputId || "file-uploader"}
         multiple={mode === "multiple"}
         type="file"
         className="hidden"
-        accept=".png, .jpg, .jpeg, .gif, .webp"
+        accept={acceptedTypes.join(",")}
         onChange={handleImageChange}
       />
 
