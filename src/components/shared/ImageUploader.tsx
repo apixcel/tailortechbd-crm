@@ -102,11 +102,11 @@ const ImageUploader: React.FC<IProps> = ({
     const validFiles = droppedFiles.filter((file) => {
       const isValid = types.includes(file.type);
       const isUnder4MB = file.size <= 4 * 1024 * 1024;
-  
+
       if (!isUnder4MB) {
         toast.error(`"${file.name}" exceeds the 4MB size limit.`);
       }
-  
+
       return isValid && isUnder4MB;
     });
 
@@ -131,11 +131,11 @@ const ImageUploader: React.FC<IProps> = ({
     const inputFiles = Array.from(event.target.files || []);
     const validFiles = inputFiles.filter((file) => {
       const isUnder4MB = file.size <= 4 * 1024 * 1024;
-  
+
       if (!isUnder4MB) {
         toast.error(`"${file.name}" exceeds the 4MB size limit.`);
       }
-  
+
       return isUnder4MB;
     });
 
