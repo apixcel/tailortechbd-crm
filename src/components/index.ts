@@ -7,6 +7,11 @@ export { default as TableSkeleton } from "./ui/TableSkeleton";
 export { default as TableDataNotFound } from "./ui/TableDataNotFound";
 export { default as Pagination } from "./ui/Pagination";
 export { default as SelectionBox } from "./ui/SelectionBox";
+export { default as Toggle } from "./ui/Toggle";
+export { default as CountrySelector } from "./ui/CountrySelector";
+export { default as TextArea } from "./ui/TextArea";
+export { default as PickDate } from "./ui/PickDate";
+export { default as DateRangePicker } from "./ui/DateRangePicker";
 
 // shared
 export { default as Header } from "./shared/Header";
@@ -38,4 +43,19 @@ export { default as AddSupplierOnPurchase } from "./create-supplier/AddSupplierO
 // supplier list
 export { default as SupplierListTable } from "./supplier-list/SupplierListTable";
 export { default as ViewSupplier } from "./supplier-list/ViewSupplier";
-export { default as EditSupplierView } from "./supplier-list/EditSupplierView";
+
+// investments
+export { default as AllInvestmentsTable } from "./investments/AllInvestmentsTable";
+export { default as InvestmentsForm } from "./investments/InvestmentsForm";
+
+// deposits
+export { default as AllDepositsTable } from "./deposits/AllDepositsTable";
+export { default as DepositsForm } from "./deposits/DepositsForm";
+
+// profit distribution
+export { default as AllProfitDistributionTable } from "./profit-distribution/AllProfitDistributionTable";
+export { default as ProfitDistributionForm } from "./profit-distribution/ProfitDistributionForm";
+
+// manage admin
+export { default as AllAdminTable } from "./manage-admin/AllAdminTable";
+export { default as AllSuperAdminTable } from "./manage-admin/AllSuperAdminTable";

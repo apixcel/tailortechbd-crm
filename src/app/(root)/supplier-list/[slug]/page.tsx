@@ -1,4 +1,4 @@
-import { EditSupplierView } from "@/components";
+import { EditSupplierView } from "@/view";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {

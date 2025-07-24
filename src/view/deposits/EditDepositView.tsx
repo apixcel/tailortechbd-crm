@@ -1,15 +1,15 @@
 "use client";
 
 import { toast } from "sonner";
-import SupplierForm from "../create-supplier/SupplierForm";
-import PageHeadingTitle from "../shared/PageHeadingTitle";
-import { useRouter } from "next/navigation";
-import { ISupplier } from "@/types";
 
-const EditSupplierView = ({ slug }: { slug: string }) => {
+import { DepositsForm, PageHeadingTitle } from "@/components";
+import { useRouter } from "next/navigation";
+import { IInvestment } from "@/types";
+
+const EditDepositView = ({ slug }: { slug: string }) => {
   const router = useRouter();
 
-  const handleSubmit = async (payload: Partial<ISupplier>) => {
+  const handleSubmit = async (payload: Partial<IInvestment>) => {
     /* if (isUpdating) {
           return;
         }
@@ -30,13 +30,15 @@ const EditSupplierView = ({ slug }: { slug: string }) => {
     
         toast.success("Product updated successfully");
         router.push("/dashboard/products"); */
+
+    console.log(payload, "payload");
   };
 
   return (
     <div className="flex flex-col gap-[20px]">
-      <PageHeadingTitle title="Edit Supplier" />
-      <SupplierForm
-        buttonLabel="Update Supplier"
+      <PageHeadingTitle title="Edit Deposit" />
+      <DepositsForm
+        buttonLabel="Update Deposit"
         onSubmit={handleSubmit}
         isLoading={false}
         /* defaultValue={{
@@ -47,4 +49,4 @@ const EditSupplierView = ({ slug }: { slug: string }) => {
   );
 };
 
-export default EditSupplierView;
+export default EditDepositView;
