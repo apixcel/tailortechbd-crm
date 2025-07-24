@@ -36,7 +36,7 @@ export { default as EditPurchaseView } from "./purchase-list/EditPurchaseView";
 // costing
 export { default as CostingReportOverview } from "./costing/CostingReportOverview";
 export { default as CostingListTable } from "./costing/CostingListTable";
-export {default as CostingForm} from "./costing/CostingForm"
+export { default as CostingForm } from "./costing/CostingForm";
 
 // create supplier
 export { default as SupplierForm } from "./create-supplier/SupplierForm";

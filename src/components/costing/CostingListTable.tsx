@@ -60,8 +60,8 @@ const CostingListTable = () => {
           <h1 className="text-[16px] font-[600]">Costing List</h1>
           <p className="text-[12px] text-muted md:text-[14px]">
             Displaying All the available costings in your store. There is total{" "}
-            <span className="font-bold text-dashboard">{metaData.totalDoc}</span> costings. Data
-            is Divided into{" "}
+            <span className="font-bold text-dashboard">{metaData.totalDoc}</span> costings. Data is
+            Divided into{" "}
             <span className="font-bold text-dashboard">
               {Math.ceil(metaData.totalDoc / 10)} pages
             </span>{" "}
@@ -157,13 +157,17 @@ const CostingListTable = () => {
 
                     {/* Attachment */}
                     <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
-                      {costing.attachment?.length ? <Link
-                        href={costing.attachment}
-                        target="_blank"
-                        className="text-sm hover:underline"
-                      >
-                        link
-                      </Link> : "-"}
+                      {costing.attachment?.length ? (
+                        <Link
+                          href={costing.attachment}
+                          target="_blank"
+                          className="text-sm hover:underline"
+                        >
+                          link
+                        </Link>
+                      ) : (
+                        "-"
+                      )}
                     </td>
 
                     {/* Updated Time */}
@@ -185,7 +189,7 @@ const CostingListTable = () => {
                         </Link>
 
                         <DeleteCostingById
-                        //   costingId={costing._id}
+                          //   costingId={costing._id}
                           costingName={costing.partnerName}
                         />
                       </div>

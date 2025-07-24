@@ -87,7 +87,11 @@ const CostingForm = ({
                 <div className="flex w-full flex-col gap-[5px]">
                   <label className={labelClass}>Costing Category</label>
                   <Field as={Input} name="costingCategory" placeholder="Costing Category" />
-                  <ErrorMessage name="costingCategory" component="div" className="text-sm text-danger" />
+                  <ErrorMessage
+                    name="costingCategory"
+                    component="div"
+                    className="text-sm text-danger"
+                  />
                 </div>
 
                 {/* date picker */}
@@ -105,10 +109,10 @@ const CostingForm = ({
               </div>
 
               <div className="flex w-full flex-col gap-[5px]">
-                  <label className={labelClass}>Costing Type</label>
-                  <Field as={Input} name="costingType" placeholder="Costing Type" />
-                  <ErrorMessage name="costingType" component="div" className="text-sm text-danger" />
-                </div>
+                <label className={labelClass}>Costing Type</label>
+                <Field as={Input} name="costingType" placeholder="Costing Type" />
+                <ErrorMessage name="costingType" component="div" className="text-sm text-danger" />
+              </div>
 
               {/* note */}
               <div className="flex w-full flex-col gap-[5px]">
