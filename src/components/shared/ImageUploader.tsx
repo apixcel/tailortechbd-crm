@@ -15,7 +15,7 @@ interface IProps {
   labelStyle?: string;
   mode?: "single" | "multiple";
   title?: string;
-  acceptPDF?: boolean; // <-- NEW
+  acceptPDF?: boolean;
 }
 
 const ImageDisplay = ({
@@ -100,7 +100,7 @@ const ImageUploader: React.FC<IProps> = ({
   inputId,
   labelStyle,
   mode = "multiple",
-  title = "Upload File",
+  title = "Upload Image",
   acceptPDF = false,
 }) => {
   const [files, setFiles] = useState<{ file: File; id: string }[]>([]);

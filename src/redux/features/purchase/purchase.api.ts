@@ -53,6 +53,7 @@ const purchaseApi = api.injectEndpoints({
     }),
   }),
 });
+
 export const {
   useCreatePurchaseMutation,
   useUpdatePurchaseBySlugMutation,
