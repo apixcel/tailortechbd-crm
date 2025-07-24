@@ -30,31 +30,44 @@ export const admin: INavLinks[] = [
         path: "/purchase-report",
       },
       {
-        label: "Purchase List",
-        path: "/purchase-list",
-      },
-      {
         label: "Create Purchase",
         path: "/create-purchase",
+      },
+      {
+        label: "Purchase List",
+        path: "/purchase-list",
       },
     ],
   },
   {
-    label: "Costing Report",
+    label: "Costing Management",
     icon: MdOutlineAttachMoney,
-    path: "/costing-report",
+    children: [
+      {
+        label: "Costing Report",
+        path: "/costing-report",
+      },
+      {
+        label: "Create Costing",
+        path: "/create-costing",
+      },
+      {
+        label: "Costing List",
+        path: "/costing-list",
+      },
+    ],
   },
   {
     label: "Suppliers Management",
     icon: HiOutlineUsers,
     children: [
       {
-        label: "Supplier List",
-        path: "/supplier-list",
-      },
-      {
         label: "Create Supplier",
         path: "/create-supplier",
+      },
+      {
+        label: "Supplier List",
+        path: "/supplier-list",
       },
     ],
   },

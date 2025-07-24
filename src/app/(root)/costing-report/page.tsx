@@ -1,4 +1,4 @@
-import { CostingView } from "@/view";
+import { CostingReportView } from "@/view";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -7,7 +7,7 @@ export const metadata: Metadata = {
 };
 
 const CostingReport = () => {
-  return <CostingView />;
+  return <CostingReportView />;
 };
 
 export default CostingReport;

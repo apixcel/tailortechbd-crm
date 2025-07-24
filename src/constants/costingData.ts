@@ -1,0 +1,35 @@
+export const costing = [
+    {
+      _id: "cost001",
+      partnerName: "BuildRight Engineers",
+      amount: 1500,
+      costingDate: "2025-07-20",
+      costingCategory: "Labor",
+      note: "Site supervision and project coordination fee.",
+      attachment: "invoice_buildright.pdf",
+      createdAt: "2025-07-20T08:00:00Z",
+      updatedAt: "2025-07-20T10:00:00Z"
+    },
+    {
+      _id: "cost002",
+      partnerName: "GreenTech Solutions",
+      amount: 850,
+      costingDate: "2025-07-21",
+      costingCategory: "Technical Support",
+      note: "Software deployment and bug fixing charges.",
+      createdAt: "2025-07-21T09:30:00Z",
+      updatedAt: "2025-07-21T11:15:00Z"
+    },
+    {
+      _id: "cost003",
+      partnerName: "Alpha Design Co.",
+      amount: 1200,
+      costingDate: "2025-07-22",
+      costingCategory: "Consultation",
+      note: "Architectural design consultation fee.",
+      attachment: "design_consult_alpha.pdf",
+      createdAt: "2025-07-22T10:45:00Z",
+      updatedAt: "2025-07-22T12:00:00Z"
+    }
+  ];
+  

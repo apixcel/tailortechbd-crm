@@ -46,7 +46,7 @@ const costingChartData = [
   { time: "2025-07-08", totalCosting: 260, totalCostingAmount: 52000 },
 ];
 
-const CostingOverview = () => {
+const CostingReportOverview = () => {
   const [selectedFilter, setSelectedFilter] = useState(options[2]);
 
   return (
@@ -108,4 +108,4 @@ const CostingOverview = () => {
   );
 };
 
-export default CostingOverview;
+export default CostingReportOverview;

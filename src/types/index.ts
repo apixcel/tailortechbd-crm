@@ -6,3 +6,5 @@ export * from "./queryMutationErroResponse";
 export * from "./investments";
 export * from "./deposits";
 export * from "./profit-distribution";
+export * from "./partner-dedication";
+export * from "./costing";

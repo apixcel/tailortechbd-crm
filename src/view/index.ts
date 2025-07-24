@@ -7,7 +7,10 @@ export { default as PurchaseListView } from "./purchases/PurchaseListView";
 export { default as CreatePurchaseView } from "./purchases/CreatePurchaseView";
 
 // costing
-export { default as CostingView } from "./CostingView";
+export { default as CreateCostingView } from "./costing/CreateCostingView";
+export { default as CostingListView } from "./costing/CostingListView";
+export { default as CostingReportView } from "./costing/CostingReportView";
+export { default as EditCostingView } from "./costing/EditCostingView";
 
 // supplier
 export { default as CreateSupplierView } from "./supplier/CreateSupplierView";
@@ -28,6 +31,11 @@ export { default as EditDepositView } from "./deposits/EditDepositView";
 export { default as ProfitDistributionView } from "./profit-distribution/ProfitDistributionView";
 export { default as CreateProfitDistributionView } from "./profit-distribution/CreateProfitDistributionView";
 export { default as EditProfitDistributionView } from "./profit-distribution/EditProfitDistributionView";
+
+// partner dedication
+export { default as PartnerDedicationView } from "./partner-dedication/PartnerDedicationView";
+export { default as CreatePartnerDedicationView } from "./partner-dedication/CreatePartnerDedicationView";
+export { default as EditPartnerDedicationView } from "./partner-dedication/EditPartnerDedicationView";
 
 // admin
 export { default as ManageAdminView } from "./admin/ManageAdminView";

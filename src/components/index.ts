@@ -34,7 +34,9 @@ export { default as PurchaseListTable } from "./purchase-list/PurchaseListTable"
 export { default as EditPurchaseView } from "./purchase-list/EditPurchaseView";
 
 // costing
-export { default as CostingOverview } from "./costing/CostingOverview";
+export { default as CostingReportOverview } from "./costing/CostingReportOverview";
+export { default as CostingListTable } from "./costing/CostingListTable";
+export {default as CostingForm} from "./costing/CostingForm"
 
 // create supplier
 export { default as SupplierForm } from "./create-supplier/SupplierForm";
@@ -55,6 +57,10 @@ export { default as DepositsForm } from "./deposits/DepositsForm";
 // profit distribution
 export { default as AllProfitDistributionTable } from "./profit-distribution/AllProfitDistributionTable";
 export { default as ProfitDistributionForm } from "./profit-distribution/ProfitDistributionForm";
+
+// partner dedication
+export { default as AllPartnerDedicationTable } from "./partner-dedication/AllPartnerDedicationTable";
+export { default as PartnerDedicationForm } from "./partner-dedication/PartnerDedicationForm";
 
 // manage admin
 export { default as AllAdminTable } from "./manage-admin/AllAdminTable";
