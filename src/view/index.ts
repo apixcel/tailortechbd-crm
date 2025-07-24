@@ -40,3 +40,6 @@ export { default as EditPartnerDedicationView } from "./partner-dedication/EditP
 // admin
 export { default as ManageAdminView } from "./admin/ManageAdminView";
 export { default as ManageSuperAdminView } from "./admin/ManageSuperAdminView";
+
+// login
+export { default as LoginView } from "./LoginView";

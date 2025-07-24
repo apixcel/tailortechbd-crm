@@ -12,6 +12,8 @@ export { default as CountrySelector } from "./ui/CountrySelector";
 export { default as TextArea } from "./ui/TextArea";
 export { default as PickDate } from "./ui/PickDate";
 export { default as DateRangePicker } from "./ui/DateRangePicker";
+export { default as FormCard } from "./ui/FormCard";
+export { default as FormMessage } from "./ui/FormMessage";
 
 // shared
 export { default as Header } from "./shared/Header";
@@ -65,3 +67,7 @@ export { default as PartnerDedicationForm } from "./partner-dedication/PartnerDe
 // manage admin
 export { default as AllAdminTable } from "./manage-admin/AllAdminTable";
 export { default as AllSuperAdminTable } from "./manage-admin/AllSuperAdminTable";
+
+// login
+export { default as PhoneNumberLogin } from "./login/PhoneNumberLogin";
+export { default as EmailLogin } from "./login/EmailLogin";
