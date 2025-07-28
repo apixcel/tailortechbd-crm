@@ -12,7 +12,7 @@ export const mockPurchases = [
       logo: "https://example.com/logos/arctic.png",
       invoiceNumber: "INV-123456",
     },
-    purchasedProducts: [
+    products: [
       {
         name: "Padded Jacket",
         price: 2800,
@@ -42,7 +42,7 @@ export const mockPurchases = [
       logo: "https://example.com/logos/arctic.png",
       invoiceNumber: "INV-123456",
     },
-    purchasedProducts: [
+    products: [
       {
         name: "Formal Pant",
         price: 1450,
@@ -72,7 +72,7 @@ export const mockPurchases = [
       logo: "https://example.com/logos/arctic.png",
       invoiceNumber: "INV-123456",
     },
-    purchasedProducts: [
+    products: [
       {
         name: "Graphic Tee",
         price: 800,
@@ -114,7 +114,7 @@ export const mockPurchases = [
       logo: "https://example.com/logos/arctic.png",
       invoiceNumber: "INV-123456",
     },
-    purchasedProducts: [
+    products: [
       {
         name: "Raincoat",
         price: 1800,
@@ -141,7 +141,7 @@ export const mockPurchases = [
       logo: "https://example.com/logos/arctic.png",
       invoiceNumber: "INV-123456",
     },
-    purchasedProducts: [
+    products: [
       {
         name: "Slim Fit Jeans",
         price: 2200,
@@ -171,7 +171,7 @@ export const mockPurchases = [
       logo: "https://example.com/logos/arctic.png",
       invoiceNumber: "INV-123456",
     },
-    purchasedProducts: [
+    products: [
       {
         name: "Kids Hoodie",
         price: 950,
@@ -201,7 +201,7 @@ export const mockPurchases = [
       logo: "https://example.com/logos/arctic.png",
       invoiceNumber: "INV-123456",
     },
-    purchasedProducts: [
+    products: [
       {
         name: "Running Shoes",
         price: 3200,
@@ -258,7 +258,7 @@ export const mockPurchases = [
       logo: "https://example.com/logos/arctic.png",
       invoiceNumber: "INV-123456",
     },
-    purchasedProducts: [
+    products: [
       {
         name: "Gym Shorts",
         price: 700,
@@ -288,7 +288,7 @@ export const mockPurchases = [
       logo: "https://example.com/logos/arctic.png",
       invoiceNumber: "INV-123456",
     },
-    purchasedProducts: [
+    products: [
       {
         name: "Silk Saree",
         price: 4500,

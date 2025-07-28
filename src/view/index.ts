@@ -5,6 +5,8 @@ export { default as SalesView } from "./SalesView";
 export { default as PurchaseReportView } from "./purchases/PurchaseReportView";
 export { default as PurchaseListView } from "./purchases/PurchaseListView";
 export { default as CreatePurchaseView } from "./purchases/CreatePurchaseView";
+export { default as EditPurchaseView } from "./purchases/EditPurchaseView";
+export { default as ViewPurchase } from "./purchases/ViewPurchase";
 
 // costing
 export { default as CreateCostingView } from "./costing/CreateCostingView";
@@ -16,6 +18,7 @@ export { default as EditCostingView } from "./costing/EditCostingView";
 export { default as CreateSupplierView } from "./supplier/CreateSupplierView";
 export { default as SupplierListView } from "./supplier/SupplierListView";
 export { default as EditSupplierView } from "./supplier/EditSupplierView";
+export { default as ViewSupplier } from "./supplier/ViewSupplier";
 
 // investments
 export { default as InvestmentsView } from "./investments/InvestmentsView";

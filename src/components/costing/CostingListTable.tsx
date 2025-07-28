@@ -1,22 +1,31 @@
 "use client";
 
-import { HorizontalLine, TableDataNotFound, TableSkeleton, Pagination } from "@/components";
+import {
+  useDeleteCostingByIdMutation,
+  useGetAllCostingsQuery,
+} from "@/redux/features/costing/costing.api";
 import { useDebounce } from "@/hooks";
-
-import Link from "next/link";
 import { useState } from "react";
+import Link from "next/link";
+import { truncateWords } from "@/utils";
+import dateUtils from "@/utils/date";
+
 import { FaChevronDown, FaChevronUp } from "react-icons/fa";
 import { GoPencil } from "react-icons/go";
 import { RxMagnifyingGlass } from "react-icons/rx";
-import dateUtils from "@/utils/date";
-// import { useGetAllCostingsQuery } from "@/redux/features/costings/costings.api";
-import DeleteCostingById from "./DeleteCostingById";
-import { costing } from "@/constants/costingData";
+
+import {
+  HorizontalLine,
+  TableDataNotFound,
+  TableSkeleton,
+  Pagination,
+  DeleteConfirmationDialog,
+} from "@/components";
 
 const tableHead = [
   { label: "#", field: "" },
   { label: "Partner Name", field: "" },
-  { label: "Costing Amount", field: "amount" },
+  { label: "Costing Amount", field: "costingAmount" },
   { label: "Date", field: "costingDate" },
   { label: "Type", field: "" },
   { label: "Note", field: "" },
@@ -26,23 +35,18 @@ const tableHead = [
 ];
 
 const CostingListTable = () => {
-  const [, /* searchTerm */ setSearchTerm] = useDebounce("");
+  const [searchTerm, setSearchTerm] = useDebounce("");
   const [sort, setSort] = useState({ field: "createdAt", order: "desc" });
-
   const [query, setQuery] = useState<Record<string, string | number>>({
     page: 1,
-    fields: "partnerName,amount,costingDate,costingCategory,note,attachment,createdAt",
+    fields: "partnerName,costingAmount,costingDate,costingType,note,fileUrl,createdAt",
     sort: `${sort.order === "desc" ? "-" : ""}${sort.field}`,
   });
 
-  // const { data, isLoading } = useGetAllInvestmentsQuery({ ...query, searchTerm });
-  // console.log(data, "all products table");
-  // const investmentData = data?.data || [];
-  // const metaData = data?.meta || { totalDoc: 0, page: 1 };
-
-  const mockCostingData = costing;
-  const metaData = { totalDoc: 0, page: 1 };
-  const isLoading = false;
+  const [deleteCosting, { isLoading: isDeleting }] = useDeleteCostingByIdMutation();
+  const { data, isLoading } = useGetAllCostingsQuery({ ...query, searchTerm });
+  const costingData = data?.data || [];
+  const metaData = data?.meta || { totalDoc: 0, page: 1 };
 
   const handleSort = (field: string) => {
     const newOrder = sort.field === field && sort.order === "asc" ? "desc" : "asc";
@@ -55,7 +59,7 @@ const CostingListTable = () => {
 
   return (
     <div className="flex flex-col gap-[10px]">
-      <div className="flex flex-col gap-[15px] bg-white p-[16px]">
+      <div className="flex flex-col gap-[15px] bg-white p-4">
         <div className="flex flex-col gap-[5px]">
           <h1 className="text-[16px] font-[600]">Costing List</h1>
           <p className="text-[12px] text-muted md:text-[14px]">
@@ -69,8 +73,11 @@ const CostingListTable = () => {
             <span className="font-bold text-dashboard">{metaData.page}.</span>
           </p>
         </div>
+
         <HorizontalLine className="my-[10px]" />
+
         <div className="flex flex-wrap items-center justify-between gap-y-5">
+          {/* search input */}
           <div className="flex w-full max-w-[300px] items-center justify-between rounded-[5px] border-[1px] border-dashboard/20 p-[5px] outline-none">
             <input
               type="text"
@@ -81,8 +88,11 @@ const CostingListTable = () => {
             <RxMagnifyingGlass />
           </div>
         </div>
+
+        {/* table */}
         <div className="overflow-x-auto">
           <table className="w-full divide-y divide-dashboard/20">
+            {/* table head */}
             <thead className="bg-dashboard/10">
               <tr>
                 {tableHead.map((heading) => (
@@ -120,46 +130,45 @@ const CostingListTable = () => {
                 ))}
               </tr>
             </thead>
-
             <tbody className="divide-y divide-gray-200 bg-white">
               {isLoading ? (
                 <TableSkeleton columns={tableHead.length} />
-              ) : mockCostingData?.length ? (
-                mockCostingData?.map((costing, index) => (
+              ) : costingData?.length ? (
+                costingData?.map((costing, index) => (
                   <tr key={index} className="hover:bg-gray-50">
-                    {/* Index */}
+                    {/* index */}
                     <td className="px-6 py-4 text-sm text-gray-900">{index + 1}</td>
 
-                    {/* Partner Name */}
+                    {/* partner name */}
                     <td className="px-6 py-4">
                       <span className="line-clamp-1 text-[14px]">{costing.partnerName}</span>
                     </td>
 
-                    {/* Investment Amount */}
+                    {/* costing amount */}
                     <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
-                      <span className="text-sm">{costing.amount}</span>
+                      <span className="text-sm">{costing.costingAmount}</span>
                     </td>
 
-                    {/* Costing Date */}
+                    {/* costing date */}
                     <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
                       <span className="text-sm">{costing.costingDate}</span>
                     </td>
 
-                    {/* Type */}
+                    {/* type */}
                     <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
-                      <span className="text-sm">{costing.costingCategory}</span>
+                      <span className="text-sm">{costing.costingType}</span>
                     </td>
 
-                    {/* Note */}
+                    {/* note */}
                     <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
-                      <span className="text-sm">{costing.note}</span>
+                      <span className="text-sm">{truncateWords(costing.note || "-", 10)}</span>
                     </td>
 
-                    {/* Attachment */}
+                    {/* attachment */}
                     <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
-                      {costing.attachment?.length ? (
+                      {costing.fileUrl?.length ? (
                         <Link
-                          href={costing.attachment}
+                          href={costing.fileUrl}
                           target="_blank"
                           className="text-sm hover:underline"
                         >
@@ -170,16 +179,17 @@ const CostingListTable = () => {
                       )}
                     </td>
 
-                    {/* Updated Time */}
+                    {/* updated time */}
                     <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
                       <span className="text-sm">
                         {dateUtils.formateCreateOrUpdateDate(costing.createdAt || "")}
                       </span>
                     </td>
 
-                    {/* Actions */}
+                    {/* actions */}
                     <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
                       <div className="flex items-center gap-2">
+                        {/* update */}
                         <Link
                           href={`/costing-list/${costing._id}`}
                           className="center aspect-square w-[30px] cursor-pointer rounded-full border-[1px] border-dashboard bg-dashboard/5 text-dashboard"
@@ -188,9 +198,13 @@ const CostingListTable = () => {
                           <GoPencil />
                         </Link>
 
-                        <DeleteCostingById
-                          //   costingId={costing._id}
-                          costingName={costing.partnerName}
+                        {/* delete */}
+                        <DeleteConfirmationDialog
+                          entityId={costing._id!}
+                          entityName={costing.partnerName}
+                          entityLabel="Costing"
+                          onDelete={(id) => deleteCosting({ costingId: id })}
+                          isLoading={isDeleting}
                         />
                       </div>
                     </td>

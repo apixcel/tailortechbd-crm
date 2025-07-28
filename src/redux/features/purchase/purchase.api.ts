@@ -12,38 +12,12 @@ const purchaseApi = api.injectEndpoints({
       }),
       invalidatesTags: ["purchase"],
     }),
-    updatePurchaseBySlug: builder.mutation<
-      { data: IPurchase },
-      { slug: string; payload: Partial<IPurchase> }
-    >({
-      query: ({ slug, payload }) => ({
-        url: `/purchase/update/${slug}`,
-        method: "PUT",
-        body: payload,
-      }),
-      invalidatesTags: ["purchase"],
-    }),
-    deletePurchaseBySlug: builder.mutation<{ data: IPurchase }, { slug: string }>({
-      query: ({ slug }) => ({
-        url: `/purchase/delete/${slug}`,
-        method: "DELETE",
-      }),
-      invalidatesTags: ["purchase"],
-    }),
-    getPurchaseBySlug: builder.query<{ data: IPurchase }, { slug: string }>({
-      query: ({ slug }) => ({
-        url: `/purchase/get/${slug}`,
-        method: "GET",
-      }),
-      providesTags: ["purchase"],
-    }),
     getAllPurchases: builder.query<
       { data: IPurchase[]; meta?: IMeta },
       Record<string, string | number>
     >({
       query: (query) => {
         const queryString = generateQueryParams(query);
-
         return {
           url: `/purchase/get?${queryString}`,
           method: "GET",
@@ -51,13 +25,38 @@ const purchaseApi = api.injectEndpoints({
       },
       providesTags: ["purchase"],
     }),
+    getPurchaseById: builder.query<{ data: IPurchase }, { purchaseId: string }>({
+      query: ({ purchaseId }) => ({
+        url: `/purchase/get/${purchaseId}`,
+        method: "GET",
+      }),
+      providesTags: ["purchase"],
+    }),
+    updatePurchaseById: builder.mutation<
+      { data: IPurchase },
+      { purchaseId: string; payload: Partial<IPurchase> }
+    >({
+      query: ({ purchaseId, payload }) => ({
+        url: `/purchase/update/${purchaseId}`,
+        method: "PATCH",
+        body: payload,
+      }),
+      invalidatesTags: ["purchase"],
+    }),
+    deletePurchaseById: builder.mutation<{ data: IPurchase }, { purchaseId: string }>({
+      query: ({ purchaseId }) => ({
+        url: `/purchase/delete/${purchaseId}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["purchase"],
+    }),
   }),
 });
 
 export const {
   useCreatePurchaseMutation,
-  useUpdatePurchaseBySlugMutation,
-  useDeletePurchaseBySlugMutation,
-  useGetPurchaseBySlugQuery,
+  useUpdatePurchaseByIdMutation,
+  useDeletePurchaseByIdMutation,
+  useGetPurchaseByIdQuery,
   useGetAllPurchasesQuery,
 } = purchaseApi;

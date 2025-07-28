@@ -1,13 +1,11 @@
 export interface ICosting {
   _id: string;
   partnerName: string;
-  amount: number;
+  costingAmount: number;
   costingDate: string;
-  costingCategory: string;
+  costingType: string;
   note: string;
-  attachment?: string;
+  fileUrl?: string;
   createdAt?: string;
   updatedAt?: string;
 }
-
-export type CreateCostingPayload = Omit<ICosting, "_id" | "createdAt" | "updatedAt">;

@@ -1,34 +1,49 @@
 "use client";
 
 import { toast } from "sonner";
-import { SupplierForm, PageHeadingTitle } from "@/components";
+import { SupplierForm, PageHeadingTitle, Loader, DataNotFound } from "@/components";
 import { useRouter } from "next/navigation";
-import { ISupplier } from "@/types";
+import { IQueryMutationErrorResponse, ISupplier } from "@/types";
+import {
+  useGetSupplierByIdQuery,
+  useUpdateSupplierByIdMutation,
+} from "@/redux/features/supplier/supplier.api";
 
 const EditSupplierView = ({ slug }: { slug: string }) => {
+  const { data, isLoading, isError } = useGetSupplierByIdQuery({ supplierId: slug });
+  const [updateSupplier, { isLoading: isUpdating }] = useUpdateSupplierByIdMutation();
+
   const router = useRouter();
 
+  if (isLoading) {
+    return <Loader />;
+  }
+
+  if (!data?.data || isError) {
+    return <DataNotFound title="Product Not Found" />;
+  }
+
   const handleSubmit = async (payload: Partial<ISupplier>) => {
-    /* if (isUpdating) {
-          return;
-        }
-    
-        const res = await updateProduct({
-          productId: data.data._id,
-          payload,
-        });
-        const error = res.error as IQueruMutationErrorResponse;
-        if (error) {
-          if (error?.data?.message) {
-            toast(error.data?.message);
-          } else {
-            toast("Something went wrong");
-          }
-          return;
-        }
-    
-        toast.success("Product updated successfully");
-        router.push("/dashboard/products"); */
+    if (isUpdating) {
+      return;
+    }
+
+    const res = await updateSupplier({
+      supplierId: data.data._id || "",
+      payload,
+    });
+    const error = res.error as IQueryMutationErrorResponse;
+    if (error) {
+      if (error?.data?.message) {
+        toast(error.data?.message);
+      } else {
+        toast("Something went wrong");
+      }
+      return;
+    }
+
+    toast.success("Supplier updated successfully");
+    router.push("/supplier-list");
   };
 
   return (
@@ -37,10 +52,10 @@ const EditSupplierView = ({ slug }: { slug: string }) => {
       <SupplierForm
         buttonLabel="Update Supplier"
         onSubmit={handleSubmit}
-        isLoading={false}
-        /* defaultValue={{
-          ...data.data,
-        }} */
+        isLoading={isUpdating}
+        defaultValue={{
+          ...data?.data,
+        }}
       />
     </div>
   );
