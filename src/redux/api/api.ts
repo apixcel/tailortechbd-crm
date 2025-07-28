@@ -48,6 +48,8 @@ export const api = createApi({
     "deposits",
     "profit-distribution",
     "partner-dedication",
+    "supplier",
+    "costing",
   ],
   endpoints: () => ({}),
 });

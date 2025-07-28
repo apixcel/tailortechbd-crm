@@ -1,38 +1,39 @@
-export interface ISizeEntry {
+import { ICategory } from "./category";
+import { ISupplier } from "./supplier";
+
+export interface ISize {
   size: string;
   quantity: number;
+  _id?: string;
 }
 
-export interface IColorVariant {
+export interface IColor {
   color: string;
-  sizes: ISizeEntry[];
+  sizes: ISize[];
+  _id?: string;
 }
 
-export interface IPurchaseItem {
-  name: string;
+export interface IProduct {
+  productName: string;
   price: number;
-  category: string;
+  category: string | ICategory;
+  colors: IColor[];
   images: string[];
-  colors: IColorVariant[];
-}
-
-export interface ISupplier {
-  _id: string;
-  name: string;
-  address: string;
-  phoneNumber: string;
-  email: string;
-  logo: string;
 }
 
 export interface IPurchase {
   _id: string;
   purchaseTitle: string;
-  supplier: ISupplier & { invoiceNumber: string };
-  purchasedProducts: IPurchaseItem[];
+  supplier: ISupplier;
+  invoiceNumber: string;
+  products: IProduct[];
   createdAt?: string;
+  updatedAt?: string;
 }
 
-export type CreatePurchasePayload = Omit<IPurchase, "_id" | "createdAt">;
-
-export type CreateSupplierPayload = Omit<ISupplier, "_id">;
+export type TPurchasePayload = {
+  purchaseTitle: string;
+  supplier: string;
+  invoiceNumber: string;
+  products: Omit<IProduct, "category">[];
+};

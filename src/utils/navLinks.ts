@@ -3,7 +3,6 @@
 import { VscGraphLine } from "react-icons/vsc";
 import { HiOutlineUsers } from "react-icons/hi";
 import { GiReceiveMoney } from "react-icons/gi";
-import { TbTruckDelivery } from "react-icons/tb";
 import { RiUserSettingsLine } from "react-icons/ri";
 import { MdOutlineAttachMoney, MdOutlineShoppingCart } from "react-icons/md";
 

@@ -36,7 +36,7 @@ const ViewSupplier = ({ setIsViewSupplier, supplierItem }: ViewSupplierProps) =>
         <div className="flex flex-col items-center gap-6">
           <div className="h-25 w-25 overflow-hidden rounded-full border border-border-muted object-cover object-center">
             <Image
-              src={"/images/avatar.jpg"}
+              src={supplierItem?.logoUrl || "/images/avatar.jpg"}
               width={200}
               height={200}
               alt={`${supplierItem?.name || "Company"} avatar`}

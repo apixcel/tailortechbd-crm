@@ -114,6 +114,10 @@
   .recharts-wrapper *:focus {
     outline: none !important;
   }
+
+  .form-label {
+    @apply text-[12px] font-semibold text-black;
+  }
 }
 
 /* === UTILITIES === */

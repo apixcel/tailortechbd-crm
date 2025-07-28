@@ -1,18 +1,22 @@
 "use client";
+
+import { useGetAllSuppliersQuery } from "@/redux/features/supplier/supplier.api";
+import * as Yup from "yup";
+import { ErrorMessage, Field, Form, Formik } from "formik";
+import useDebounce from "@/hooks/useDebounce";
+import { useState } from "react";
+import { ISupplier } from "@/types";
+
+import Input from "@/components/ui/Input";
+import Loader from "@/components/ui/Loader";
 import Button from "@/components/ui/Button";
 import DialogProvider from "@/components/ui/DialogProvider";
 import HorizontalLine from "@/components/ui/HorizontalLine";
-import { mockSuppliers } from "@/constants/supplierData";
-import useDebounce from "@/hooks/useDebounce";
-import { ISupplier } from "@/types";
-import { ErrorMessage, Field, Form, Formik } from "formik";
-import { useState } from "react";
+
 import { FaPlus } from "react-icons/fa";
 import { LuX } from "react-icons/lu";
 import { RxMagnifyingGlass } from "react-icons/rx";
 import { toast } from "sonner";
-import Input from "../ui/Input";
-import * as Yup from "yup";
 
 interface IProps {
   setFieldValue: (field: string, value: string | number | object) => void;
@@ -27,7 +31,15 @@ const AddSupplierOnPurchase = ({ setFieldValue }: IProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedSupplier, setSelectedSupplier] = useState<ISupplier | undefined>();
 
-  const [, /* searchValue */ setSearchValue] = useDebounce("");
+  const [searchValue, setSearchValue] = useDebounce("");
+
+  const { data, isLoading } = useGetAllSuppliersQuery({ searchTerm: searchValue, page: 1 });
+
+  const supplierData = data?.data || [];
+
+  if (isLoading) {
+    return <Loader />;
+  }
 
   const handleAddItem = (values: { invoiceNumber: string }) => {
     if (!selectedSupplier) {
@@ -41,7 +53,7 @@ const AddSupplierOnPurchase = ({ setFieldValue }: IProps) => {
       address: selectedSupplier.address,
       phoneNumber: selectedSupplier.phoneNumber,
       email: selectedSupplier.email,
-      logo: selectedSupplier.logo,
+      logoUrl: selectedSupplier.logoUrl,
       invoiceNumber: values.invoiceNumber,
     };
 
@@ -77,7 +89,7 @@ const AddSupplierOnPurchase = ({ setFieldValue }: IProps) => {
             <RxMagnifyingGlass />
           </div>
           <div className="mt-[20px] grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-2">
-            {mockSuppliers?.map((supplier) => (
+            {supplierData?.map((supplier) => (
               <div
                 key={supplier._id}
                 onClick={() => {
@@ -87,7 +99,7 @@ const AddSupplierOnPurchase = ({ setFieldValue }: IProps) => {
                 className="flex cursor-pointer items-center justify-between gap-[8px] rounded-[4px] border border-gray-200 p-[8px] hover:border-success"
               >
                 <img
-                  src={supplier.logo}
+                  src={supplier.logoUrl}
                   alt={supplier.name}
                   width={50}
                   height={50}
@@ -98,16 +110,16 @@ const AddSupplierOnPurchase = ({ setFieldValue }: IProps) => {
                 />
                 <div className="flex w-full flex-col gap-[4px] text-sm">
                   <p className="line-clamp-2 leading-[120%] font-semibold">
-                    <span className="font-medium">Name:</span> {supplier.name}
+                    <span className="font-normal">Name:</span> {supplier.name}
                   </p>
-                  <span>
-                    <span className="font-medium">Address:</span> {supplier.address}
+                  <span className="line-clamp-2 leading-[120%] font-semibold">
+                    <span className="font-normal">Address:</span> {supplier.address}
                   </span>
-                  <span>
-                    <span className="font-medium">Phone:</span> {supplier.phoneNumber}
+                  <span className="line-clamp-2 leading-[120%] font-semibold">
+                    <span className="font-normal">Phone:</span> {supplier.phoneNumber}
                   </span>
-                  <span>
-                    <span className="font-medium">Email:</span> {supplier.email}
+                  <span className="line-clamp-2 leading-[120%] font-semibold">
+                    <span className="font-normal">Email:</span> {supplier.email}
                   </span>
                 </div>
               </div>

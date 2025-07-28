@@ -2,30 +2,33 @@
 
 import * as Yup from "yup";
 import { ErrorMessage, Field, FieldArray, Form, Formik, FormikHelpers } from "formik";
-import Input from "../ui/Input";
-import HorizontalLine from "../ui/HorizontalLine";
-import ImageUploader from "../shared/ImageUploader";
-import CategorySelector from "../shared/CategorySelector";
-import Button from "../ui/Button";
+import { IPurchase, ISupplier, TPurchasePayload } from "@/types";
 import { FaRegTrashAlt } from "react-icons/fa";
-import AddSupplierOnPurchase from "../create-supplier/AddSupplierOnPurchase";
 import Link from "next/link";
-import { CreatePurchasePayload, ISupplier } from "@/types";
 
-// Initial Values
-const initialValues = {
+import Input from "@/components/ui/Input";
+import HorizontalLine from "@/components/ui/HorizontalLine";
+import ImageUploader from "@/components/shared/ImageUploader";
+import CategorySelector from "@/components/shared/CategorySelector";
+import Button from "@/components/ui/Button";
+import AddSupplierOnPurchase from "@/components/create-supplier/AddSupplierOnPurchase";
+import SectionTitle from "@/components/shared/SectionTitle";
+
+const initialValues: Omit<IPurchase, "_id" | "createdAt" | "updatedAt"> & {
+  supplier: Omit<ISupplier, "_id">;
+} = {
   purchaseTitle: "",
+  invoiceNumber: "",
   supplier: {
     name: "",
     address: "",
-    invoiceNumber: "",
     phoneNumber: "",
     email: "",
-    logo: "",
+    logoUrl: "",
   },
-  purchasedProducts: [
+  products: [
     {
-      name: "",
+      productName: "",
       price: 0,
       category: "",
       images: [],
@@ -39,16 +42,13 @@ const initialValues = {
   ],
 };
 
-// Validation Schema
 const validationSchema = Yup.object().shape({
-  purchaseTitle: Yup.string().required("Purchase title is required"),
-  purchasedProducts: Yup.array().of(
+  purchaseTitle: Yup.string().required("Title is required"),
+  products: Yup.array().of(
     Yup.object().shape({
-      name: Yup.string().required("Product name is required"),
-      price: Yup.number()
-        .required("Product price is required")
-        .min(1, "Product price must be >= 1"),
-      category: Yup.string().required("Product category is required"),
+      productName: Yup.string().required("Name is required"),
+      price: Yup.number().required("Price is required").min(1, "Price must be >= 1"),
+      category: Yup.string().required("Category is required"),
       images: Yup.array()
         .min(1, "At least one image is required")
         .of(Yup.string().url("Must be a valid URL")),
@@ -73,43 +73,54 @@ const validationSchema = Yup.object().shape({
   ),
 });
 
-const labelClass = "text-[12px] font-semibold text-black";
-
-const SectionTitle = ({ children }: { children: React.ReactNode }) => (
-  <div className="w-full bg-dashboard/10 px-4 py-2">
-    <span className="text-lg font-bold text-dashboard">{children}</span>
-  </div>
-);
-
 const PurchaseForm = ({
   isLoading = false,
+  defaultValue,
   onSubmit,
   buttonLabel = "Create Purchase",
 }: {
-  isLoading: boolean;
-  onSubmit: (data: CreatePurchasePayload, helper: FormikHelpers<typeof initialValues>) => void;
+  isLoading?: boolean;
+  defaultValue?: typeof initialValues;
+  onSubmit: (values: TPurchasePayload, helpers: FormikHelpers<typeof initialValues>) => void;
   buttonLabel?: string;
 }) => {
+  const initValue = defaultValue
+    ? {
+        ...defaultValue,
+        products: defaultValue.products.map((p) => ({
+          ...p,
+          category: typeof p.category == "string" ? p.category : p.category?._id,
+        })),
+      }
+    : undefined;
+
   return (
     <Formik
-      initialValues={initialValues}
+      initialValues={initValue || initialValues}
       validationSchema={validationSchema}
       onSubmit={(values, helpers) => {
-        const enrichedProducts = values.purchasedProducts.map((p) => {
-          const totalQuantity = p.colors.reduce((sum, color) => {
-            return sum + color.sizes.reduce((s, sz) => s + Number(sz.quantity || 0), 0);
-          }, 0);
-          return { ...p, totalQuantity };
-        });
+        const { supplier, ...rest } = values;
 
-        onSubmit(
-          {
-            ...values,
-            purchasedProducts: enrichedProducts,
-            supplier: values.supplier as ISupplier & { invoiceNumber: string },
-          },
-          helpers
-        );
+        const supplierId = (supplier as ISupplier)._id;
+
+        if (!supplierId) {
+          helpers.setSubmitting(false);
+          return;
+        }
+
+        const products = values.products.map((product) => ({
+          ...product,
+          category: typeof product.category === "string" ? product.category : product.category._id,
+        }));
+
+        const payload = {
+          ...rest,
+          supplier: supplierId,
+          invoiceNumber: values.supplier.invoiceNumber,
+          products,
+        };
+
+        onSubmit(payload, helpers);
       }}
     >
       {({ values, setFieldValue, touched, submitCount }) => (
@@ -121,7 +132,7 @@ const PurchaseForm = ({
 
               {/* purchase title */}
               <div className="flex flex-col gap-[5px]">
-                <label className={labelClass}>Purchase Title</label>
+                <label className="form-label">Purchase Title</label>
                 <Field as={Input} name="purchaseTitle" placeholder="Enter title" />
                 <ErrorMessage
                   name="purchaseTitle"
@@ -169,10 +180,10 @@ const PurchaseForm = ({
           <HorizontalLine />
 
           {/* Products Information */}
-          <FieldArray name="purchasedProducts">
+          <FieldArray name="products">
             {({ push, remove }) => (
               <>
-                {values.purchasedProducts.map((product, index) => {
+                {values.products.map((product, index) => {
                   const totalQty = product.colors.reduce(
                     (sum, c) => sum + c.sizes.reduce((s, sz) => s + Number(sz.quantity || 0), 0),
                     0
@@ -185,14 +196,14 @@ const PurchaseForm = ({
 
                         {/* product name */}
                         <div className="flex w-full flex-col gap-[5px]">
-                          <label className={labelClass}>Product Name</label>
+                          <label className="form-label">Product Name</label>
                           <Field
                             as={Input}
-                            name={`purchasedProducts.${index}.name`}
+                            name={`products.${index}.productName`}
                             placeholder="Product name"
                           />
                           <ErrorMessage
-                            name={`purchasedProducts.${index}.name`}
+                            name={`products.${index}.productName`}
                             component="div"
                             className="text-sm text-danger"
                           />
@@ -201,28 +212,34 @@ const PurchaseForm = ({
                         {/* product price and category */}
                         <div className="flex w-full flex-col items-start justify-start gap-[16px] sm:flex-row">
                           <div className="flex w-full flex-col gap-[5px]">
-                            <label className={labelClass}>Price</label>
+                            <label className="form-label">Price</label>
                             <Field
                               as={Input}
                               type="number"
-                              name={`purchasedProducts.${index}.price`}
+                              name={`products.${index}.price`}
                               placeholder="Price"
                             />
                             <ErrorMessage
-                              name={`purchasedProducts.${index}.price`}
+                              name={`products.${index}.price`}
                               component="div"
                               className="text-sm text-danger"
                             />
                           </div>
                           <div className="flex w-full flex-col gap-[5px]">
-                            <label className={labelClass}>Category</label>
+                            <label className="form-label">Category</label>
                             <CategorySelector
-                              onSelect={({ label }) =>
-                                setFieldValue(`purchasedProducts.${index}.category`, label)
+                              category={
+                                typeof defaultValue?.products[index]?.category === "object"
+                                  ? defaultValue?.products[index]?.category?.label
+                                  : undefined
+                              }
+                              onSelect={({ label, value }) =>
+                                setFieldValue(`products.${index}.category`, value)
                               }
                             />
+
                             <ErrorMessage
-                              name={`purchasedProducts.${index}.category`}
+                              name={`products.${index}.category`}
                               component="div"
                               className="text-sm text-danger"
                             />
@@ -230,7 +247,7 @@ const PurchaseForm = ({
                         </div>
 
                         {/* Colors & Sizes */}
-                        <FieldArray name={`purchasedProducts.${index}.colors`}>
+                        <FieldArray name={`products.${index}.colors`}>
                           {({ push, remove }) => (
                             <div className="mt-4">
                               <SectionTitle>Colors & Sizes #{index + 1}</SectionTitle>
@@ -241,11 +258,11 @@ const PurchaseForm = ({
                                   className="mt-2 rounded border border-solid-slab p-4"
                                 >
                                   <div className="flex flex-1 flex-col gap-[5px]">
-                                    <label className={labelClass}>Color #{colorIndex + 1}</label>
+                                    <label className="form-label">Color #{colorIndex + 1}</label>
                                     <div className="flex gap-4">
                                       <Field
                                         as={Input}
-                                        name={`purchasedProducts.${index}.colors.${colorIndex}.color`}
+                                        name={`products.${index}.colors.${colorIndex}.color`}
                                         placeholder="Color"
                                       />
                                       {/* remove color button */}
@@ -260,41 +277,39 @@ const PurchaseForm = ({
                                       )}
                                     </div>
                                     <ErrorMessage
-                                      name={`purchasedProducts.${index}.colors.${colorIndex}.color`}
+                                      name={`products.${index}.colors.${colorIndex}.color`}
                                       component="div"
                                       className="text-sm text-danger"
                                     />
                                   </div>
 
                                   {/* sizes */}
-                                  <FieldArray
-                                    name={`purchasedProducts.${index}.colors.${colorIndex}.sizes`}
-                                  >
+                                  <FieldArray name={`products.${index}.colors.${colorIndex}.sizes`}>
                                     {({ push, remove }) => (
                                       <>
                                         {color.sizes.map((sz, szIndex) => (
                                           <div key={szIndex} className="mt-3">
                                             <div className="flex w-full gap-[16px]">
                                               <div className="flex flex-1 flex-col gap-[5px]">
-                                                <label className={labelClass}>Size</label>
+                                                <label className="form-label">Size</label>
                                                 <Field
                                                   as={Input}
-                                                  name={`purchasedProducts.${index}.colors.${colorIndex}.sizes.${szIndex}.size`}
+                                                  name={`products.${index}.colors.${colorIndex}.sizes.${szIndex}.size`}
                                                   placeholder="Size"
                                                 />
                                                 <ErrorMessage
-                                                  name={`purchasedProducts.${index}.colors.${colorIndex}.sizes.${szIndex}.size`}
+                                                  name={`products.${index}.colors.${colorIndex}.sizes.${szIndex}.size`}
                                                   component="div"
                                                   className="text-sm text-danger"
                                                 />
                                               </div>
                                               <div className="flex flex-1 flex-col gap-[5px]">
-                                                <label className={labelClass}>Quantity</label>
+                                                <label className="form-label">Quantity</label>
                                                 <div className="flex gap-4">
                                                   <Field
                                                     as={Input}
                                                     type="number"
-                                                    name={`purchasedProducts.${index}.colors.${colorIndex}.sizes.${szIndex}.quantity`}
+                                                    name={`products.${index}.colors.${colorIndex}.sizes.${szIndex}.quantity`}
                                                     placeholder="Quantity"
                                                   />
                                                   {/* remove size button */}
@@ -309,7 +324,7 @@ const PurchaseForm = ({
                                                   )}
                                                 </div>
                                                 <ErrorMessage
-                                                  name={`purchasedProducts.${index}.colors.${colorIndex}.sizes.${szIndex}.quantity`}
+                                                  name={`products.${index}.colors.${colorIndex}.sizes.${szIndex}.quantity`}
                                                   component="div"
                                                   className="text-sm text-danger"
                                                 />
@@ -354,12 +369,10 @@ const PurchaseForm = ({
                         <div>
                           <ImageUploader
                             inputId={`product-image-${index}`}
-                            onChange={(urls) =>
-                              setFieldValue(`purchasedProducts.${index}.images`, urls)
-                            }
+                            onChange={(urls) => setFieldValue(`products.${index}.images`, urls)}
                           />
                           <ErrorMessage
-                            name={`purchasedProducts.${index}.images`}
+                            name={`products.${index}.images`}
                             component="div"
                             className="text-sm text-danger"
                           />

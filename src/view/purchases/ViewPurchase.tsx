@@ -38,7 +38,7 @@ const ViewPurchase = ({ setIsViewPurchase, purchaseItem }: ViewPurchaseProps) =>
           <div className="flex flex-col gap-4 lg:flex-row">
             <div className="h-14 w-14 overflow-hidden rounded-full border border-border-muted object-cover object-center">
               <Image
-                src={"/images/avatar.jpg"}
+                src={purchaseItem?.supplier?.logoUrl || "/images/avatar.jpg"}
                 width={100}
                 height={100}
                 alt={`${purchaseItem?.supplier?.name || "Company"} avatar`}
@@ -80,8 +80,8 @@ const ViewPurchase = ({ setIsViewPurchase, purchaseItem }: ViewPurchaseProps) =>
           <h2 className="mb-[16px] text-[20px] font-semibold">Purchase Summary</h2>
           <div className="space-y-2">
             <p>
-              <span className="text-[14px] font-[700] text-primary">Supplier Invoice Number: </span>
-              {purchaseItem?.supplier?.invoiceNumber || "N/A"}
+              <span className="text-[14px] font-[700] text-primary">Invoice Number: </span>
+              {purchaseItem?.invoiceNumber || "N/A"}
             </p>
             <p>
               <span className="text-[14px] font-[700] text-primary">Purchase Date: </span>
@@ -95,7 +95,7 @@ const ViewPurchase = ({ setIsViewPurchase, purchaseItem }: ViewPurchaseProps) =>
             </p>
             <p>
               <span className="text-[14px] font-[700] text-primary">Total Quantity: </span>
-              {purchaseItem?.purchasedProducts.reduce(
+              {purchaseItem?.products.reduce(
                 (sum, item) =>
                   sum +
                   item.colors.reduce(
@@ -108,21 +108,23 @@ const ViewPurchase = ({ setIsViewPurchase, purchaseItem }: ViewPurchaseProps) =>
             </p>
             <p>
               <span className="text-[14px] font-[700] text-primary">Total Amount: </span>
-              {purchaseItem?.purchasedProducts.reduce(
-                (sum, item) =>
-                  sum +
-                  item.price *
-                    item.colors.reduce(
-                      (colorSum, color) =>
-                        colorSum +
-                        color.sizes.reduce(
-                          (sizeSum, size) => sizeSum + Number(size.quantity || 0),
-                          0
-                        ),
-                      0
-                    ),
-                0
-              )}{" "}
+              {purchaseItem?.products
+                .reduce(
+                  (sum, item) =>
+                    sum +
+                    item.price *
+                      item.colors.reduce(
+                        (colorSum, color) =>
+                          colorSum +
+                          color.sizes.reduce(
+                            (sizeSum, size) => sizeSum + Number(size.quantity || 0),
+                            0
+                          ),
+                        0
+                      ),
+                  0
+                )
+                .toFixed(2)}{" "}
               BDT
             </p>
           </div>
@@ -150,7 +152,7 @@ const ViewPurchase = ({ setIsViewPurchase, purchaseItem }: ViewPurchaseProps) =>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200 bg-white">
-              {purchaseItem?.purchasedProducts?.map((product, index) => {
+              {purchaseItem?.products?.map((product, index) => {
                 const totalQuantity = product.colors.reduce(
                   (colorSum, color) =>
                     colorSum +
@@ -182,16 +184,22 @@ const ViewPurchase = ({ setIsViewPurchase, purchaseItem }: ViewPurchaseProps) =>
                           src={product.images?.[0] || "/placeholder.jpg"}
                           width={0}
                           height={0}
-                          alt={product.name}
+                          alt={`${product.productName || "Product"} image`}
                           className="h-12 w-12 object-contain object-center"
                         />
-                        <span>{product.name}</span>
+                        <span>{product.productName}</span>
                       </div>
                     </td>
 
                     {/* Category */}
                     <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
-                      {product.category || "N/A"}
+                      {typeof product.category === "object" &&
+                      product.category !== null &&
+                      "label" in product.category
+                        ? (product.category as { label: string }).label
+                        : typeof product.category === "string"
+                          ? product.category
+                          : "N/A"}
                     </td>
 
                     {/* Color & Size */}
@@ -219,7 +227,7 @@ const ViewPurchase = ({ setIsViewPurchase, purchaseItem }: ViewPurchaseProps) =>
             </tbody>
           </table>
 
-          {!purchaseItem?.purchasedProducts?.length && (
+          {!purchaseItem?.products?.length && (
             <div className="py-12 text-center">
               <div className="text-lg text-gray-500">No orders found</div>
               <p className="mt-2 text-gray-400">Try changing your search criteria</p>

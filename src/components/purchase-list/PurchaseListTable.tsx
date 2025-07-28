@@ -1,5 +1,9 @@
 "use client";
 
+import {
+  useDeletePurchaseByIdMutation,
+  useGetAllPurchasesQuery,
+} from "@/redux/features/purchase/purchase.api";
 import { useDebounce } from "@/hooks";
 import dateUtils from "@/utils/date";
 import { useEffect, useState } from "react";
@@ -14,9 +18,8 @@ import HorizontalLine from "../ui/HorizontalLine";
 import TableSkeleton from "../ui/TableSkeleton";
 import Pagination from "../ui/Pagination";
 import TimelineDropDown from "../shared/TimelineDropDown";
-import ViewPurchase from "./ViewPurchase";
-import DeletePurchaseById from "./DeletePurchaseById";
-import { mockPurchases } from "@/constants/purchaseData";
+import DeleteConfirmationDialog from "../shared/DeleteConfirmationDialog";
+import { ViewPurchase } from "@/view";
 
 const tableHead = [
   { label: "Supplier Info", field: "companyInfo" },
@@ -28,23 +31,17 @@ const tableHead = [
 ];
 
 const PurchaseListTable = () => {
-  const [, /* searchTerm */ setSearchTerm] = useDebounce("");
+  const [isViewPurchase, setIsViewPurchase] = useState(false);
+  const [purchaseItemView, setPurchaseItemView] = useState<IPurchase | null>(null);
+
+  const [searchTerm, setSearchTerm] = useDebounce("");
   const [page, setPage] = useState<number>(1);
   const [query, setQuery] = useState<Record<string, string | number>>({
     day_count: "",
   });
 
-  const [isViewPurchase, setIsViewPurchase] = useState(false);
-  const [purchaseItemView, setPurchaseItemView] = useState<IPurchase | null>(null);
-
-  const isLoading = false;
-  const data = {
-    data: mockPurchases,
-    meta: {
-      totalDoc: mockPurchases.length,
-      page: 1,
-    },
-  };
+  const [deletePurchase, { isLoading: isDeleting }] = useDeletePurchaseByIdMutation();
+  const { data, isLoading } = useGetAllPurchasesQuery({ ...query, searchTerm, page });
 
   const purchaseData = data?.data || [];
   const metaData = data?.meta || { totalDoc: 0, page: 1 };
@@ -118,17 +115,17 @@ const PurchaseListTable = () => {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200 bg-white">
-                  {isLoading ? (
+                  {isLoading && purchaseData.length > 0 ? (
                     <TableSkeleton columns={tableHead.length} />
                   ) : (
                     purchaseData.map((purchase) => (
                       <tr key={purchase._id} className="hover:bg-gray-50">
                         <td className="px-6 py-4">
                           <div className="text-sm font-medium text-gray-900">
-                            {purchase.supplier.name}
+                            {purchase.supplier?.name}
                           </div>
                           <div className="text-sm text-gray-500">
-                            {purchase.supplier.phoneNumber}
+                            {purchase.supplier?.phoneNumber}
                           </div>
                         </td>
                         <td className="px-6 py-4">
@@ -138,7 +135,7 @@ const PurchaseListTable = () => {
                         </td>
                         {/* Total Quantity */}
                         <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
-                          {purchase.purchasedProducts.reduce(
+                          {purchase.products.reduce(
                             (sum, item) =>
                               sum +
                               item.colors.reduce(
@@ -152,21 +149,23 @@ const PurchaseListTable = () => {
                         </td>
                         {/* Total Amount */}
                         <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
-                          {purchase.purchasedProducts.reduce(
-                            (sum, item) =>
-                              sum +
-                              item.price *
-                                item.colors.reduce(
-                                  (colorSum, color) =>
-                                    colorSum +
-                                    color.sizes.reduce(
-                                      (sizeSum, size) => sizeSum + Number(size.quantity || 0),
-                                      0
-                                    ),
-                                  0
-                                ),
-                            0
-                          )}{" "}
+                          {purchase.products
+                            .reduce(
+                              (sum, item) =>
+                                sum +
+                                item.price *
+                                  item.colors.reduce(
+                                    (colorSum, color) =>
+                                      colorSum +
+                                      color.sizes.reduce(
+                                        (sizeSum, size) => sizeSum + Number(size.quantity || 0),
+                                        0
+                                      ),
+                                    0
+                                  ),
+                              0
+                            )
+                            .toFixed(2)}{" "}
                           BDT
                         </td>
                         <td className="px-6 py-4 text-sm text-gray-500">
@@ -181,9 +180,12 @@ const PurchaseListTable = () => {
                             >
                               <GoPencil />
                             </Link>
-                            <DeletePurchaseById
-                              // purchaseId={purchase._id}
-                              purchaseName={purchase.purchaseTitle}
+                            <DeleteConfirmationDialog
+                              entityId={purchase._id}
+                              entityName={purchase.purchaseTitle}
+                              entityLabel="Purchase"
+                              onDelete={(id) => deletePurchase({ purchaseId: id })}
+                              isLoading={isDeleting}
                             />
                             <button
                               onClick={() => handlePurchaseView(purchase as IPurchase)}

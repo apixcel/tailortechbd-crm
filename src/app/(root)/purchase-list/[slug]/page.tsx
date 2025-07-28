@@ -1,4 +1,4 @@
-import { EditPurchaseView } from "@/components";
+import { EditPurchaseView } from "@/view";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
