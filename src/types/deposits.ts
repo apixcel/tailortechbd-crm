@@ -1,7 +1,7 @@
 export interface IDeposit {
   _id: string;
   partnerName: string;
-  amount: number;
+  depositAmount: number;
   source: string;
   depositDate: string;
   type: string;
@@ -10,5 +10,3 @@ export interface IDeposit {
   createdAt?: string;
   updatedAt?: string;
 }
-
-export type CreateDepositPayload = Omit<IDeposit, "_id" | "createdAt" | "updatedAt">;

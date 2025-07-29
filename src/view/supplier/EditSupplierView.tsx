@@ -1,18 +1,18 @@
 "use client";
 
-import { toast } from "sonner";
-import { SupplierForm, PageHeadingTitle, Loader, DataNotFound } from "@/components";
-import { useRouter } from "next/navigation";
-import { IQueryMutationErrorResponse, ISupplier } from "@/types";
 import {
   useGetSupplierByIdQuery,
   useUpdateSupplierByIdMutation,
 } from "@/redux/features/supplier/supplier.api";
+import { IQueryMutationErrorResponse, ISupplier } from "@/types";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
+
+import { PageHeadingTitle, SupplierForm, Loader, DataNotFound } from "@/components";
 
 const EditSupplierView = ({ slug }: { slug: string }) => {
   const { data, isLoading, isError } = useGetSupplierByIdQuery({ supplierId: slug });
   const [updateSupplier, { isLoading: isUpdating }] = useUpdateSupplierByIdMutation();
-
   const router = useRouter();
 
   if (isLoading) {
@@ -53,9 +53,7 @@ const EditSupplierView = ({ slug }: { slug: string }) => {
         buttonLabel="Update Supplier"
         onSubmit={handleSubmit}
         isLoading={isUpdating}
-        defaultValue={{
-          ...data?.data,
-        }}
+        defaultValue={data?.data}
       />
     </div>
   );

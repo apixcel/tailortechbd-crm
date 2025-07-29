@@ -14,11 +14,14 @@ import { RxMagnifyingGlass } from "react-icons/rx";
 import { GoPencil } from "react-icons/go";
 import { FiEye } from "react-icons/fi";
 
-import HorizontalLine from "../ui/HorizontalLine";
-import TableSkeleton from "../ui/TableSkeleton";
-import Pagination from "../ui/Pagination";
-import TimelineDropDown from "../shared/TimelineDropDown";
-import DeleteConfirmationDialog from "../shared/DeleteConfirmationDialog";
+import {
+  HorizontalLine,
+  TableDataNotFound,
+  TableSkeleton,
+  Pagination,
+  DeleteConfirmationDialog,
+  TimelineDropDown,
+} from "@/components";
 import { ViewPurchase } from "@/view";
 
 const tableHead = [
@@ -30,7 +33,7 @@ const tableHead = [
   { label: "Actions", field: "" },
 ];
 
-const PurchaseListTable = () => {
+const AllPurchaseListTable = () => {
   const [isViewPurchase, setIsViewPurchase] = useState(false);
   const [purchaseItemView, setPurchaseItemView] = useState<IPurchase | null>(null);
 
@@ -72,11 +75,19 @@ const PurchaseListTable = () => {
               <p className="text-[12px] text-muted md:text-[14px]">
                 Displaying All the available purchases in your store. There is total{" "}
                 <span className="font-bold text-dashboard">{metaData.totalDoc}</span> purchases.
+                Data is Divided into{" "}
+                <span className="font-bold text-dashboard">
+                  {Math.ceil(metaData.totalDoc / 10)} pages
+                </span>{" "}
+                & currently showing page{" "}
+                <span className="font-bold text-dashboard">{metaData.page}.</span>
               </p>
             </div>
+
             <HorizontalLine className="my-[10px]" />
 
             <div className="flex flex-col justify-between gap-[16px] md:flex-row md:items-center md:gap-[8px]">
+              {/* search input */}
               <div className="flex w-full max-w-[300px] items-center rounded-[5px] border border-dashboard/20 p-[5px]">
                 <input
                   type="text"
@@ -89,6 +100,8 @@ const PurchaseListTable = () => {
                 />
                 <RxMagnifyingGlass />
               </div>
+
+              {/* timeline dropdown */}
               <div>
                 <TimelineDropDown
                   onSelect={({ value }) => {
@@ -99,7 +112,7 @@ const PurchaseListTable = () => {
               </div>
             </div>
 
-            {/* Table */}
+            {/* table */}
             <div className="overflow-x-auto bg-white shadow">
               <table className="min-w-full divide-y divide-dashboard/20">
                 <thead className="bg-dashboard/10">
@@ -115,9 +128,9 @@ const PurchaseListTable = () => {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200 bg-white">
-                  {isLoading && purchaseData.length > 0 ? (
+                  {isLoading ? (
                     <TableSkeleton columns={tableHead.length} />
-                  ) : (
+                  ) : purchaseData.length ? (
                     purchaseData.map((purchase) => (
                       <tr key={purchase._id} className="hover:bg-gray-50">
                         <td className="px-6 py-4">
@@ -173,6 +186,7 @@ const PurchaseListTable = () => {
                         </td>
                         <td className="px-6 py-4">
                           <div className="flex items-center gap-[8px]">
+                            {/* update */}
                             <Link
                               href={`/purchase-list/${purchase._id}`}
                               className="center aspect-square w-[30px] cursor-pointer rounded-full border-[1px] border-dashboard bg-dashboard/5 text-dashboard"
@@ -180,6 +194,8 @@ const PurchaseListTable = () => {
                             >
                               <GoPencil />
                             </Link>
+
+                            {/* delete */}
                             <DeleteConfirmationDialog
                               entityId={purchase._id}
                               entityName={purchase.purchaseTitle}
@@ -187,6 +203,7 @@ const PurchaseListTable = () => {
                               onDelete={(id) => deletePurchase({ purchaseId: id })}
                               isLoading={isDeleting}
                             />
+                            {/* view */}
                             <button
                               onClick={() => handlePurchaseView(purchase as IPurchase)}
                               className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-full border border-dashboard/20 text-dashboard transition-all duration-200 hover:border-dashboard/40 hover:bg-dashboard/10 hover:text-dashboard/80"
@@ -198,16 +215,11 @@ const PurchaseListTable = () => {
                         </td>
                       </tr>
                     ))
+                  ) : (
+                    <TableDataNotFound span={tableHead.length} message="No Purchase Found" />
                   )}
                 </tbody>
               </table>
-
-              {!purchaseData.length && (
-                <div className="py-12 text-center">
-                  <div className="text-lg text-gray-500">No orders found</div>
-                  <p className="mt-2 text-gray-400">Try changing your search criteria</p>
-                </div>
-              )}
             </div>
           </div>
           <Pagination
@@ -224,4 +236,4 @@ const PurchaseListTable = () => {
   );
 };
 
-export default PurchaseListTable;
+export default AllPurchaseListTable;

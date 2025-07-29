@@ -4,45 +4,48 @@ import { generateQueryParams } from "@/utils";
 
 const depositsApi = api.injectEndpoints({
   endpoints: (builder) => ({
-    createDeposit: builder.mutation<{ data: IDeposit }, IDeposit>({
-      query: (body) => ({
-        url: "/deposits/create",
+    createDeposit: builder.mutation<{ data: IDeposit }, Partial<IDeposit>>({
+      query: (payload) => ({
+        url: "/deposit/create",
         method: "POST",
-        body,
+        body: payload,
       }),
       invalidatesTags: ["deposits"],
     }),
     getAllDeposits: builder.query<
-      { data: IDeposit[]; meta: IMeta },
+      { data: IDeposit[]; meta?: IMeta },
       Record<string, string | number>
     >({
       query: (query) => {
         const queryString = generateQueryParams(query);
         return {
-          url: `/deposits?${queryString}`,
+          url: `/deposit/get?${queryString}`,
           method: "GET",
         };
       },
       providesTags: ["deposits"],
     }),
-    getDepositById: builder.query<{ data: IDeposit }, string>({
-      query: (id) => ({
-        url: `/deposits/${id}`,
+    getDepositById: builder.query<{ data: IDeposit }, { depositId: string }>({
+      query: ({ depositId }) => ({
+        url: `/deposit/get/${depositId}`,
         method: "GET",
       }),
       providesTags: ["deposits"],
     }),
-    updateDeposit: builder.mutation<{ data: IDeposit }, { id: string; body: IDeposit }>({
-      query: ({ id, body }) => ({
-        url: `/deposits/${id}`,
-        method: "PUT",
-        body,
+    updateDepositById: builder.mutation<
+      { data: IDeposit },
+      { depositId: string; payload: Partial<IDeposit> }
+    >({
+      query: ({ depositId, payload }) => ({
+        url: `/deposit/update/${depositId}`,
+        method: "PATCH",
+        body: { _id: undefined, ...payload },
       }),
       invalidatesTags: ["deposits"],
     }),
-    deleteDepositById: builder.mutation<{ data: IDeposit[] }, string>({
-      query: (id) => ({
-        url: `/deposits/${id}`,
+    deleteDepositById: builder.mutation<{ data: IDeposit }, { depositId: string }>({
+      query: ({ depositId }) => ({
+        url: `/deposit/delete/${depositId}`,
         method: "DELETE",
       }),
       invalidatesTags: ["deposits"],
@@ -53,7 +56,7 @@ const depositsApi = api.injectEndpoints({
 export const {
   useCreateDepositMutation,
   useGetAllDepositsQuery,
-  useGetDepositByIdQuery,
   useDeleteDepositByIdMutation,
-  useUpdateDepositMutation,
+  useGetDepositByIdQuery,
+  useUpdateDepositByIdMutation,
 } = depositsApi;

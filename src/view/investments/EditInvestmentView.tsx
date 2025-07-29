@@ -1,21 +1,53 @@
 "use client";
 
+import {
+  useGetInvestmentByIdQuery,
+  useUpdateInvestmentByIdMutation,
+} from "@/redux/features/investments/investments.api";
+import { IInvestment, IQueryMutationErrorResponse } from "@/types";
+import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
-import { InvestmentsForm, PageHeadingTitle } from "@/components";
-import { useRouter } from "next/navigation";
-import { CreateInvestmentPayload } from "@/types";
+import { InvestmentsForm, PageHeadingTitle, Loader, DataNotFound } from "@/components";
 
 const EditInvestmentView = ({ slug }: { slug: string }) => {
+  const { data, isLoading, isError } = useGetInvestmentByIdQuery({ investmentId: slug });
+  const [updateInvestment, { isLoading: isUpdating }] = useUpdateInvestmentByIdMutation();
   const router = useRouter();
 
-  const handleSubmit = async (payload: CreateInvestmentPayload) => {
-    const formattedValues: CreateInvestmentPayload = {
+  if (isLoading) {
+    return <Loader />;
+  }
+
+  if (!data?.data || isError) {
+    return <DataNotFound title="Investment Not Found" />;
+  }
+
+  const handleSubmit = async (payload: IInvestment) => {
+    const formattedValues: IInvestment = {
       ...payload,
       investmentDate: payload.investmentDate.split("T")[0],
     };
 
-    console.log(formattedValues, "formattedValues");
+    if (isUpdating) {
+      return;
+    }
+
+    const res = await updateInvestment({ investmentId: data.data._id, payload: formattedValues });
+    const error = res.error as IQueryMutationErrorResponse;
+    if (error) {
+      if (error?.data?.message) {
+        toast(error.data?.message);
+      } else {
+        toast("Something went wrong");
+      }
+      return;
+    }
+
+    toast.success("Investment updated successfully");
+    router.push("/investments");
+
+    return;
   };
 
   return (
@@ -24,10 +56,8 @@ const EditInvestmentView = ({ slug }: { slug: string }) => {
       <InvestmentsForm
         buttonLabel="Update Investment"
         onSubmit={handleSubmit}
-        isLoading={false}
-        /* defaultValue={{
-          ...data.data,
-        }} */
+        isLoading={isUpdating}
+        defaultValue={data.data}
       />
     </div>
   );

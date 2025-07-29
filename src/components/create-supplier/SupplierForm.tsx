@@ -4,7 +4,7 @@ import * as Yup from "yup";
 import { Formik, Form, Field, ErrorMessage, FormikHelpers } from "formik";
 import { ISupplier } from "@/types";
 
-import {Input, Button, ImageUploader, SectionTitle} from "@/components";
+import { Input, Button, ImageUploader, SectionTitle } from "@/components";
 
 const initialValues: Omit<ISupplier, "_id" | "createdAt" | "updatedAt"> = {
   name: "",

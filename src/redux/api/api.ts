@@ -46,7 +46,7 @@ export const api = createApi({
     "super-admin",
     "investments",
     "deposits",
-    "profit-distribution",
+    "profit-withdrawal",
     "partner-dedication",
     "supplier",
     "costing",

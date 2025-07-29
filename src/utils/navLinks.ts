@@ -75,6 +75,10 @@ export const admin: INavLinks[] = [
     icon: GiReceiveMoney,
     children: [
       {
+        label: "Capitals",
+        path: "/capitals",
+      },
+      {
         label: "Investments",
         path: "/investments",
       },
@@ -83,8 +87,16 @@ export const admin: INavLinks[] = [
         path: "/deposits",
       },
       {
-        label: "Profit Distribution",
-        path: "/profit-distribution",
+        label: "Profit Withdrawal",
+        path: "/profit-withdrawal",
+      },
+      {
+        label: "Profit Balance",
+        path: "/profit-balance",
+      },
+      {
+        label: "Partner List",
+        path: "/partner-list",
       },
       {
         label: "Partner Dedication",

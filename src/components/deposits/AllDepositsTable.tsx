@@ -1,22 +1,30 @@
 "use client";
 
-import { HorizontalLine, TableDataNotFound, TableSkeleton, Pagination } from "@/components";
+import {
+  useDeleteDepositByIdMutation,
+  useGetAllDepositsQuery,
+} from "@/redux/features/deposits/deposits.api";
 import { useDebounce } from "@/hooks";
-
-import Link from "next/link";
 import { useState } from "react";
+import Link from "next/link";
+import dateUtils from "@/utils/date";
+
 import { FaChevronDown, FaChevronUp } from "react-icons/fa";
 import { GoPencil } from "react-icons/go";
 import { RxMagnifyingGlass } from "react-icons/rx";
-import dateUtils from "@/utils/date";
-import { useGetAllDepositsQuery } from "@/redux/features/deposits/deposits.api";
-import { depositData } from "@/constants/depositsData";
-import DeleteDepositsById from "./DeleteDepositsById";
+
+import {
+  HorizontalLine,
+  TableDataNotFound,
+  TableSkeleton,
+  Pagination,
+  DeleteConfirmationDialog,
+} from "@/components";
 
 const tableHead = [
   { label: "#", field: "" },
   { label: "Partner Name", field: "" },
-  { label: "Deposit Amount", field: "amount" },
+  { label: "Deposit Amount", field: "depositAmount" },
   { label: "Source", field: "" },
   { label: "Date", field: "depositDate" },
   { label: "Type", field: "" },
@@ -27,23 +35,18 @@ const tableHead = [
 ];
 
 const AllDepositsTable = () => {
-  const [, /* searchTerm */ setSearchTerm] = useDebounce("");
+  const [searchTerm, setSearchTerm] = useDebounce("");
   const [sort, setSort] = useState({ field: "createdAt", order: "desc" });
-
   const [query, setQuery] = useState<Record<string, string | number>>({
     page: 1,
-    fields: "partnerName,amount,source,depositDate,type,note,attachment,createdAt",
+    fields: "partnerName,depositAmount,source,depositDate,type,note,attachment,createdAt",
     sort: `${sort.order === "desc" ? "-" : ""}${sort.field}`,
   });
 
-  //   const { data, isLoading } = useGetAllDepositsQuery({ ...query, searchTerm });
-  //   console.log(data, "all deposits table");
-  //   const depositsData = data?.data || [];
-  //   const metaData = data?.meta || { totalDoc: 0, page: 1 };
-
-  const mockDepositsData = depositData;
-  const metaData = { totalDoc: 0, page: 1 };
-  const isLoading = false;
+  const [deleteDeposit, { isLoading: isDeleting }] = useDeleteDepositByIdMutation();
+  const { data, isLoading } = useGetAllDepositsQuery({ ...query, searchTerm });
+  const depositsData = data?.data || [];
+  const metaData = data?.meta || { totalDoc: 0, page: 1 };
 
   const handleSort = (field: string) => {
     const newOrder = sort.field === field && sort.order === "asc" ? "desc" : "asc";
@@ -70,8 +73,11 @@ const AllDepositsTable = () => {
             <span className="font-bold text-dashboard">{metaData.page}.</span>
           </p>
         </div>
+
         <HorizontalLine className="my-[10px]" />
+
         <div className="flex flex-wrap items-center justify-between gap-y-5">
+          {/* search input */}
           <div className="flex w-full max-w-[300px] items-center justify-between rounded-[5px] border-[1px] border-dashboard/20 p-[5px] outline-none">
             <input
               type="text"
@@ -82,6 +88,7 @@ const AllDepositsTable = () => {
             <RxMagnifyingGlass />
           </div>
 
+          {/* create deposit link */}
           <Link
             href="/deposits/create"
             className="rounded-[5px] bg-primary px-[20px] py-[6px] text-white"
@@ -89,8 +96,11 @@ const AllDepositsTable = () => {
             Create Deposit
           </Link>
         </div>
+
+        {/* table */}
         <div className="overflow-x-auto">
           <table className="w-full divide-y divide-dashboard/20">
+            {/* table head */}
             <thead className="bg-dashboard/10">
               <tr>
                 {tableHead.map((heading) => (
@@ -132,43 +142,43 @@ const AllDepositsTable = () => {
             <tbody className="divide-y divide-gray-200 bg-white">
               {isLoading ? (
                 <TableSkeleton columns={tableHead.length} />
-              ) : mockDepositsData?.length ? (
-                mockDepositsData?.map((deposit, index) => (
+              ) : depositsData?.length ? (
+                depositsData?.map((deposit, index) => (
                   <tr key={index} className="hover:bg-gray-50">
-                    {/* Index */}
+                    {/* index */}
                     <td className="px-6 py-4 text-sm text-gray-900">{index + 1}</td>
 
-                    {/* Partner Name */}
+                    {/* partner name */}
                     <td className="px-6 py-4">
                       <span className="line-clamp-1 text-[14px]">{deposit.partnerName}</span>
                     </td>
 
-                    {/* Deposit Amount */}
+                    {/* deposit amount */}
                     <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
-                      <span className="text-sm">{deposit.amount}</span>
+                      <span className="text-sm">{deposit.depositAmount}</span>
                     </td>
 
-                    {/* Source */}
+                    {/* source */}
                     <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
                       <span className="text-sm">{deposit.source}</span>
                     </td>
 
-                    {/* Date */}
+                    {/* date */}
                     <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
                       <span className="text-sm">{deposit.depositDate}</span>
                     </td>
 
-                    {/* Type */}
+                    {/* type */}
                     <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
                       <span className="text-sm">{deposit.type}</span>
                     </td>
 
-                    {/* Note */}
+                    {/* note */}
                     <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
                       <span className="text-sm">{deposit.note}</span>
                     </td>
 
-                    {/* Attachment */}
+                    {/* attachment */}
                     <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
                       <Link
                         href={deposit.attachment}
@@ -179,16 +189,17 @@ const AllDepositsTable = () => {
                       </Link>
                     </td>
 
-                    {/* Updated Time */}
+                    {/* updated time */}
                     <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
                       <span className="text-sm">
                         {dateUtils.formateCreateOrUpdateDate(deposit.createdAt || "")}
                       </span>
                     </td>
 
-                    {/* Actions */}
+                    {/* actions */}
                     <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
                       <div className="flex items-center gap-2">
+                        {/* update */}
                         <Link
                           href={`/deposits/${deposit._id}`}
                           className="center aspect-square w-[30px] cursor-pointer rounded-full border-[1px] border-dashboard bg-dashboard/5 text-dashboard"
@@ -197,9 +208,13 @@ const AllDepositsTable = () => {
                           <GoPencil />
                         </Link>
 
-                        <DeleteDepositsById
-                          depositId={deposit._id}
-                          depositName={deposit.partnerName}
+                        {/* delete */}
+                        <DeleteConfirmationDialog
+                          entityId={deposit._id!}
+                          entityName={deposit.partnerName}
+                          entityLabel="Deposit"
+                          onDelete={(id) => deleteDeposit({ depositId: id })}
+                          isLoading={isDeleting}
                         />
                       </div>
                     </td>

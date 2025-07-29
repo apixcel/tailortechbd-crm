@@ -2,10 +2,8 @@
 
 import { useAppDispatch } from "@/hooks/redux";
 import { ICountry } from "@/hooks/useCountries";
-import { useLoginAdminMutation } from "@/redux/features/admin/admin.api";
 import { setToken, setUser } from "@/redux/features/user/user.slice";
-import { IQueruMutationErrorResponse } from "@/types";
-import { Field, FieldProps, Form, Formik, FormikHelpers } from "formik";
+import { Field, Form, Formik, FormikHelpers } from "formik";
 import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -14,7 +12,6 @@ import * as yup from "yup";
 import Button from "../ui/Button";
 import Input from "../ui/Input";
 import FormMessage, { IFormMessage } from "../ui/FormMessage";
-import RoleDropdown from "./RoleDropdown";
 
 const initialValues = { phoneNumber: "", password: "", role: "" };
 
@@ -30,7 +27,7 @@ const validationSchema = yup.object({
 const PhoneNumberLogin = () => {
   const [country, setCountry] = useState<ICountry>();
 
-  const [login, { isLoading }] = useLoginAdminMutation(undefined);
+  // const [login, { isLoading }] = useLoginAdminMutation(undefined);
   const [formMessage, setFormMessage] = useState<IFormMessage | null>(null);
   const dispatch = useAppDispatch();
 
@@ -104,26 +101,6 @@ const PhoneNumberLogin = () => {
           </div>
 
           <div className="flex flex-col gap-[5px]">
-            <Field name="role">
-              {({ field, form }: FieldProps) => (
-                <>
-                  <RoleDropdown
-                    options={[
-                      { label: "Admin", value: "admin" },
-                      { label: "Super Admin", value: "superAdmin" },
-                    ]}
-                    selected={field.value}
-                    onChange={(val) => form.setFieldValue("role", val)}
-                  />
-                  {typeof form.errors.role === "string" && form.touched.role && (
-                    <span className="text-[12px] text-danger">{form.errors.role}</span>
-                  )}
-                </>
-              )}
-            </Field>
-          </div>
-
-          <div className="flex flex-col gap-[5px]">
             <Field type="password" name="password" placeholder="Enter Your Password" as={Input} />
 
             {touched.password && errors.password && (
@@ -131,7 +108,7 @@ const PhoneNumberLogin = () => {
             )}
           </div>
           <FormMessage formMessage={formMessage} />
-          <Button isLoading={isLoading} type="submit" className="w-full">
+          <Button isLoading={false} type="submit" className="w-full">
             Login
           </Button>
         </Form>

@@ -1,17 +1,14 @@
 "use client";
 
-import { CreateInvestmentPayload } from "@/types";
-import { ErrorMessage, Field, FieldProps, Form, Formik, FormikHelpers } from "formik";
 import * as Yup from "yup";
-import Input from "../ui/Input";
-import ImageUploader from "../shared/ImageUploader";
-import Button from "../ui/Button";
-import TextArea from "../ui/TextArea";
-import PickDate from "../ui/PickDate";
+import { ErrorMessage, Field, FieldProps, Form, Formik, FormikHelpers } from "formik";
+import { IInvestment } from "@/types";
 
-const initialValues = {
+import { Input, ImageUploader, Button, SectionTitle, TextArea, PickDate } from "@/components";
+
+const initialValues: Omit<IInvestment, "_id" | "createdAt" | "updatedAt"> = {
   partnerName: "",
-  amount: 0,
+  investmentAmount: 0,
   investmentDate: new Date().toISOString(),
   type: "",
   note: "",
@@ -20,39 +17,30 @@ const initialValues = {
 
 const validationSchema = Yup.object().shape({
   partnerName: Yup.string().required("Partner name is required"),
-  amount: Yup.number().required("Amount is required").min(1, "Amount must be >= 1"),
+  investmentAmount: Yup.number().required("Amount is required").min(1, "Amount must be >= 1"),
   investmentDate: Yup.string().required("Date is required"),
   type: Yup.string().required("Type is required"),
   note: Yup.string().required("Note is required"),
   attachment: Yup.string().required("Attachment is required"),
 });
 
-const labelClass = "text-[12px] font-semibold text-black";
-
-const SectionTitle = ({ children }: { children: React.ReactNode }) => (
-  <div className="w-full bg-dashboard/10 px-4 py-2">
-    <span className="text-lg font-bold text-dashboard">{children}</span>
-  </div>
-);
-
 const InvestmentsForm = ({
   isLoading = false,
+  defaultValue,
   onSubmit,
   buttonLabel = "Create Investment",
 }: {
   isLoading: boolean;
-  onSubmit: (
-    values: CreateInvestmentPayload,
-    { resetForm }: FormikHelpers<typeof initialValues>
-  ) => void;
+  defaultValue?: typeof initialValues;
+  onSubmit: (values: IInvestment, { resetForm }: FormikHelpers<typeof initialValues>) => void;
   buttonLabel?: string;
 }) => {
   return (
     <Formik
-      initialValues={initialValues}
+      initialValues={defaultValue || initialValues}
       validationSchema={validationSchema}
       onSubmit={(values) => {
-        onSubmit(values, {} as FormikHelpers<typeof initialValues>);
+        onSubmit(values as IInvestment, {} as FormikHelpers<typeof initialValues>);
       }}
     >
       {({ setFieldValue }) => (
@@ -65,7 +53,7 @@ const InvestmentsForm = ({
               <div className="flex w-full flex-col items-start justify-start gap-[16px] sm:flex-row">
                 {/* partner name */}
                 <div className="flex w-full flex-col gap-[5px]">
-                  <label className={labelClass}>Partner Name</label>
+                  <label className="form-label">Partner Name</label>
                   <Field as={Input} name="partnerName" placeholder="Partner name" />
                   <ErrorMessage
                     name="partnerName"
@@ -74,24 +62,29 @@ const InvestmentsForm = ({
                   />
                 </div>
 
+                {/* amount */}
                 <div className="flex w-full flex-col gap-[5px]">
-                  <label className={labelClass}>Investment Amount</label>
-                  <Field as={Input} type="number" name="amount" placeholder="Amount" />
-                  <ErrorMessage name="amount" component="div" className="text-sm text-danger" />
+                  <label className="form-label">Investment Amount</label>
+                  <Field as={Input} type="number" name="investmentAmount" placeholder="Amount" />
+                  <ErrorMessage
+                    name="investmentAmount"
+                    component="div"
+                    className="text-sm text-danger"
+                  />
                 </div>
               </div>
 
               {/* type and date picker */}
               <div className="flex w-full flex-col items-start justify-start gap-[16px] sm:flex-row">
                 <div className="flex w-full flex-col gap-[5px]">
-                  <label className={labelClass}>Type</label>
+                  <label className="form-label">Type</label>
                   <Field as={Input} name="type" placeholder="Type" />
                   <ErrorMessage name="type" component="div" className="text-sm text-danger" />
                 </div>
 
                 {/* date picker */}
                 <div className="flex w-full flex-col gap-[5px]">
-                  <label className={labelClass}>Investment Date</label>
+                  <label className="form-label">Investment Date</label>
                   <Field name="investmentDate">
                     {(fieldProps: FieldProps) => <PickDate {...fieldProps} />}
                   </Field>
@@ -105,7 +98,7 @@ const InvestmentsForm = ({
 
               {/* note */}
               <div className="flex w-full flex-col gap-[5px]">
-                <label className={labelClass}>Note</label>
+                <label className="form-label">Note</label>
                 <Field as={TextArea} name="note" placeholder="Note" rows={4} />
                 <ErrorMessage name="note" component="div" className="text-sm text-danger" />
               </div>

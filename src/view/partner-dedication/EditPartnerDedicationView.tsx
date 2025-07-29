@@ -2,22 +2,57 @@
 
 import { toast } from "sonner";
 
-import { PageHeadingTitle, PartnerDedicationForm } from "@/components";
+import { DataNotFound, Loader, PageHeadingTitle, PartnerDedicationForm } from "@/components";
 import { useRouter } from "next/navigation";
-import { CreatePartnerDedicationPayload } from "@/types";
+import {
+  useGetPartnerDedicationByIdQuery,
+  useUpdatePartnerDedicationByIdMutation,
+} from "@/redux/features/partner-dedication/partner-dedication.api";
+import { IPartnerDedication, IQueryMutationErrorResponse } from "@/types";
 
 const EditPartnerDedicationView = ({ slug }: { slug: string }) => {
+  const { data, isLoading, isError } = useGetPartnerDedicationByIdQuery({
+    partnerDedicationId: slug,
+  });
+  const [updatePartnerDedication, { isLoading: isUpdating }] =
+    useUpdatePartnerDedicationByIdMutation();
   const router = useRouter();
 
-  const handleSubmit = async (payload: CreatePartnerDedicationPayload) => {
-    const formattedValues: CreatePartnerDedicationPayload = {
+  if (isLoading) {
+    return <Loader />;
+  }
+
+  if (!data?.data || isError) {
+    return <DataNotFound title="Partner Dedication Not Found" />;
+  }
+
+  const handleSubmit = async (payload: IPartnerDedication) => {
+    const formattedValues: IPartnerDedication = {
       ...payload,
       date: payload.date.split("T")[0],
     };
 
-    console.log(formattedValues, "formattedValues");
+    if (isUpdating) {
+      return;
+    }
 
-    // Submit logic here
+    const res = await updatePartnerDedication({
+      partnerDedicationId: data.data._id,
+      payload: formattedValues,
+    });
+    const error = res.error as IQueryMutationErrorResponse;
+    if (error) {
+      if (error?.data?.message) {
+        toast.error(error.data?.message);
+      } else {
+        toast.error("Something went wrong");
+      }
+    }
+
+    toast.success("Partner Dedication updated successfully");
+    router.push("/partner-dedication");
+
+    return;
   };
 
   return (
@@ -26,18 +61,8 @@ const EditPartnerDedicationView = ({ slug }: { slug: string }) => {
       <PartnerDedicationForm
         buttonLabel="Update Partner Dedication"
         onSubmit={handleSubmit}
-        isLoading={false}
-        /* defaultValue={{
-          ...data.data,
-        }} */
-        //   defaultValue={{
-        //     ...data,
-        //     distributionDate: data.distributionDate.split("T")[0],
-        //     period: {
-        //       startDate: data.period.startDate.split("T")[0],
-        //       endDate: data.period.endDate.split("T")[0],
-        //     },
-        //   }}
+        isLoading={isUpdating}
+        defaultValue={data?.data}
       />
     </div>
   );
