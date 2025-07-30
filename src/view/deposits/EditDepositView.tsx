@@ -1,37 +1,53 @@
 "use client";
 
+import {
+  useGetDepositByIdQuery,
+  useUpdateDepositByIdMutation,
+} from "@/redux/features/deposits/deposits.api";
+import { IDeposit, IQueryMutationErrorResponse } from "@/types";
+import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
-import { DepositsForm, PageHeadingTitle } from "@/components";
-import { useRouter } from "next/navigation";
-import { IInvestment } from "@/types";
+import { DepositsForm, Loader, PageHeadingTitle, DataNotFound } from "@/components";
 
 const EditDepositView = ({ slug }: { slug: string }) => {
+  const { data, isLoading, isError } = useGetDepositByIdQuery({ depositId: slug });
+  const [updateDeposit, { isLoading: isUpdating }] = useUpdateDepositByIdMutation();
   const router = useRouter();
 
-  const handleSubmit = async (payload: Partial<IInvestment>) => {
-    /* if (isUpdating) {
-          return;
-        }
-    
-        const res = await updateProduct({
-          productId: data.data._id,
-          payload,
-        });
-        const error = res.error as IQueruMutationErrorResponse;
-        if (error) {
-          if (error?.data?.message) {
-            toast(error.data?.message);
-          } else {
-            toast("Something went wrong");
-          }
-          return;
-        }
-    
-        toast.success("Product updated successfully");
-        router.push("/dashboard/products"); */
+  if (isLoading) {
+    return <Loader />;
+  }
 
-    console.log(payload, "payload");
+  if (!data?.data || isError) {
+    return <DataNotFound title="Deposit Not Found" />;
+  }
+
+  const handleSubmit = async (payload: IDeposit) => {
+    const formattedValues: IDeposit = {
+      ...payload,
+      depositDate: payload.depositDate.split("T")[0],
+    };
+
+    if (isUpdating) {
+      return;
+    }
+
+    const res = await updateDeposit({ depositId: slug, payload: formattedValues });
+    const error = res.error as IQueryMutationErrorResponse;
+    if (error) {
+      if (error?.data?.message) {
+        toast(error.data?.message);
+      } else {
+        toast("Something went wrong");
+      }
+      return;
+    }
+
+    toast.success("Deposit updated successfully");
+    router.push("/deposits");
+
+    return;
   };
 
   return (
@@ -40,10 +56,8 @@ const EditDepositView = ({ slug }: { slug: string }) => {
       <DepositsForm
         buttonLabel="Update Deposit"
         onSubmit={handleSubmit}
-        isLoading={false}
-        /* defaultValue={{
-          ...data.data,
-        }} */
+        isLoading={isUpdating}
+        defaultValue={data.data}
       />
     </div>
   );

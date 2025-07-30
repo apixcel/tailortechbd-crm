@@ -4,8 +4,8 @@ import DialogProvider from "@/components/ui/DialogProvider";
 import HorizontalLine from "@/components/ui/HorizontalLine";
 import Input from "@/components/ui/Input";
 import { ICountry } from "@/hooks";
-import { useCreateAdminMutation } from "@/redux/features/admin/admin.api";
-import { IQueruMutationErrorResponse } from "@/types";
+// import { useCreateAdminMutation } from "@/redux/features/admin/admin.api";
+// import { IQueruMutationErrorResponse } from "@/types";
 import { IUser } from "@/types/user";
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import React, { useState } from "react";
@@ -36,7 +36,7 @@ const CreateAdmin = () => {
   const [country, setCountry] = useState<ICountry>();
   const [isOpen, setIsOpen] = React.useState(false);
 
-  const [createAdmin, { isLoading }] = useCreateAdminMutation();
+  // const [createAdmin, { isLoading }] = useCreateAdminMutation();
 
   const handleSubmit = async (values: typeof initialValues) => {
     const payload = {
@@ -45,8 +45,8 @@ const CreateAdmin = () => {
       phoneNumber: `${country?.dial_code}${values.phoneNumber}`,
       geo_profile: { country: country?.name || "", phone_code: country?.dial_code || "" },
     };
-    const res = await createAdmin(payload as IUser);
-    const error = res.error as IQueruMutationErrorResponse;
+    // const res = await createAdmin(payload as IUser);
+    // const error = res.error as IQueruMutationErrorResponse;
 
     if (error) {
       if (error.data?.message) {
@@ -167,11 +167,7 @@ const CreateAdmin = () => {
                     >
                       Cancel
                     </Button>
-                    <Button
-                      type="submit"
-                      className="flex-1 hover:bg-primary/90"
-                      isLoading={isLoading}
-                    >
+                    <Button type="submit" className="flex-1 hover:bg-primary/90" isLoading={false}>
                       Create Admin
                     </Button>
                   </div>

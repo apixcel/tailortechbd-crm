@@ -3,11 +3,15 @@
 import Image from "next/image";
 import Link from "next/link";
 
-import PathSearchBar from "./PathSearchBar";
-import UserDropdown from "./navbar/UserDropdown";
+import { useAppSelector } from "@/hooks";
 import { admin } from "@/utils";
 
+import { PathSearchBar, UserDropdown } from "@/components";
+
 const Header = () => {
+  const { user } = useAppSelector((state) => state.user);
+  console.log(user);
+
   return (
     <header className="sticky top-0 z-[10] flex h-[60px] w-full items-center justify-between border-b border-border-muted bg-white px-4">
       <Link href={"/"} className="w-[190px] shrink-0 lg:w-[284px]">
@@ -28,7 +32,7 @@ const Header = () => {
       </Link>
       <div className="flex w-[200px] items-center justify-between lg:w-full">
         <PathSearchBar navLinks={admin} />
-        <UserDropdown /* displayName={true} */ />
+        {user && <UserDropdown /* displayName={true} */ />}
       </div>
     </header>
   );

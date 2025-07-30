@@ -34,7 +34,6 @@ const DeleteConfirmationDialog = ({
     if (inputValue !== confirmationKeyword) return;
 
     const res = (await onDelete(entityId)) as { error?: IQueryMutationErrorResponse };
-    console.log(res);
     const error = res?.error as IQueryMutationErrorResponse;
     if (error) {
       if (error.data?.message) {

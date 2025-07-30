@@ -20,6 +20,7 @@ export { default as DataNotFound } from "./ui/DataNotFound";
 // shared
 export { default as Header } from "./shared/Header";
 export { default as PathSearchBar } from "./shared/PathSearchBar";
+export { default as UserDropdown } from "./shared/navbar/UserDropdown";
 export { default as SideBar } from "./shared/SideBar";
 export { default as PageHeadingTitle } from "./shared/PageHeadingTitle";
 export { default as AnalyticsOverviewFilter } from "./shared/AnalyticsOverviewFilter";
@@ -38,7 +39,7 @@ export { default as PurchaseReportOverview } from "./purchase-report/PurchaseRep
 export { default as PurchaseForm } from "./create-purchase/PurchaseForm";
 
 // purchase list
-export { default as PurchaseListTable } from "./purchase-list/PurchaseListTable";
+export { default as AllPurchaseListTable } from "./purchase-list/AllPurchaseListTable";
 
 // costing
 export { default as CostingReportOverview } from "./costing/CostingReportOverview";
@@ -52,6 +53,9 @@ export { default as AddSupplierOnPurchase } from "./create-supplier/AddSupplierO
 // supplier list
 export { default as SupplierListTable } from "./supplier-list/SupplierListTable";
 
+// capitals
+export { default as AllCapitalsListTable } from "./capitals/AllCapitalsListTable";
+
 // investments
 export { default as AllInvestmentsTable } from "./investments/AllInvestmentsTable";
 export { default as InvestmentsForm } from "./investments/InvestmentsForm";
@@ -60,13 +64,17 @@ export { default as InvestmentsForm } from "./investments/InvestmentsForm";
 export { default as AllDepositsTable } from "./deposits/AllDepositsTable";
 export { default as DepositsForm } from "./deposits/DepositsForm";
 
-// profit distribution
-export { default as AllProfitDistributionTable } from "./profit-distribution/AllProfitDistributionTable";
-export { default as ProfitDistributionForm } from "./profit-distribution/ProfitDistributionForm";
+// profit withdrawal
+export { default as AllProfitWithdrawalTable } from "./profit-withdrawal/AllProfitWithdrawalTable";
+export { default as ProfitWithdrawalForm } from "./profit-withdrawal/ProfitWithdrawalForm";
 
 // partner dedication
 export { default as AllPartnerDedicationTable } from "./partner-dedication/AllPartnerDedicationTable";
 export { default as PartnerDedicationForm } from "./partner-dedication/PartnerDedicationForm";
+
+// partner
+export { default as AllPartnerListTable } from "./partner/AllPartnerListTable";
+export { default as PartnerForm } from "./partner/PartnerForm";
 
 // manage admin
 export { default as AllAdminTable } from "./manage-admin/AllAdminTable";

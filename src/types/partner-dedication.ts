@@ -9,8 +9,3 @@ export interface IPartnerDedication {
   createdAt?: string;
   updatedAt?: string;
 }
-
-export type CreatePartnerDedicationPayload = Omit<
-  IPartnerDedication,
-  "_id" | "createdAt" | "updatedAt"
->;

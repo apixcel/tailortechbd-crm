@@ -1,24 +1,28 @@
 "use client";
 
-import { CreateProfitDistributionPayload } from "@/types";
-import { ErrorMessage, Field, FieldProps, Form, Formik, FormikHelpers } from "formik";
 import * as Yup from "yup";
-import Input from "../ui/Input";
-import ImageUploader from "../shared/ImageUploader";
-import Button from "../ui/Button";
-import TextArea from "../ui/TextArea";
-import PickDate from "../ui/PickDate";
-import DateRangePicker from "../ui/DateRangePicker";
+import { ErrorMessage, Field, FieldProps, Form, Formik, FormikHelpers } from "formik";
+import { IProfitWithdrawal } from "@/types";
 
-const initialValues = {
+import {
+  Input,
+  ImageUploader,
+  Button,
+  SectionTitle,
+  TextArea,
+  PickDate,
+  DateRangePicker,
+} from "@/components";
+
+const initialValues: Omit<IProfitWithdrawal, "_id" | "createdAt" | "updatedAt"> = {
   partnerName: "",
-  totalProfit: 0,
+  totalProfitAmount: 0,
   percentage: 0,
-  distributionDate: new Date().toISOString(),
+  withdrawalDate: new Date().toISOString(),
   status: "",
   comment: "",
   attachment: "",
-  period: {
+  profitPeriod: {
     startDate: "",
     endDate: "",
   },
@@ -26,75 +30,53 @@ const initialValues = {
 
 const validationSchema = Yup.object().shape({
   partnerName: Yup.string().required("Partner name is required"),
-  totalProfit: Yup.number()
+  totalProfitAmount: Yup.number()
     .required("Total profit is required")
     .min(1, "Total profit must be >= 1"),
   percentage: Yup.number().required("Percentage is required").min(1, "Percentage must be >= 1"),
-  distributionDate: Yup.string().required("Date is required"),
+  withdrawalDate: Yup.string().required("Date is required"),
   status: Yup.string().required("Status is required"),
   comment: Yup.string().required("Comment is required"),
   attachment: Yup.string().required("Attachment is required"),
-  period: Yup.object({
+  profitPeriod: Yup.object({
     startDate: Yup.string().required("Start date is required"),
     endDate: Yup.string().required("End date is required"),
   }),
 });
 
-const labelClass = "text-[12px] font-semibold text-black";
-
-const SectionTitle = ({ children }: { children: React.ReactNode }) => (
-  <div className="w-full bg-dashboard/10 px-4 py-2">
-    <span className="text-lg font-bold text-dashboard">{children}</span>
-  </div>
-);
-
-const ProfitDistributionForm = ({
+const ProfitWithdrawalForm = ({
   isLoading = false,
-  onSubmit,
-  buttonLabel = "Create Profit Distribution",
   defaultValue,
+  onSubmit,
+  buttonLabel = "Create Profit Withdrawal",
 }: {
   isLoading: boolean;
+  defaultValue?: typeof initialValues;
   onSubmit: (
-    values: CreateProfitDistributionPayload,
-    formikHelpers: FormikHelpers<CreateProfitDistributionPayload>
+    values: IProfitWithdrawal,
+    { resetForm }: FormikHelpers<typeof initialValues>
   ) => void;
   buttonLabel?: string;
-  defaultValue?: CreateProfitDistributionPayload;
 }) => {
-  const initialValues = defaultValue ?? {
-    partnerName: "",
-    totalProfit: 0,
-    percentage: 0,
-    distributionDate: new Date().toISOString(),
-    status: "",
-    comment: "",
-    attachment: "",
-    period: {
-      startDate: "",
-      endDate: "",
-    },
-  };
-
   return (
     <Formik
-      initialValues={initialValues}
+      initialValues={defaultValue || initialValues}
       validationSchema={validationSchema}
       onSubmit={(values) => {
-        onSubmit(values, {} as FormikHelpers<typeof initialValues>);
+        onSubmit(values as IProfitWithdrawal, {} as FormikHelpers<typeof initialValues>);
       }}
     >
       {({ setFieldValue }) => (
         <Form className="flex flex-col gap-4">
           <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
             <div className="flex flex-col gap-4 bg-white p-4">
-              <SectionTitle>Profit Distribution Information</SectionTitle>
+              <SectionTitle>Profit Withdrawal Information</SectionTitle>
 
               {/* partner name and total Profit amount */}
               <div className="flex w-full flex-col items-start justify-start gap-[16px] sm:flex-row">
                 {/* partner name */}
                 <div className="flex w-full flex-col gap-[5px]">
-                  <label className={labelClass}>Partner Name</label>
+                  <label className="form-label">Partner Name</label>
                   <Field as={Input} name="partnerName" placeholder="Partner name" />
                   <ErrorMessage
                     name="partnerName"
@@ -103,16 +85,17 @@ const ProfitDistributionForm = ({
                   />
                 </div>
 
+                {/* total profit amount */}
                 <div className="flex w-full flex-col gap-[5px]">
-                  <label className={labelClass}>Total Profit Amount</label>
+                  <label className="form-label">Total Profit Amount</label>
                   <Field
                     as={Input}
                     type="number"
-                    name="totalProfit"
+                    name="totalProfitAmount"
                     placeholder="Total Profit Amount"
                   />
                   <ErrorMessage
-                    name="totalProfit"
+                    name="totalProfitAmount"
                     component="div"
                     className="text-sm text-danger"
                   />
@@ -122,19 +105,19 @@ const ProfitDistributionForm = ({
               {/* type and date picker */}
               <div className="flex w-full flex-col items-start justify-start gap-[16px] sm:flex-row">
                 <div className="flex w-full flex-col gap-[5px]">
-                  <label className={labelClass}>Percentage</label>
+                  <label className="form-label">Percentage</label>
                   <Field as={Input} type="number" name="percentage" placeholder="Percentage" />
                   <ErrorMessage name="percentage" component="div" className="text-sm text-danger" />
                 </div>
 
                 {/* date picker */}
                 <div className="flex w-full flex-col gap-[5px]">
-                  <label className={labelClass}>Distribution Date</label>
-                  <Field name="distributionDate">
+                  <label className="form-label">Withdrawal Date</label>
+                  <Field name="withdrawalDate">
                     {(fieldProps: FieldProps) => <PickDate {...fieldProps} />}
                   </Field>
                   <ErrorMessage
-                    name="distributionDate"
+                    name="withdrawalDate"
                     component="div"
                     className="text-sm text-danger"
                   />
@@ -145,15 +128,15 @@ const ProfitDistributionForm = ({
               <div className="flex w-full flex-col items-start justify-start gap-[16px] sm:flex-row">
                 {/* period */}
                 <div className="flex w-full flex-col gap-[5px]">
-                  <label className={labelClass}>Profit Period</label>
-                  <Field name="period" component={DateRangePicker} />
+                  <label className="form-label">Profit Period</label>
+                  <Field name="profitPeriod" component={DateRangePicker} />
                   <ErrorMessage
-                    name="period.startDate"
+                    name="profitPeriod.startDate"
                     component="div"
                     className="text-sm text-danger"
                   />
                   <ErrorMessage
-                    name="period.endDate"
+                    name="profitPeriod.endDate"
                     component="div"
                     className="text-sm text-danger"
                   />
@@ -161,7 +144,7 @@ const ProfitDistributionForm = ({
 
                 {/* status */}
                 <div className="flex w-full flex-col gap-[5px]">
-                  <label className={labelClass}>Status</label>
+                  <label className="form-label">Status</label>
                   <Field
                     name="status"
                     as="select"
@@ -177,7 +160,7 @@ const ProfitDistributionForm = ({
 
               {/* comment */}
               <div className="flex w-full flex-col gap-[5px]">
-                <label className={labelClass}>Comment</label>
+                <label className="form-label">Comment</label>
                 <Field as={TextArea} name="comment" placeholder="Comment" rows={4} />
                 <ErrorMessage name="comment" component="div" className="text-sm text-danger" />
               </div>
@@ -207,4 +190,4 @@ const ProfitDistributionForm = ({
   );
 };
 
-export default ProfitDistributionForm;
+export default ProfitWithdrawalForm;

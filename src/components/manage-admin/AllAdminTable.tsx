@@ -6,10 +6,10 @@ import { useDebounce } from "@/hooks";
 import { FaChevronDown, FaChevronUp } from "react-icons/fa";
 
 import HorizontalLine from "@/components/ui/HorizontalLine";
-import {
-  useGetAllAdminsQuery,
-  useToggleAdminAccountActivationMutation,
-} from "@/redux/features/admin/admin.api";
+// import {
+//   useGetAllAdminsQuery,
+//   useToggleAdminAccountActivationMutation,
+// } from "@/redux/features/admin/admin.api";
 
 import Pagination from "@/components/ui/Pagination";
 import TableDataNotFound from "@/components/ui/TableDataNotFound";
@@ -36,7 +36,7 @@ const AllAdminTable = () => {
   const [sort, setSort] = useState({ field: "createdAt", order: "desc" });
   const { user: currentUser } = useAppSelector((state) => state.user);
 
-  const [toggleActivation] = useToggleAdminAccountActivationMutation();
+  // const [toggleActivation] = useToggleAdminAccountActivationMutation();
 
   const [query, setQuery] = useState<Record<string, string | number>>({
     page: 1,
@@ -45,9 +45,9 @@ const AllAdminTable = () => {
     sort: `${sort.order === "desc" ? "-" : ""}${sort.field}`,
   });
 
-  const { data, isLoading } = useGetAllAdminsQuery({ ...query, searchTerm });
-  const userData = data?.data || [];
-  const metaData = data?.meta || { totalDoc: 0, page: 1 };
+  // const { data, isLoading } = useGetAllAdminsQuery({ ...query, searchTerm });
+  // const userData = data?.data || [];
+  // const metaData = data?.meta || { totalDoc: 0, page: 1 };
   const handleSort = (field: string) => {
     const newOrder = sort.field === field && sort.order === "asc" ? "desc" : "asc";
     setSort({ field, order: newOrder });
@@ -119,61 +119,61 @@ const AllAdminTable = () => {
             </thead>
 
             <tbody className="divide-y divide-dashboard/20">
-              {isLoading ? (
+              {/* {isLoading ? (
                 <TableSkeleton columns={tableHead.length} />
-              ) : data?.data.length ? (
-                userData?.map((user) => (
-                  <tr key={user?._id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-[5px]">
-                        <span className="flex aspect-square max-h-[50px] w-[50px] items-center justify-start bg-white">
-                          <Image
-                            src={user.avatar || "/images/avatar.jpg"}
-                            alt={`${user.fullName} image`}
-                            width={80}
-                            height={80}
-                            className="mx-auto h-full w-auto max-w-full object-contain"
-                          />
-                        </span>
-                        <span className="line-clamp-1 text-[14px]">{user.fullName}</span>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <span className="flex flex-col gap-[6px]">
-                        <span className="text-[14px]">Email: {user.email || "N/A"}</span>
-                        <span className="text-[14px]">Phone: {user.phoneNumber}</span>
-                      </span>
-                    </td>
-                    <td className="px-6 py-4">
-                      {user.isActive ? (
-                        <span className="rounded-full bg-success/10 px-[8px] py-[2px] text-[14px] text-success">
-                          Active
-                        </span>
-                      ) : (
-                        <span className="rounded-full bg-danger/10 px-[8px] py-[2px] text-[14px] text-danger">
-                          Inactive
-                        </span>
-                      )}
-                    </td>
-
-                    <td className="px-6 py-4">
-                      <span className="text-[14px]">
-                        {dateUtils.formateCreateOrUpdateDate(user.createdAt) || "N/A"}
-                      </span>
-                    </td>
-                    <td className="flex items-center justify-start gap-[10px] px-6 py-4">
-                      <Toggle
-                        disabled={user._id === currentUser?._id}
-                        onToggle={() => toggleActivation(user._id)}
-                        defaultActive={user.isActive}
+              ) : data?.data.length ? ( */}
+              {/* userData?.map((user) => ( */}
+              <tr key={user?._id} className="hover:bg-gray-50">
+                <td className="px-6 py-4">
+                  <div className="flex items-center gap-[5px]">
+                    <span className="flex aspect-square max-h-[50px] w-[50px] items-center justify-start bg-white">
+                      <Image
+                        src={user.avatar || "/images/avatar.jpg"}
+                        alt={`${user.fullName} image`}
+                        width={80}
+                        height={80}
+                        className="mx-auto h-full w-auto max-w-full object-contain"
                       />
-                      <DeleteAdmin admin={user} />
-                    </td>
-                  </tr>
-                ))
-              ) : (
+                    </span>
+                    <span className="line-clamp-1 text-[14px]">{user.fullName}</span>
+                  </div>
+                </td>
+                <td className="px-6 py-4">
+                  <span className="flex flex-col gap-[6px]">
+                    <span className="text-[14px]">Email: {user.email || "N/A"}</span>
+                    <span className="text-[14px]">Phone: {user.phoneNumber}</span>
+                  </span>
+                </td>
+                <td className="px-6 py-4">
+                  {user.isActive ? (
+                    <span className="rounded-full bg-success/10 px-[8px] py-[2px] text-[14px] text-success">
+                      Active
+                    </span>
+                  ) : (
+                    <span className="rounded-full bg-danger/10 px-[8px] py-[2px] text-[14px] text-danger">
+                      Inactive
+                    </span>
+                  )}
+                </td>
+
+                <td className="px-6 py-4">
+                  <span className="text-[14px]">
+                    {dateUtils.formateCreateOrUpdateDate(user.createdAt) || "N/A"}
+                  </span>
+                </td>
+                <td className="flex items-center justify-start gap-[10px] px-6 py-4">
+                  <Toggle
+                    disabled={user._id === currentUser?._id}
+                    // onToggle={() => toggleActivation(user._id)}
+                    defaultActive={user.isActive}
+                  />
+                  <DeleteAdmin admin={user} />
+                </td>
+              </tr>
+              {/* )) */}
+              {/* ) : (
                 <TableDataNotFound span={tableHead.length} message="No Admin Found" />
-              )}
+              )} */}
             </tbody>
           </table>
         </div>

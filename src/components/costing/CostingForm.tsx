@@ -4,7 +4,7 @@ import * as Yup from "yup";
 import { ErrorMessage, Field, FieldProps, Form, Formik, FormikHelpers } from "formik";
 import { ICosting } from "@/types";
 
-import {Input, ImageUploader, Button, SectionTitle, TextArea, PickDate} from "@/components";
+import { Input, ImageUploader, Button, SectionTitle, TextArea, PickDate } from "@/components";
 
 const initialValues: Omit<ICosting, "_id" | "createdAt" | "updatedAt"> = {
   partnerName: "",
@@ -62,6 +62,7 @@ const CostingForm = ({
                   />
                 </div>
 
+                {/* amount */}
                 <div className="flex w-full flex-col gap-[5px]">
                   <label className="form-label">Costing Amount</label>
                   <Field as={Input} type="number" name="costingAmount" placeholder="Amount" />

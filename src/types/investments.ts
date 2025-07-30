@@ -1,7 +1,7 @@
 export interface IInvestment {
   _id: string;
   partnerName: string;
-  amount: number;
+  investmentAmount: number;
   investmentDate: string;
   type: string;
   note: string;
@@ -9,5 +9,3 @@ export interface IInvestment {
   createdAt?: string;
   updatedAt?: string;
 }
-
-export type CreateInvestmentPayload = Omit<IInvestment, "_id" | "createdAt" | "updatedAt">;

@@ -4,45 +4,48 @@ import { generateQueryParams } from "@/utils";
 
 const investmentsApi = api.injectEndpoints({
   endpoints: (builder) => ({
-    createInvestment: builder.mutation<{ data: IInvestment }, IInvestment>({
-      query: (body) => ({
+    createInvestment: builder.mutation<{ data: IInvestment }, Partial<IInvestment>>({
+      query: (payload) => ({
         url: "/investments/create",
         method: "POST",
-        body,
+        body: payload,
       }),
       invalidatesTags: ["investments"],
     }),
     getAllInvestments: builder.query<
-      { data: IInvestment[]; meta: IMeta },
+      { data: IInvestment[]; meta?: IMeta },
       Record<string, string | number>
     >({
       query: (query) => {
         const queryString = generateQueryParams(query);
         return {
-          url: `/investments?${queryString}`,
+          url: `/investments/get?${queryString}`,
           method: "GET",
         };
       },
       providesTags: ["investments"],
     }),
-    getInvestmentById: builder.query<{ data: IInvestment }, string>({
-      query: (id) => ({
-        url: `/investments/${id}`,
+    getInvestmentById: builder.query<{ data: IInvestment }, { investmentId: string }>({
+      query: ({ investmentId }) => ({
+        url: `/investments/get/${investmentId}`,
         method: "GET",
       }),
       providesTags: ["investments"],
     }),
-    updateInvestment: builder.mutation<{ data: IInvestment }, { id: string; body: IInvestment }>({
-      query: ({ id, body }) => ({
-        url: `/investments/${id}`,
-        method: "PUT",
-        body,
+    updateInvestmentById: builder.mutation<
+      { data: IInvestment },
+      { investmentId: string; payload: Partial<IInvestment> }
+    >({
+      query: ({ investmentId, payload }) => ({
+        url: `/investments/update/${investmentId}`,
+        method: "PATCH",
+        body: { _id: undefined, ...payload },
       }),
       invalidatesTags: ["investments"],
     }),
-    deleteInvestmentById: builder.mutation<{ data: IInvestment[] }, string>({
-      query: (id) => ({
-        url: `/investments/${id}`,
+    deleteInvestmentById: builder.mutation<{ data: IInvestment }, { investmentId: string }>({
+      query: ({ investmentId }) => ({
+        url: `/investments/delete/${investmentId}`,
         method: "DELETE",
       }),
       invalidatesTags: ["investments"],
@@ -55,5 +58,5 @@ export const {
   useGetAllInvestmentsQuery,
   useDeleteInvestmentByIdMutation,
   useGetInvestmentByIdQuery,
-  useUpdateInvestmentMutation,
+  useUpdateInvestmentByIdMutation,
 } = investmentsApi;

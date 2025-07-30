@@ -1,48 +1,53 @@
 "use client";
 
-import { HorizontalLine, TableDataNotFound, TableSkeleton, Pagination } from "@/components";
+import {
+  useDeletePartnerDedicationByIdMutation,
+  useGetAllPartnerDedicationQuery,
+} from "@/redux/features/partner-dedication/partner-dedication.api";
 import { useDebounce } from "@/hooks";
-
-import Link from "next/link";
 import { useState } from "react";
+import Link from "next/link";
+import dateUtils from "@/utils/date";
+
 import { FaChevronDown, FaChevronUp } from "react-icons/fa";
 import { GoPencil } from "react-icons/go";
 import { RxMagnifyingGlass } from "react-icons/rx";
-import dateUtils from "@/utils/date";
-import { format } from "date-fns";
-import { useGetAllPartnerDedicationQuery } from "@/redux/features/partner-dedication/partner-dedication.api";
-import DeletePartnerDedicationById from "./DeletePartnerDedicationById";
-import { partnerDedications } from "@/constants/partnerDedication";
+
+import {
+  HorizontalLine,
+  TableDataNotFound,
+  TableSkeleton,
+  Pagination,
+  DeleteConfirmationDialog,
+} from "@/components";
 
 const tableHead = [
   { label: "#", field: "" },
   { label: "Partner name", field: "" },
   { label: "Work type", field: "" },
-  { label: "Time (hours)", field: "" },
-  { label: "Date", field: "" },
+  { label: "Time (hours)", field: "time" },
+  { label: "Date", field: "date" },
   { label: "Comment", field: "" },
   { label: "Attachment", field: "" },
   { label: "Actions", field: "" },
 ];
 
 const AllPartnerDedicationTable = () => {
-  const [, /* searchTerm */ setSearchTerm] = useDebounce("");
+  const [searchTerm, setSearchTerm] = useDebounce("");
   const [sort, setSort] = useState({ field: "createdAt", order: "desc" });
 
   const [query, setQuery] = useState<Record<string, string | number>>({
     page: 1,
-    fields: "partnerName,amount,investmentDate,type,note,attachment,createdAt",
+    fields: "partnerName,workType,time,date,comment,attachment,createdAt",
     sort: `${sort.order === "desc" ? "-" : ""}${sort.field}`,
   });
 
-  // const { data, isLoading } = useGetAllInvestmentsQuery({ ...query, searchTerm });
-  // console.log(data, "all products table");
-  // const investmentData = data?.data || [];
-  // const metaData = data?.meta || { totalDoc: 0, page: 1 };
-
-  const mockPartnerDedicationData = partnerDedications;
-  const metaData = { totalDoc: 0, page: 1 };
-  const isLoading = false;
+  const [deletePartnerDedication, { isLoading: isDeleting }] =
+    useDeletePartnerDedicationByIdMutation();
+  const { data, isLoading } = useGetAllPartnerDedicationQuery({ ...query, searchTerm });
+  const partnerDedicationData = data?.data || [];
+  console.log("log from partner dedication table", partnerDedicationData);
+  const metaData = data?.meta || { totalDoc: 0, page: 1 };
 
   const handleSort = (field: string) => {
     const newOrder = sort.field === field && sort.order === "asc" ? "desc" : "asc";
@@ -69,18 +74,22 @@ const AllPartnerDedicationTable = () => {
             <span className="font-bold text-dashboard">{metaData.page}.</span>
           </p>
         </div>
+
         <HorizontalLine className="my-[10px]" />
+
         <div className="flex flex-wrap items-center justify-between gap-y-5">
+          {/* search input */}
           <div className="flex w-full max-w-[300px] items-center justify-between rounded-[5px] border-[1px] border-dashboard/20 p-[5px] outline-none">
             <input
               type="text"
               className="w-full bg-transparent outline-none"
-              placeholder="Search Profit Distribution"
+              placeholder="Search Partner Dedication"
               onChange={(e) => setSearchTerm(e.target.value)}
             />
             <RxMagnifyingGlass />
           </div>
 
+          {/* create partner dedication link */}
           <Link
             href="/partner-dedication/create"
             className="rounded-[5px] bg-primary px-[20px] py-[6px] text-white"
@@ -88,6 +97,8 @@ const AllPartnerDedicationTable = () => {
             Create Partner Dedication
           </Link>
         </div>
+
+        {/* table */}
         <div className="overflow-x-auto">
           <table className="w-full divide-y divide-dashboard/20">
             <thead className="bg-dashboard/10">
@@ -131,38 +142,40 @@ const AllPartnerDedicationTable = () => {
             <tbody className="divide-y divide-gray-200 bg-white">
               {isLoading ? (
                 <TableSkeleton columns={tableHead.length} />
-              ) : mockPartnerDedicationData?.length ? (
-                mockPartnerDedicationData?.map((partnerDedication, index) => (
+              ) : partnerDedicationData?.length ? (
+                partnerDedicationData?.map((partnerDedication, index) => (
                   <tr key={index} className="hover:bg-gray-50">
                     {/* Index */}
                     <td className="px-6 py-4 text-sm text-gray-900">{index + 1}</td>
 
-                    {/* Partner name */}
+                    {/* partner name */}
                     <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
                       <span className="text-sm">{partnerDedication.partnerName}</span>
                     </td>
 
-                    {/* Work type */}
+                    {/* work type */}
                     <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
                       <span className="text-sm">{partnerDedication.workType}</span>
                     </td>
 
-                    {/* Time */}
+                    {/* time */}
                     <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
                       <span className="text-sm">{partnerDedication.time} hours</span>
                     </td>
 
-                    {/* Date */}
+                    {/* date */}
                     <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
-                      <span className="text-sm">{partnerDedication.date}</span>
+                      <span className="text-sm">
+                        {dateUtils.formateCreateOrUpdateDate(partnerDedication.date)}
+                      </span>
                     </td>
 
-                    {/* Comment */}
+                    {/* comment */}
                     <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
                       <span className="text-sm">{partnerDedication.comment}</span>
                     </td>
 
-                    {/* Attachment */}
+                    {/* attachment */}
                     <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
                       <Link
                         href={partnerDedication.attachment}
@@ -173,9 +186,10 @@ const AllPartnerDedicationTable = () => {
                       </Link>
                     </td>
 
-                    {/* Actions */}
+                    {/* actions */}
                     <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
                       <div className="flex items-center gap-2">
+                        {/* update */}
                         <Link
                           href={`/partner-dedication/${partnerDedication._id}`}
                           className="center aspect-square w-[30px] cursor-pointer rounded-full border-[1px] border-dashboard bg-dashboard/5 text-dashboard"
@@ -184,9 +198,13 @@ const AllPartnerDedicationTable = () => {
                           <GoPencil />
                         </Link>
 
-                        <DeletePartnerDedicationById
-                          partnerDedicationId={partnerDedication._id}
-                          partnerDedicationName={partnerDedication.partnerName}
+                        {/* delete */}
+                        <DeleteConfirmationDialog
+                          entityId={partnerDedication._id!}
+                          entityName={partnerDedication.partnerName}
+                          entityLabel="Partner Dedication"
+                          onDelete={(id) => deletePartnerDedication({ partnerDedicationId: id })}
+                          isLoading={isDeleting}
                         />
                       </div>
                     </td>

@@ -1,52 +1,57 @@
 "use client";
 
-import { HorizontalLine, TableDataNotFound, TableSkeleton, Pagination } from "@/components";
+import {
+  useDeleteProfitWithdrawalByIdMutation,
+  useGetAllProfitWithdrawalQuery,
+} from "@/redux/features/profit-withdrawal/profit-withdrawal.api";
 import { useDebounce } from "@/hooks";
-
-import Link from "next/link";
 import { useState } from "react";
+import Link from "next/link";
+import dateUtils from "@/utils/date";
+import { format } from "date-fns";
+
 import { FaChevronDown, FaChevronUp } from "react-icons/fa";
 import { GoPencil } from "react-icons/go";
 import { RxMagnifyingGlass } from "react-icons/rx";
-import dateUtils from "@/utils/date";
-import { format } from "date-fns";
-import { useGetAllInvestmentsQuery } from "@/redux/features/investments/investments.api";
-import { profitDistributions } from "@/constants/profitDistributionData";
-import DeleteProfitDistributionById from "./DeleteProfitDistributionById";
+
+import {
+  HorizontalLine,
+  TableDataNotFound,
+  TableSkeleton,
+  Pagination,
+  DeleteConfirmationDialog,
+} from "@/components";
 
 const tableHead = [
   { label: "#", field: "" },
   { label: "Period", field: "" },
-  { label: "Total profit", field: "" },
+  { label: "Total profit", field: "totalProfitAmount" },
   { label: "Partner name", field: "" },
   { label: "Percentage", field: "" },
   { label: "Getting Amount", field: "" },
   { label: "Status", field: "" },
   { label: "Comment", field: "" },
-  { label: "Profit Distribution Date", field: "" },
+  { label: "Profit Withdrawal Date", field: "withdrawalDate" },
   { label: "Attachment", field: "" },
   { label: "Created Date", field: "createdAt" },
   { label: "Actions", field: "" },
 ];
 
-const AllProfitDistributionTable = () => {
-  const [, /* searchTerm */ setSearchTerm] = useDebounce("");
+const AllProfitWithdrawalTable = () => {
+  const [searchTerm, setSearchTerm] = useDebounce("");
   const [sort, setSort] = useState({ field: "createdAt", order: "desc" });
-
   const [query, setQuery] = useState<Record<string, string | number>>({
     page: 1,
-    fields: "partnerName,amount,investmentDate,type,note,attachment,createdAt",
+    fields:
+      "partnerName,totalProfitAmount,percentage,withdrawalDate,profitPeriod,status,comment,attachment,createdAt",
     sort: `${sort.order === "desc" ? "-" : ""}${sort.field}`,
   });
 
-  // const { data, isLoading } = useGetAllInvestmentsQuery({ ...query, searchTerm });
-  // console.log(data, "all products table");
-  // const investmentData = data?.data || [];
-  // const metaData = data?.meta || { totalDoc: 0, page: 1 };
-
-  const mockProfitDistributionData = profitDistributions;
-  const metaData = { totalDoc: 0, page: 1 };
-  const isLoading = false;
+  const [deleteProfitWithdrawal, { isLoading: isDeleting }] =
+    useDeleteProfitWithdrawalByIdMutation();
+  const { data, isLoading } = useGetAllProfitWithdrawalQuery({ ...query, searchTerm });
+  const profitWithdrawalData = data?.data || [];
+  const metaData = data?.meta || { totalDoc: 0, page: 1 };
 
   const handleSort = (field: string) => {
     const newOrder = sort.field === field && sort.order === "asc" ? "desc" : "asc";
@@ -61,11 +66,11 @@ const AllProfitDistributionTable = () => {
     <div className="flex flex-col gap-[10px]">
       <div className="flex flex-col gap-[15px] bg-white p-[16px]">
         <div className="flex flex-col gap-[5px]">
-          <h1 className="text-[16px] font-[600]">Profit Distribution List</h1>
+          <h1 className="text-[16px] font-[600]">Profit Withdrawal List</h1>
           <p className="text-[12px] text-muted md:text-[14px]">
-            Displaying All the available profit distributions in your store. There is total{" "}
+            Displaying All the available profit withdrawals in your store. There is total{" "}
             <span className="font-bold text-dashboard">{metaData.totalDoc}</span> profit
-            distributions. Data is Divided into{" "}
+            withdrawals. Data is Divided into{" "}
             <span className="font-bold text-dashboard">
               {Math.ceil(metaData.totalDoc / 10)} pages
             </span>{" "}
@@ -73,27 +78,34 @@ const AllProfitDistributionTable = () => {
             <span className="font-bold text-dashboard">{metaData.page}.</span>
           </p>
         </div>
+
         <HorizontalLine className="my-[10px]" />
+
         <div className="flex flex-wrap items-center justify-between gap-y-5">
+          {/* search input */}
           <div className="flex w-full max-w-[300px] items-center justify-between rounded-[5px] border-[1px] border-dashboard/20 p-[5px] outline-none">
             <input
               type="text"
               className="w-full bg-transparent outline-none"
-              placeholder="Search Profit Distribution"
+              placeholder="Search Profit Withdrawal"
               onChange={(e) => setSearchTerm(e.target.value)}
             />
             <RxMagnifyingGlass />
           </div>
 
+          {/* create profit distribution link */}
           <Link
-            href="/profit-distribution/create"
+            href="/profit-withdrawal/create"
             className="rounded-[5px] bg-primary px-[20px] py-[6px] text-white"
           >
-            Create Profit Distribution
+            Create Profit Withdrawal
           </Link>
         </div>
+
+        {/* table */}
         <div className="overflow-x-auto">
           <table className="w-full divide-y divide-dashboard/20">
+            {/* table head */}
             <thead className="bg-dashboard/10">
               <tr>
                 {tableHead.map((heading) => (
@@ -135,76 +147,77 @@ const AllProfitDistributionTable = () => {
             <tbody className="divide-y divide-gray-200 bg-white">
               {isLoading ? (
                 <TableSkeleton columns={tableHead.length} />
-              ) : mockProfitDistributionData?.length ? (
-                mockProfitDistributionData?.map((profitDistribution, index) => (
+              ) : profitWithdrawalData?.length ? (
+                profitWithdrawalData?.map((profitWithdrawal, index) => (
                   <tr key={index} className="hover:bg-gray-50">
-                    {/* Index */}
+                    {/* index */}
                     <td className="px-6 py-4 text-sm text-gray-900">{index + 1}</td>
 
-                    {/* Period */}
+                    {/* period */}
                     <td className="px-6 py-4">
                       <span className="text-[14px]">
-                        {profitDistribution.period.startDate && profitDistribution.period.endDate
-                          ? `${format(new Date(profitDistribution.period.startDate), "MMM")}–${format(
-                              new Date(profitDistribution.period.endDate),
+                        {profitWithdrawal.profitPeriod.startDate &&
+                        profitWithdrawal.profitPeriod.endDate
+                          ? `${format(new Date(profitWithdrawal.profitPeriod.startDate), "MMM")}–${format(
+                              new Date(profitWithdrawal.profitPeriod.endDate),
                               "MMM yyyy"
                             )}`
                           : ""}
                       </span>
                     </td>
 
-                    {/* Total profit */}
+                    {/* total profit */}
                     <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
-                      <span className="text-sm">{profitDistribution.totalProfit}</span>
+                      <span className="text-sm">{profitWithdrawal.totalProfitAmount}</span>
                     </td>
 
-                    {/* Partner name */}
+                    {/* partner name */}
                     <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
-                      <span className="text-sm">{profitDistribution.partnerName}</span>
+                      <span className="text-sm">{profitWithdrawal.partnerName}</span>
                     </td>
 
-                    {/* Profit percentage */}
+                    {/* profit percentage */}
                     <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
-                      <span className="text-sm">{profitDistribution.percentage}%</span>
+                      <span className="text-sm">{profitWithdrawal.percentage}%</span>
                     </td>
 
-                    {/* Getting amount */}
+                    {/* getting amount */}
                     <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
                       <span className="text-sm">
-                        {Number(profitDistribution.totalProfit) *
-                          (Number(profitDistribution.percentage) / 100)}
+                        {Number(profitWithdrawal.totalProfitAmount) *
+                          (Number(profitWithdrawal.percentage) / 100)}
                       </span>
                     </td>
 
-                    {/* Status */}
+                    {/* status */}
                     <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
                       <span
                         className={`text-sm ${
-                          profitDistribution.status.toLowerCase() === "paid"
+                          profitWithdrawal.status.toLowerCase() === "paid"
                             ? "text-green-500"
                             : "text-red-400"
                         }`}
                       >
-                        {profitDistribution.status}
+                        {profitWithdrawal.status}
                       </span>
                     </td>
 
-                    {/* Comment */}
+                    {/* comment */}
                     <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
-                      <span className="text-sm">{profitDistribution.comment}</span>
+                      <span className="text-sm">{profitWithdrawal.comment}</span>
                     </td>
 
-                    {/* Profit distribution date */}
+                    {/* profit withdrawal date */}
                     <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
                       <span className="text-sm">
-                        {dateUtils.formateCreateOrUpdateDate(profitDistribution.distributionDate)}
+                        {dateUtils.formateCreateOrUpdateDate(profitWithdrawal.withdrawalDate)}
                       </span>
                     </td>
 
-                    {/* Attachment */}
+                    {/* attachment */}
                     <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
                       <Link
-                        href={profitDistribution.attachment}
+                        href={profitWithdrawal.attachment}
                         target="_blank"
                         className="text-sm hover:underline"
                       >
@@ -212,34 +225,42 @@ const AllProfitDistributionTable = () => {
                       </Link>
                     </td>
 
-                    {/* Created Date */}
+                    {/* created date */}
                     <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
                       <span className="text-sm">
-                        {dateUtils.formateCreateOrUpdateDate(profitDistribution.createdAt)}
+                        {dateUtils.formateCreateOrUpdateDate(profitWithdrawal.createdAt)}
                       </span>
                     </td>
 
-                    {/* Actions */}
+                    {/* actions */}
                     <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
                       <div className="flex items-center gap-2">
+                        {/* update */}
                         <Link
-                          href={`/profit-distribution/${profitDistribution._id}`}
+                          href={`/profit-withdrawal/${profitWithdrawal._id}`}
                           className="center aspect-square w-[30px] cursor-pointer rounded-full border-[1px] border-dashboard bg-dashboard/5 text-dashboard"
-                          title="Edit Profit Distribution"
+                          title="Edit Profit Withdrawal"
                         >
                           <GoPencil />
                         </Link>
 
-                        <DeleteProfitDistributionById
-                          profitDistributionId={profitDistribution._id}
-                          profitDistributionName={profitDistribution.partnerName}
+                        {/* delete */}
+                        <DeleteConfirmationDialog
+                          entityId={profitWithdrawal._id!}
+                          entityName={profitWithdrawal.partnerName}
+                          entityLabel="Profit Withdrawal"
+                          onDelete={(id) => deleteProfitWithdrawal({ profitWithdrawalId: id })}
+                          isLoading={isDeleting}
                         />
                       </div>
                     </td>
                   </tr>
                 ))
               ) : (
-                <TableDataNotFound span={tableHead.length} message="No Profit Distribution Found" />
+                <TableDataNotFound
+                  span={tableHead.length}
+                  message="No Profit Withdrawal Found"
+                />
               )}
             </tbody>
           </table>
@@ -253,4 +274,4 @@ const AllProfitDistributionTable = () => {
   );
 };
 
-export default AllProfitDistributionTable;
+export default AllProfitWithdrawalTable;

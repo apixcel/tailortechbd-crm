@@ -1,7 +1,7 @@
 "use client";
 import Button from "@/components/ui/Button";
 import DialogProvider from "@/components/ui/DialogProvider";
-import { useDeleteProfitDistributionByIdMutation } from "@/redux/features/profit-distribution/profit-distribution.api";
+import { useDeleteProfitDistributionByIdMutation } from "@/redux/features/profit-withdrawal/profit-withdrawal.api";
 
 import { IQueruMutationErrorResponse } from "@/types";
 import { useState } from "react";
