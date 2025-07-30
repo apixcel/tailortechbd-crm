@@ -75,6 +75,7 @@ export { default as PartnerDedicationForm } from "./partner-dedication/PartnerDe
 // partner
 export { default as AllPartnerListTable } from "./partner/AllPartnerListTable";
 export { default as PartnerForm } from "./partner/PartnerForm";
+export { default as PartnerDropDown } from "./partner/PartnerDropDown";
 
 // manage admin
 export { default as AllAdminTable } from "./manage-admin/AllAdminTable";

@@ -2,7 +2,7 @@
 
 import * as Yup from "yup";
 import { ErrorMessage, Field, FieldArray, Form, Formik, FormikHelpers } from "formik";
-import { IPurchase, ISupplier, TPurchasePayload } from "@/types";
+import { IPurchase, ISupplier, SupplierFormType } from "@/types";
 import { FaRegTrashAlt } from "react-icons/fa";
 import Link from "next/link";
 
@@ -14,8 +14,8 @@ import Button from "@/components/ui/Button";
 import AddSupplierOnPurchase from "@/components/create-supplier/AddSupplierOnPurchase";
 import SectionTitle from "@/components/shared/SectionTitle";
 
-const initialValues: Omit<IPurchase, "_id" | "createdAt" | "updatedAt"> & {
-  supplier: Omit<ISupplier, "_id">;
+const initialValues: Omit<IPurchase, "_id" | "createdAt" | "updatedAt" | "supplier"> & {
+  supplier: SupplierFormType;
 } = {
   purchaseTitle: "",
   invoiceNumber: "",
@@ -81,7 +81,7 @@ const PurchaseForm = ({
 }: {
   isLoading?: boolean;
   defaultValue?: typeof initialValues;
-  onSubmit: (values: TPurchasePayload, helpers: FormikHelpers<typeof initialValues>) => void;
+  onSubmit: (values: IPurchase, helpers: FormikHelpers<typeof initialValues>) => void;
   buttonLabel?: string;
 }) => {
   const initValue = defaultValue
