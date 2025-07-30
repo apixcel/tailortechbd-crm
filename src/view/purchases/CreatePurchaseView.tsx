@@ -33,7 +33,7 @@ const CreatePurchaseView = () => {
   return (
     <div className="flex flex-col gap-4">
       <PageHeadingTitle title="Create Purchase" />
-      <PurchaseForm isLoading={isLoading} onSubmit={(value) => handleSubmit(value)} />
+      <PurchaseForm isLoading={isLoading} onSubmit={handleSubmit} />
     </div>
   );
 };

@@ -55,9 +55,7 @@ const EditPurchaseView = ({ slug }: { slug: string }) => {
         buttonLabel="Update Purchase"
         onSubmit={handleSubmit}
         isLoading={isUpdating}
-        defaultValue={{
-          ...data.data,
-        }}
+        defaultValue={data.data}
       />
     </div>
   );

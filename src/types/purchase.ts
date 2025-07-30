@@ -31,9 +31,3 @@ export interface IPurchase {
   updatedAt?: string;
 }
 
-export type TPurchasePayload = {
-  purchaseTitle: string;
-  supplier: string;
-  invoiceNumber: string;
-  products: Omit<IProduct, "category">[];
-};
