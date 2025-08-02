@@ -1,30 +1,9 @@
 import { api } from "@/redux/api/api";
-import { IMeta, IRole, IRoleAction, IUser } from "@/types";
+import { IRole, IRoleAction, IUser } from "@/types";
 import { generateQueryParams } from "@/utils";
 
 const superAdminApi = api.injectEndpoints({
   endpoints: (builder) => ({
-    createSuperAdmin: builder.mutation<
-      { data: string[] },
-      Pick<IUser, "email" | "password" | "phoneNumber" | "fullName">
-    >({
-      query: (body) => ({
-        url: `/super-admin/create-super-admin`,
-        method: "POST",
-        body,
-      }),
-      invalidatesTags: ["role"],
-    }),
-    getAllAdmins: builder.query<{ data: IUser[]; meta: IMeta }, Record<string, string | number>>({
-      query: (query) => {
-        const queryString = generateQueryParams(query);
-        return {
-          url: `/role/get-all/admin?${queryString}`,
-          method: "GET",
-        };
-      },
-      providesTags: ["role"],
-    }),
     toggleSuperAdminAccountActivation: builder.mutation<{ data: IUser[] }, string>({
       query: (userId) => {
         return {
@@ -64,6 +43,7 @@ const superAdminApi = api.injectEndpoints({
           method: "GET",
         };
       },
+      providesTags: ["role"],
     }),
 
     getRoleDetailsByRoleId: builder.query<{ data: IRole }, string>({
@@ -79,6 +59,16 @@ const superAdminApi = api.injectEndpoints({
         method: "GET",
       }),
       providesTags: ["role"],
+    }),
+    getMyRole: builder.query<
+      { data: Omit<IRole, "actions"> & { actions: IRoleAction[] } },
+      undefined
+    >({
+      query: () => ({
+        url: `/role/my`,
+        method: "GET",
+      }),
+      providesTags: ["user"],
     }),
 
     updateRoleActionsByRoleId: builder.mutation<
@@ -96,8 +86,7 @@ const superAdminApi = api.injectEndpoints({
 });
 
 export const {
-  useCreateSuperAdminMutation,
-  useGetAllAdminsQuery,
+  useGetMyRoleQuery,
   useToggleSuperAdminAccountActivationMutation,
   useLoginSuperAdminMutation,
   useDeleteSuperAdminByIdMutation,

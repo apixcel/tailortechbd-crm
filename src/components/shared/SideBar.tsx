@@ -7,6 +7,7 @@ import { useEffect, useRef, useState } from "react";
 import { GoChevronDown } from "react-icons/go";
 import { IoIosArrowBack } from "react-icons/io";
 
+import { useAppSelector } from "@/hooks";
 import { adminNavlinks, INavLinks } from "@/utils";
 
 const NavBox = ({
@@ -114,6 +115,7 @@ const NavBox = ({
 
 const SideBar = () => {
   const [isNavOpen, setIsNavOpen] = useState(true);
+  const { role } = useAppSelector((state) => state.user);
 
   const toggleNav = () => {
     setIsNavOpen(!isNavOpen);
@@ -134,6 +136,32 @@ const SideBar = () => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
+  // 🟢 Get allowed action values from role
+  const allowedActions = role?.actions?.map((a) => a.value) || [];
+
+  // 🟢 Filter nav links based on action values or allow if no action (public)
+  const filteredNavLinks = adminNavlinks
+    .map((link) => {
+      if (link.children && Array.isArray(link.children)) {
+        const filteredChildren = link.children.filter(
+          (child) => !child.action || allowedActions.includes(child.action)
+        );
+
+        if (filteredChildren.length > 0) {
+          return { ...link, children: filteredChildren };
+        }
+
+        return null;
+      }
+
+      if (!link.action || allowedActions.includes(link.action)) {
+        return link;
+      }
+
+      return null;
+    })
+    .filter((link) => link !== null);
+
   return (
     <>
       <div
@@ -144,7 +172,7 @@ const SideBar = () => {
         <div className={`relative h-full w-full`}>
           <div className="smoothBar h-full w-full flex-col justify-between overflow-x-hidden overflow-y-auto pt-[20px] pb-[20px] lg:flex">
             <div className="flex flex-col gap-[0]">
-              {adminNavlinks?.map((link, index) => (
+              {filteredNavLinks.map((link, index) => (
                 <NavBox
                   navlink={link}
                   key={index + (link.path || "parent")}
@@ -155,6 +183,7 @@ const SideBar = () => {
           </div>
         </div>
       </div>
+
       <div
         className={`absolute ${isNavOpen ? "left-[284px]" : "left-0"} top-[60px] z-[11] flex h-[calc(100dvh-60px)] items-center`}
       >

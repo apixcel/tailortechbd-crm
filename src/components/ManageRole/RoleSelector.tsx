@@ -3,24 +3,44 @@
 import { useDebounce } from "@/hooks";
 import { useGetAllRolesQuery } from "@/redux/features/role/role.api";
 import { IRole } from "@/types";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { BiChevronDown } from "react-icons/bi";
+import { twMerge } from "tailwind-merge";
+
 interface IProps {
   defaultSelectedRole?: IRole | null;
   onSelected?: (role: IRole | null) => void;
+  className?: string;
 }
 
-const RoleSelector: React.FC<IProps> = ({ defaultSelectedRole, onSelected }) => {
+const RoleSelector: React.FC<IProps> = ({ defaultSelectedRole, onSelected, className }) => {
   const [selectedRole, setSelectedRole] = useState<IRole | null>(defaultSelectedRole || null);
   const [searchTerm, setSearchTerm] = useDebounce("");
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
+  const wrapperRef = useRef<HTMLDivElement>(null);
+
   const { data, isLoading } = useGetAllRolesQuery({ searchTerm });
   const rolesData = data?.data || [];
 
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (wrapperRef.current && !wrapperRef.current.contains(event.target as Node)) {
+        setDropdownOpen(false);
+      }
+    };
+
+    if (dropdownOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [dropdownOpen]);
+
   return (
-    <div className="relative w-72">
-      {/* Trigger box */}
+    <div ref={wrapperRef} className={twMerge("relative w-72", className)}>
       <div
         onClick={() => setDropdownOpen(!dropdownOpen)}
         className="flex cursor-pointer items-center justify-between rounded-md border border-gray-300 px-3 py-2 shadow-sm hover:border-blue-500 focus:outline-none"
@@ -29,10 +49,8 @@ const RoleSelector: React.FC<IProps> = ({ defaultSelectedRole, onSelected }) => 
         <BiChevronDown className="text-xl text-gray-500" />
       </div>
 
-      {/* Dropdown */}
       {dropdownOpen && (
         <div className="absolute z-50 mt-1 max-h-72 w-full overflow-auto rounded-md border border-gray-300 bg-white shadow-lg">
-          {/* Search input inside dropdown */}
           <div className="border-b border-gray-200 p-2">
             <input
               type="text"
@@ -42,10 +60,8 @@ const RoleSelector: React.FC<IProps> = ({ defaultSelectedRole, onSelected }) => 
             />
           </div>
 
-          {/* Content list */}
           <div className="flex w-full flex-col">
             {isLoading ? (
-              // Loading skeletons
               Array.from({ length: 5 }).map((_, i) => (
                 <div key={i} className="mx-2 my-1 h-8 animate-pulse rounded bg-gray-200" />
               ))

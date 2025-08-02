@@ -6,18 +6,12 @@ import { useState } from "react";
 import { FaChevronDown, FaChevronUp } from "react-icons/fa";
 
 import HorizontalLine from "@/components/ui/HorizontalLine";
-// import {
-//   useGetAllAdminsQuery,
-//   useToggleAdminAccountActivationMutation,
-// } from "@/redux/features/admin/admin.api";
 
 import Pagination from "@/components/ui/Pagination";
 
 import { useAppSelector } from "@/hooks/redux";
-import {
-  useGetAllAdminsQuery,
-  useToggleSuperAdminAccountActivationMutation,
-} from "@/redux/features/role/role.api";
+import { useToggleSuperAdminAccountActivationMutation } from "@/redux/features/role/role.api";
+import { useGetAllAdminsQuery } from "@/redux/features/user/user.api";
 import dateUtils from "@/utils/date";
 import Image from "next/image";
 import { RxMagnifyingGlass } from "react-icons/rx";

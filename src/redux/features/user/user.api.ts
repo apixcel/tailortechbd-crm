@@ -1,5 +1,6 @@
 import { api } from "@/redux/api/api";
-import { IUser } from "@/types";
+import { IMeta, IUser } from "@/types";
+import { generateQueryParams } from "@/utils";
 
 const userApi = api.injectEndpoints({
   endpoints: (builder) => ({
@@ -14,7 +15,17 @@ const userApi = api.injectEndpoints({
       }),
       invalidatesTags: ["user"],
     }),
-
+    createAdmin: builder.mutation<
+      { data: string[] },
+      Pick<IUser, "email" | "password" | "phoneNumber" | "fullName"> & { role: string }
+    >({
+      query: (body) => ({
+        url: `/auth/create`,
+        method: "POST",
+        body,
+      }),
+      invalidatesTags: ["user"],
+    }),
     logoutUser: builder.mutation<{ data: null }, undefined>({
       query: () => ({
         url: `/auth/logout`,
@@ -25,16 +36,33 @@ const userApi = api.injectEndpoints({
 
     // getMyRole
 
-    // getAuthor: builder.query<{ data: IUser }, undefined>({
-    //     query: () => {
-    //       return {
-    //         url: `/auth/author`,
-    //         method: "GET",
-    //       };
-    //     },
-    //     providesTags: ["user"],
-    //   }),
+    getAuthor: builder.query<{ data: IUser }, undefined>({
+      query: () => {
+        return {
+          url: `/auth/author`,
+          method: "GET",
+        };
+      },
+      providesTags: ["user"],
+    }),
+
+    getAllAdmins: builder.query<{ data: IUser[]; meta: IMeta }, Record<string, string | number>>({
+      query: (query) => {
+        const queryString = generateQueryParams(query);
+        return {
+          url: `/auth/get/admins?${queryString}`,
+          method: "GET",
+        };
+      },
+      providesTags: ["user"],
+    }),
   }),
 });
 
-export const { useLoginUserMutation, useLogoutUserMutation /* useGetAuthorQuery */ } = userApi;
+export const {
+  useLoginUserMutation,
+  useLogoutUserMutation,
+  useGetAuthorQuery,
+  useGetAllAdminsQuery,
+  useCreateAdminMutation,
+} = userApi;

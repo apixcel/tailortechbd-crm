@@ -4,13 +4,15 @@ import DialogProvider from "@/components/ui/DialogProvider";
 import HorizontalLine from "@/components/ui/HorizontalLine";
 import Input from "@/components/ui/Input";
 import { ICountry } from "@/hooks";
+import { IQueryMutationErrorResponse } from "@/types";
 // import { useCreateAdminMutation } from "@/redux/features/admin/admin.api";
 // import { IQueruMutationErrorResponse } from "@/types";
-import { IUser } from "@/types/user";
+import { useCreateAdminMutation } from "@/redux/features/user/user.api";
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import React, { useState } from "react";
 import { toast } from "sonner";
 import * as Yup from "yup";
+import RoleSelector from "../ManageRole/RoleSelector";
 
 const validationSchema = Yup.object({
   fullName: Yup.string()
@@ -21,6 +23,8 @@ const validationSchema = Yup.object({
 
   email: Yup.string().email("Invalid email address"),
 
+  role: Yup.string().required("Role is required"),
+
   password: Yup.string()
     .required("Password is required")
     .min(6, "Password must be at least 6 characters"),
@@ -30,23 +34,24 @@ const initialValues = {
   fullName: "",
   phoneNumber: "",
   email: "",
+  role: "",
   password: "",
 };
 const CreateAdmin = () => {
   const [country, setCountry] = useState<ICountry>();
   const [isOpen, setIsOpen] = React.useState(false);
 
-  // const [createAdmin, { isLoading }] = useCreateAdminMutation();
+  const [createAdmin, { isLoading }] = useCreateAdminMutation();
 
   const handleSubmit = async (values: typeof initialValues) => {
+    if (isLoading) return;
     const payload = {
       ...values,
-      email: values.email || undefined,
       phoneNumber: `${country?.dial_code}${values.phoneNumber}`,
-      geo_profile: { country: country?.name || "", phone_code: country?.dial_code || "" },
+      email: values.email || undefined,
     };
-    // const res = await createAdmin(payload as IUser);
-    // const error = res.error as IQueruMutationErrorResponse;
+    const res = await createAdmin(payload);
+    const error = res.error as IQueryMutationErrorResponse;
 
     if (error) {
       if (error.data?.message) {
@@ -77,7 +82,7 @@ const CreateAdmin = () => {
               validationSchema={validationSchema}
               onSubmit={handleSubmit}
             >
-              {({ touched, errors }) => (
+              {({ touched, errors, setFieldValue, setFieldTouched }) => (
                 <Form className="space-y-6">
                   <div className="space-y-2">
                     <label htmlFor="fullName" className="font-medium text-primary">
@@ -93,6 +98,26 @@ const CreateAdmin = () => {
                     />
                     <ErrorMessage
                       name="fullName"
+                      component="div"
+                      className="text-sm font-medium text-danger"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <label htmlFor="email" className="font-medium text-primary">
+                      Role
+                    </label>
+                    <RoleSelector
+                      className="w-full"
+                      onSelected={(role) => {
+                        setFieldValue("role", role?._id);
+                        if (!touched.role) {
+                          setFieldTouched("role", true);
+                        }
+                      }}
+                    />
+                    <ErrorMessage
+                      name="email"
                       component="div"
                       className="text-sm font-medium text-danger"
                     />
