@@ -1,13 +1,13 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
 
 import { GoChevronDown } from "react-icons/go";
 import { IoIosArrowBack } from "react-icons/io";
 
-import { INavLinks } from "@/utils";
+import { adminNavlinks, INavLinks } from "@/utils";
 
 const NavBox = ({
   navlink,
@@ -112,7 +112,7 @@ const NavBox = ({
   );
 };
 
-const SideBar = ({ navlinks }: { navlinks: INavLinks[] }) => {
+const SideBar = () => {
   const [isNavOpen, setIsNavOpen] = useState(true);
 
   const toggleNav = () => {
@@ -137,14 +137,14 @@ const SideBar = ({ navlinks }: { navlinks: INavLinks[] }) => {
   return (
     <>
       <div
-        className={`h-[calc(100dvh-60px)] shrink-0 overflow-x-hidden overflow-y-auto bg-white transition-[width] duration-[0.3s] ease-in-out ${
+        className={`h-[calc(100dvh-60px)] shrink-0 overflow-x-hidden bg-white px-[10px] transition-[width] duration-[0.3s] ease-in-out ${
           window.innerWidth <= 750 ? "absolute top-0 left-0 z-[10] min-h-screen" : ""
         } ${isNavOpen ? "w-[300px]" : "w-0"}`}
       >
         <div className={`relative h-full w-full`}>
-          <div className="h-full w-full flex-col justify-between border-r-[1px] border-border-muted p-[20px] lg:flex">
+          <div className="smoothBar h-full w-full flex-col justify-between overflow-x-hidden overflow-y-auto pt-[20px] pb-[20px] lg:flex">
             <div className="flex flex-col gap-[0]">
-              {navlinks?.map((link, index) => (
+              {adminNavlinks?.map((link, index) => (
                 <NavBox
                   navlink={link}
                   key={index + (link.path || "parent")}

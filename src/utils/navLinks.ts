@@ -1,10 +1,10 @@
 "use client";
 
-import { VscGraphLine } from "react-icons/vsc";
-import { HiOutlineUsers } from "react-icons/hi";
 import { GiReceiveMoney } from "react-icons/gi";
-import { RiUserSettingsLine } from "react-icons/ri";
+import { HiOutlineUsers } from "react-icons/hi";
 import { MdOutlineAttachMoney, MdOutlineShoppingCart } from "react-icons/md";
+import { RiUserSettingsLine } from "react-icons/ri";
+import { VscGraphLine } from "react-icons/vsc";
 
 export interface INavLinks {
   label: string;
@@ -14,7 +14,7 @@ export interface INavLinks {
   element?: React.ElementType;
 }
 
-export const admin: INavLinks[] = [
+export const adminNavlinks: INavLinks[] = [
   {
     label: "Sales Report",
     icon: VscGraphLine,
@@ -113,15 +113,15 @@ export const admin: INavLinks[] = [
         path: "/manage-admins",
       },
       {
-        label: "Super Admin",
-        path: "/manage-super-admin",
+        label: "Role & Permission",
+        path: "/manage-roles",
       },
     ],
   },
 ];
 
 const NavLinks = {
-  admin,
+  admin: adminNavlinks,
 };
 
 export default NavLinks;

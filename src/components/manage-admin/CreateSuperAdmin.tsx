@@ -4,7 +4,7 @@ import DialogProvider from "@/components/ui/DialogProvider";
 import HorizontalLine from "@/components/ui/HorizontalLine";
 import Input from "@/components/ui/Input";
 import { ICountry } from "@/hooks";
-import { useCreateSuperAdminMutation } from "@/redux/features/super-admin/super-admin.api";
+import { useCreateSuperAdminMutation } from "@/redux/features/role/role.api";
 import { IQueruMutationErrorResponse } from "@/types";
 import { IUser } from "@/types/user";
 import { ErrorMessage, Field, Form, Formik } from "formik";

@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 
 import { useAppSelector } from "@/hooks";
-import { admin } from "@/utils";
+import { adminNavlinks } from "@/utils";
 
 import { PathSearchBar, UserDropdown } from "@/components";
 
@@ -31,7 +31,7 @@ const Header = () => {
         />
       </Link>
       <div className="flex w-[200px] items-center justify-between lg:w-full">
-        <PathSearchBar navLinks={admin} />
+        <PathSearchBar navLinks={adminNavlinks} />
         {user && <UserDropdown /* displayName={true} */ />}
       </div>
     </header>

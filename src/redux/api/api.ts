@@ -12,7 +12,7 @@ const baseQueryWithRefreshToken = async (args: any, api: any, extraOptions: any)
   let result = await baseQuery(args, api, extraOptions);
 
   if (result?.error?.status === 401) {
-    const res = await fetch(`${baseUrl}/user/refresh-token`, {
+    const res = await fetch(`${baseUrl}/auth/refresh-token`, {
       method: "POST",
       credentials: "include",
     });
@@ -43,7 +43,7 @@ export const api = createApi({
     "categories",
     "purchase",
     "admin",
-    "super-admin",
+    "role",
     "investments",
     "deposits",
     "profit-withdrawal",

@@ -1,6 +1,6 @@
 import Button from "@/components/ui/Button";
 import DialogProvider from "@/components/ui/DialogProvider";
-import { useDeleteSuperAdminByIdMutation } from "@/redux/features/super-admin/super-admin.api";
+import { useDeleteSuperAdminByIdMutation } from "@/redux/features/role/role.api";
 import { IQueruMutationErrorResponse } from "@/types";
 import { IUser } from "@/types/user";
 import { useRef, useState } from "react";

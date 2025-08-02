@@ -274,30 +274,36 @@
     display: none; /* Chrome/Safari */
   }
 
+  .smoothBar::-webkit-scrollbar {
+    width: 5px;
+    opacity: 1;
+  }
+
+  .smoothBar::-webkit-scrollbar-thumb {
+    background-color: transparent;
+    border-radius: 5px;
+  }
+
+  .smoothBar:hover::-webkit-scrollbar-thumb {
+    background-color: #c2c2c2 !important;
+  }
+  .smoothBar::-webkit-scrollbar {
+    width: 5px;
+    opacity: 1;
+  }
+
+  .smoothBar::-webkit-scrollbar-thumb {
+    background-color: #c2c2c2;
+    border-radius: 5px;
+  }
+
+  .smoothBar:hover::-webkit-scrollbar-thumb {
+    background-color: #c2c2c2;
+  }
+
   .gridResponsive {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(246px, 279px));
-  }
-
-  .hover_underline {
-    position: relative;
-  }
-
-  .hover_underline::after {
-    content: "";
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 2px;
-    background-color: var(--primary);
-    transform: scaleX(0);
-    transform-origin: left;
-    transition: transform 0.3s ease-in-out;
-  }
-
-  .hover_underline:hover::after {
-    transform: scaleX(1);
   }
 
   /* Number Input Cleanup */
@@ -332,20 +338,35 @@
   }
 
   @keyframes wave {
-    0% { transform: rotate(0.0deg); }
-    10% { transform: rotate(14.0deg); }
-    20% { transform: rotate(-8.0deg); }
-    30% { transform: rotate(14.0deg); }
-    40% { transform: rotate(-4.0deg); }
-    50% { transform: rotate(10.0deg); }
-    60% { transform: rotate(0.0deg); }
-    100% { transform: rotate(0.0deg); }
+    0% {
+      transform: rotate(0deg);
+    }
+    10% {
+      transform: rotate(14deg);
+    }
+    20% {
+      transform: rotate(-8deg);
+    }
+    30% {
+      transform: rotate(14deg);
+    }
+    40% {
+      transform: rotate(-4deg);
+    }
+    50% {
+      transform: rotate(10deg);
+    }
+    60% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(0deg);
+    }
   }
-  
+
   .animate-waving-hand {
     display: inline-block;
     animation: wave 1.5s infinite;
     transform-origin: 70% 70%;
   }
-  
 }
