@@ -32,7 +32,7 @@ const profitWithdrawalApi = api.injectEndpoints({
       { data: IProfitWithdrawal },
       { profitWithdrawalId: string }
     >({
-        query: ({ profitWithdrawalId }) => ({
+      query: ({ profitWithdrawalId }) => ({
         url: `/profit-withdrawal/get/${profitWithdrawalId}`,
         method: "GET",
       }),

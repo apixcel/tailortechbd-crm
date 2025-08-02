@@ -7,11 +7,11 @@ import React from "react";
 const CreatePartnerView = () => {
   const handleSubmit = async (payload: IPartner) => {
     const formattedValues = {
-        ...payload,
-        joiningDate: payload.joiningDate.split("T")[0],
-      };
+      ...payload,
+      partnerJoiningDate: payload.partnerJoiningDate.split("T")[0],
+    };
 
-      console.log(formattedValues)
+    console.log(formattedValues);
   };
 
   return (

@@ -1,7 +1,5 @@
 "use client";
 
-import { useState } from "react";
-
 import {
   CartesianGrid,
   Legend,
@@ -13,16 +11,9 @@ import {
   YAxis,
 } from "recharts";
 
-import { AnalyticsOverviewFilter } from "@/components";
 import CostingQuantityCard from "./CostingQuantityCard";
 import CostingAmountCard from "./CostingAmountCard";
-
-const options = [
-  { value: "overall", label: "Overall" },
-  { value: "today", label: "Today" },
-  { value: "this-month", label: "This Month" },
-  { value: "this-year", label: "This Year" },
-];
+import { DateObject } from "react-multi-date-picker";
 
 // dummy data
 const totals = {
@@ -46,28 +37,50 @@ const costingChartData = [
   { time: "2025-07-08", totalCosting: 260, totalCostingAmount: 52000 },
 ];
 
-const CostingReportOverview = () => {
-  const [selectedFilter, setSelectedFilter] = useState(options[2]);
+interface CostingReportOverviewProps {
+  selectedRange: DateObject[] | undefined;
+}
+
+const CostingReportOverview = ({ selectedRange }: CostingReportOverviewProps) => {
+  const increase = 10;
+
+  // Filter sales data by selected date range
+  const filteredData = costingChartData.filter((item) => {
+    if (!selectedRange || selectedRange.length !== 2) return true;
+
+    const from = selectedRange[0].toDate();
+    const to = selectedRange[1].toDate();
+    const itemDate = new Date(item.time);
+
+    return itemDate >= from && itemDate <= to;
+  });
+
+  // Calculate totals
+  const totals = {
+    quantity: filteredData.reduce((acc, item) => acc + item.totalCosting, 0),
+    amount: filteredData.reduce((acc, item) => acc + item.totalCostingAmount, 0),
+  };
+
+    // Format the selected filter label
+    const formatDate = (dateObj: DateObject) => dateObj?.format("DD-MM-YYYY");
+
+    const selectedFilterLabel =
+      selectedRange && selectedRange.length === 2
+        ? `${formatDate(selectedRange[0])} to ${formatDate(selectedRange[1])}`
+        : "Custom";
 
   return (
     <section>
-      <div className="mb-4 flex items-center justify-end bg-white p-4">
-        <AnalyticsOverviewFilter
-          options={options}
-          selected={selectedFilter}
-          onChange={setSelectedFilter}
-        />
-      </div>
 
       <div className="mb-4 grid gap-4 sm:grid-cols-2">
         <CostingQuantityCard
-          value={totals.Sales}
-          selectedFilter={selectedFilter.value}
+          value={totals.quantity}
+          selectedFilter={selectedFilterLabel}
           increase={increase}
         />
         <CostingAmountCard
-          value={totals.Earnings}
-          selectedFilter={selectedFilter.value}
+          value={totals.amount}
+          selectedFilter={selectedFilterLabel}
           increase={increase}
         />
       </div>

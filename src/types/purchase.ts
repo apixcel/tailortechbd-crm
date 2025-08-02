@@ -30,4 +30,3 @@ export interface IPurchase {
   createdAt?: string;
   updatedAt?: string;
 }
-

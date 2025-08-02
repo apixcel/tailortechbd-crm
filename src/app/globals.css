@@ -118,6 +118,145 @@
   .form-label {
     @apply text-[12px] font-semibold text-black;
   }
+
+  /* === WEEK DAYS === */
+  .rmdp-week-day {
+    color: var(--primary-foreground) !important;
+  }
+
+  /* === DAY CELL === */
+  .rmdp-day {
+    background-color: transparent !important;
+    color: var(--primary-foreground);
+    font-size: 14px;
+    transition: all 0.2s ease;
+  }
+
+  .rmdp-day span {
+    padding: 6px 8px;
+    border-radius: 4px;
+    display: inline-block;
+  }
+
+  .rmdp-day:not(.rmdp-disabled):hover span {
+    background-color: var(--primary) !important;
+    color: white !important;
+  }
+
+  .rmdp-day.rmdp-selected span {
+    background-color: var(--primary) !important;
+    color: white !important;
+  }
+
+  .rmdp-day.rmdp-range span {
+    background-color: var(--primary) !important;
+    color: white !important;
+  }
+
+  .rmdp-day.rmdp-range-hover span {
+    background-color: rgba(16, 25, 73, 0.15) !important;
+    color: var(--primary) !important;
+  }
+
+  .rmdp-day.rmdp-today span {
+    background-color: var(--primary) !important;
+    font-weight: 600;
+  }
+
+  .rmdp-day.rmdp-disabled span {
+    color: var(--muted) !important;
+    background-color: transparent !important;
+    cursor: not-allowed;
+  }
+
+  /* === MONTH/YEAR PICKERS === */
+  .rmdp-month-picker,
+  .rmdp-year-picker {
+    font-size: 14px;
+  }
+
+  .rmdp-month-picker .rmdp-selected,
+  .rmdp-year-picker .rmdp-selected {
+    background-color: var(--primary) !important;
+    color: white !important;
+  }
+
+  .rmdp-month-picker .rmdp-range,
+  .rmdp-year-picker .rmdp-range {
+    background-color: rgba(16, 25, 73, 0.15) !important;
+    color: var(--primary) !important;
+  }
+
+  /* === HEADER & NAVIGATION === */
+  .rmdp-header {
+    padding: 6px 12px;
+    background-color: white;
+    color: var(--primary-foreground);
+    font-weight: 600;
+    border-bottom: 1px solid var(--border-muted);
+  }
+
+  .rmdp-arrow-container {
+    background-color: white;
+    color: var(--primary);
+    border-radius: 4px;
+    padding: 4px;
+    transition: background-color 0.2s ease;
+  }
+
+  .rmdp-arrow-container:hover {
+    background-color: var(--primary) !important;
+    color: white !important;
+  }
+
+  .rmdp-arrow-container:hover .rmdp-arrow {
+    border-color: white !important;
+  }
+
+  .rmdp-arrow-container.disabled {
+    opacity: 0.5 !important;
+  }
+
+  .rmdp-arrow {
+    border-color: var(--primary-foreground) !important;
+  }
+
+  /* === INPUT OVERRIDES === */
+  .date-range-input {
+    @apply cursor-pointer rounded-[3px] border border-quaternary bg-white px-2 py-2 text-[14px] text-primary transition-colors duration-200 hover:border-primary;
+  }
+
+  .date-range-input:focus {
+    @apply border-primary outline-none;
+  }
+
+  /* === CALENDAR CONTAINER === */
+  .date-range-calendar {
+    @apply p-0;
+  }
+
+  /* === TIME PICKER (if used) === */
+  .rmdp-time-picker input {
+    border: 1px solid var(--quaternary);
+    border-radius: 4px;
+    padding: 4px 6px;
+    font-size: 14px;
+  }
+
+  .rmdp-time-picker input:focus {
+    outline: none;
+    border-color: var(--primary);
+  }
+
+  /* === DARK MODE (optional example) === */
+  .dark .rmdp-day span {
+    color: #ccc;
+  }
+
+  .dark .rmdp-day.rmdp-selected span {
+    background-color: var(--secondary);
+    color: #fff;
+  }
 }
 
 /* === UTILITIES === */
@@ -191,15 +330,22 @@
   .animate-marquee {
     animation: marquee 25s linear infinite;
   }
-}
 
-/* === RESPONSIVE FIXES === */
-@media screen and (max-width: 768px) {
-  .widget-visible > iframe {
-    bottom: 63px !important;
+  @keyframes wave {
+    0% { transform: rotate(0.0deg); }
+    10% { transform: rotate(14.0deg); }
+    20% { transform: rotate(-8.0deg); }
+    30% { transform: rotate(14.0deg); }
+    40% { transform: rotate(-4.0deg); }
+    50% { transform: rotate(10.0deg); }
+    60% { transform: rotate(0.0deg); }
+    100% { transform: rotate(0.0deg); }
   }
-
-  iframe[title="chat-widget"] {
-    inset: auto 20px 133px auto !important;
+  
+  .animate-waving-hand {
+    display: inline-block;
+    animation: wave 1.5s infinite;
+    transform-origin: 70% 70%;
   }
+  
 }

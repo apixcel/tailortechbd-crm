@@ -13,9 +13,9 @@ import {
   YAxis,
 } from "recharts";
 
-import { AnalyticsOverviewFilter } from "@/components";
 import PurchaseQuantityCard from "./PurchaseQuantityCard";
 import PurchaseAmountCard from "./PurchaseAmountCard";
+import { DateObject } from "react-multi-date-picker";
 
 const options = [
   { value: "overall", label: "Overall" },
@@ -46,27 +46,48 @@ const purchaseChartData = [
   { time: "2025-07-08", totalPurchase: 260, totalPurchaseAmount: 52000 },
 ];
 
-const PurchaseReportOverview = () => {
+interface PurchaseReportOverviewProps {
+  selectedRange: DateObject[] | undefined;
+}
+
+const PurchaseReportOverview = ({ selectedRange }: PurchaseReportOverviewProps) => {
   const [selectedFilter, setSelectedFilter] = useState(options[2]);
+
+    // Filter sales data by selected date range
+    const filteredData = purchaseChartData.filter((item) => {
+      if (!selectedRange || selectedRange.length !== 2) return true;
+  
+      const from = selectedRange[0].toDate();
+      const to = selectedRange[1].toDate();
+      const itemDate = new Date(item.time);
+  
+      return itemDate >= from && itemDate <= to;
+    });
+
+      // Calculate totals
+  const totals = {
+    quantity: filteredData.reduce((acc, item) => acc + item.totalPurchase, 0),
+    amount: filteredData.reduce((acc, item) => acc + item.totalPurchaseAmount, 0),
+  };
+
+  // Format the selected filter label
+  const formatDate = (dateObj: DateObject) => dateObj?.format("DD-MM-YYYY");
+
+  const selectedFilterLabel =
+    selectedRange && selectedRange.length === 2
+      ? `${formatDate(selectedRange[0])} to ${formatDate(selectedRange[1])}`
+      : "Custom";
 
   return (
     <section>
-      <div className="mb-4 flex items-center justify-end bg-white p-4">
-        <AnalyticsOverviewFilter
-          options={options}
-          selected={selectedFilter}
-          onChange={setSelectedFilter}
-        />
-      </div>
-
       <div className="mb-4 grid gap-4 sm:grid-cols-2">
         <PurchaseQuantityCard
-          value={totals.Sales}
+          value={totals.quantity}
           selectedFilter={selectedFilter.value}
           increase={increase}
         />
         <PurchaseAmountCard
-          value={totals.Earnings}
+            value={totals.amount}
           selectedFilter={selectedFilter.value}
           increase={increase}
         />

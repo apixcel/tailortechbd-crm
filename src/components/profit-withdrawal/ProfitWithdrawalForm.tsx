@@ -2,7 +2,7 @@
 
 import * as Yup from "yup";
 import { ErrorMessage, Field, FieldProps, Form, Formik, FormikHelpers } from "formik";
-import { IProfitWithdrawal } from "@/types";
+import { IProfitWithdrawal, IPartner } from "@/types";
 
 import {
   Input,
@@ -12,36 +12,29 @@ import {
   TextArea,
   PickDate,
   DateRangePicker,
+  AddPartnerOnForm,
 } from "@/components";
 
-const initialValues: Omit<IProfitWithdrawal, "_id" | "createdAt" | "updatedAt"> = {
-  partnerName: "",
-  totalProfitAmount: 0,
-  percentage: 0,
+const initialValues: Omit<IProfitWithdrawal, "_id" | "createdAt" | "updatedAt" | "partner"> & {
+  partner: Omit<IPartner, "createdAt" | "updatedAt">;
+} = {
+  withdrawalAmount: 0,
   withdrawalDate: new Date().toISOString(),
-  status: "",
-  comment: "",
-  attachment: "",
-  profitPeriod: {
-    startDate: "",
-    endDate: "",
+  withdrawalDescription: "",
+  partner: {
+    _id: "",
+    partnerName: "",
+    partnerDesignation: "",
+    partnerJoiningDate: "",
   },
 };
 
 const validationSchema = Yup.object().shape({
-  partnerName: Yup.string().required("Partner name is required"),
-  totalProfitAmount: Yup.number()
-    .required("Total profit is required")
-    .min(1, "Total profit must be >= 1"),
-  percentage: Yup.number().required("Percentage is required").min(1, "Percentage must be >= 1"),
+  withdrawalAmount: Yup.number()
+    .required("Withdrawal amount is required")
+    .min(1, "Withdrawal amount must be >= 1"),
   withdrawalDate: Yup.string().required("Date is required"),
-  status: Yup.string().required("Status is required"),
-  comment: Yup.string().required("Comment is required"),
-  attachment: Yup.string().required("Attachment is required"),
-  profitPeriod: Yup.object({
-    startDate: Yup.string().required("Start date is required"),
-    endDate: Yup.string().required("End date is required"),
-  }),
+  withdrawalDescription: Yup.string().required("Description is required"),
 });
 
 const ProfitWithdrawalForm = ({
@@ -52,10 +45,7 @@ const ProfitWithdrawalForm = ({
 }: {
   isLoading: boolean;
   defaultValue?: typeof initialValues;
-  onSubmit: (
-    values: IProfitWithdrawal,
-    { resetForm }: FormikHelpers<typeof initialValues>
-  ) => void;
+  onSubmit: (values: IProfitWithdrawal, { resetForm }: FormikHelpers<typeof initialValues>) => void;
   buttonLabel?: string;
 }) => {
   return (
@@ -66,7 +56,7 @@ const ProfitWithdrawalForm = ({
         onSubmit(values as IProfitWithdrawal, {} as FormikHelpers<typeof initialValues>);
       }}
     >
-      {({ setFieldValue }) => (
+      {({ setFieldValue, values, touched, submitCount }) => (
         <Form className="flex flex-col gap-4">
           <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
             <div className="flex flex-col gap-4 bg-white p-4">
@@ -74,40 +64,15 @@ const ProfitWithdrawalForm = ({
 
               {/* partner name and total Profit amount */}
               <div className="flex w-full flex-col items-start justify-start gap-[16px] sm:flex-row">
-                {/* partner name */}
+                {/* withdrawal amount */}
                 <div className="flex w-full flex-col gap-[5px]">
-                  <label className="form-label">Partner Name</label>
-                  <Field as={Input} name="partnerName" placeholder="Partner name" />
+                  <label className="form-label">Withdrawal Amount</label>
+                  <Field as={Input} type="number" name="withdrawalAmount" placeholder="Amount" />
                   <ErrorMessage
-                    name="partnerName"
+                    name="withdrawalAmount"
                     component="div"
                     className="text-sm text-danger"
                   />
-                </div>
-
-                {/* total profit amount */}
-                <div className="flex w-full flex-col gap-[5px]">
-                  <label className="form-label">Total Profit Amount</label>
-                  <Field
-                    as={Input}
-                    type="number"
-                    name="totalProfitAmount"
-                    placeholder="Total Profit Amount"
-                  />
-                  <ErrorMessage
-                    name="totalProfitAmount"
-                    component="div"
-                    className="text-sm text-danger"
-                  />
-                </div>
-              </div>
-
-              {/* type and date picker */}
-              <div className="flex w-full flex-col items-start justify-start gap-[16px] sm:flex-row">
-                <div className="flex w-full flex-col gap-[5px]">
-                  <label className="form-label">Percentage</label>
-                  <Field as={Input} type="number" name="percentage" placeholder="Percentage" />
-                  <ErrorMessage name="percentage" component="div" className="text-sm text-danger" />
                 </div>
 
                 {/* date picker */}
@@ -124,60 +89,48 @@ const ProfitWithdrawalForm = ({
                 </div>
               </div>
 
-              {/* period and status */}
-              <div className="flex w-full flex-col items-start justify-start gap-[16px] sm:flex-row">
-                {/* period */}
-                <div className="flex w-full flex-col gap-[5px]">
-                  <label className="form-label">Profit Period</label>
-                  <Field name="profitPeriod" component={DateRangePicker} />
-                  <ErrorMessage
-                    name="profitPeriod.startDate"
-                    component="div"
-                    className="text-sm text-danger"
-                  />
-                  <ErrorMessage
-                    name="profitPeriod.endDate"
-                    component="div"
-                    className="text-sm text-danger"
-                  />
-                </div>
-
-                {/* status */}
-                <div className="flex w-full flex-col gap-[5px]">
-                  <label className="form-label">Status</label>
-                  <Field
-                    name="status"
-                    as="select"
-                    className="w-full cursor-pointer appearance-none border border-border-main bg-white px-[12px] py-[6px] text-sm text-strong outline-none"
-                  >
-                    <option value="">Select status</option>
-                    <option value="Paid">Paid</option>
-                    <option value="Not Paid">Not Paid</option>
-                  </Field>
-                  <ErrorMessage name="status" component="div" className="text-sm text-danger" />
-                </div>
-              </div>
-
-              {/* comment */}
+              {/* description */}
               <div className="flex w-full flex-col gap-[5px]">
-                <label className="form-label">Comment</label>
-                <Field as={TextArea} name="comment" placeholder="Comment" rows={4} />
-                <ErrorMessage name="comment" component="div" className="text-sm text-danger" />
+                <label className="form-label">Description</label>
+                <Field
+                  as={TextArea}
+                  name="withdrawalDescription"
+                  placeholder="Description"
+                  rows={4}
+                />
+                <ErrorMessage
+                  name="withdrawalDescription"
+                  component="div"
+                  className="text-sm text-danger"
+                />
               </div>
             </div>
 
             <div className="flex flex-col gap-4 bg-white p-4">
               <SectionTitle>Attachment</SectionTitle>
-              <div>
-                <ImageUploader
-                  inputId="investment-attachment"
-                  mode="single"
-                  onChange={(urls) => setFieldValue("attachment", urls?.[0] || "")}
-                  title="Upload Attachment"
-                  acceptPDF
-                />
-                <ErrorMessage name="attachment" component="div" className="text-sm text-danger" />
-              </div>
+
+              {!values.partner.partnerName && (
+                <AddPartnerOnForm setFieldValue={setFieldValue} values={values} />
+              )}
+
+              {values.partner.partnerName && (
+                <div className="flex flex-col gap-2 p-3 text-sm">
+                  <div>
+                    <strong>Name:</strong> {values.partner.partnerName}
+                  </div>
+                  <div>
+                    <strong>Designation:</strong> {values.partner.partnerDesignation}
+                  </div>
+                  <div>
+                    <strong>Joining Date:</strong> {values.partner.partnerJoiningDate.split("T")[0]}
+                  </div>
+                </div>
+              )}
+
+              {/* Error if no supplier added */}
+              {(touched.partner || submitCount > 0) && !values.partner?.partnerName && (
+                <div className="text-sm text-danger">No partner selected</div>
+              )}
             </div>
           </div>
 
