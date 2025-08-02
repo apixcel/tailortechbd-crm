@@ -2,8 +2,8 @@
 import Button from "@/components/ui/Button";
 import DialogProvider from "@/components/ui/DialogProvider";
 import { useDeleteDepositByIdMutation } from "@/redux/features/deposits/deposits.api";
+import { IQueryMutationErrorResponse } from "@/types";
 
-import { IQueruMutationErrorResponse } from "@/types";
 import { useState } from "react";
 import { FaRegTrashAlt } from "react-icons/fa";
 import { toast } from "sonner";
@@ -22,7 +22,7 @@ const DeleteDepositsById = ({
   const handleDelete = async () => {
     if (inputValue !== "DELETE") return;
     const res = await deleteDeposit(depositId);
-    const error = res.error as IQueruMutationErrorResponse;
+    const error = res.error as IQueryMutationErrorResponse;
     if (error) {
       if (error.data?.message) {
         toast.error(error.data?.message);

@@ -1,18 +1,18 @@
 "use client";
 
-import * as Yup from "yup";
-import { ErrorMessage, Field, FieldArray, Form, Formik, FormikHelpers } from "formik";
 import { IPurchase, ISupplier } from "@/types";
-import { FaRegTrashAlt } from "react-icons/fa";
+import { ErrorMessage, Field, FieldArray, Form, Formik, FormikHelpers } from "formik";
 import Link from "next/link";
+import { FaRegTrashAlt } from "react-icons/fa";
+import * as Yup from "yup";
 
-import Input from "@/components/ui/Input";
-import HorizontalLine from "@/components/ui/HorizontalLine";
-import ImageUploader from "@/components/shared/ImageUploader";
-import CategorySelector from "@/components/shared/CategorySelector";
-import Button from "@/components/ui/Button";
 import AddSupplierOnPurchase from "@/components/create-supplier/AddSupplierOnPurchase";
+import CategorySelector from "@/components/shared/CategorySelector";
+import ImageUploader from "@/components/shared/ImageUploader";
 import SectionTitle from "@/components/shared/SectionTitle";
+import Button from "@/components/ui/Button";
+import HorizontalLine from "@/components/ui/HorizontalLine";
+import Input from "@/components/ui/Input";
 
 const initialValues: Omit<IPurchase, "_id" | "createdAt" | "updatedAt" | "supplier"> & {
   supplier: Omit<ISupplier, "_id" | "createdAt" | "updatedAt">;
@@ -81,7 +81,10 @@ const PurchaseForm = ({
 }: {
   isLoading?: boolean;
   defaultValue?: typeof initialValues;
-  onSubmit: (values: IPurchase, helpers: FormikHelpers<typeof initialValues>) => void;
+  onSubmit: (
+    values: Omit<IPurchase, "_id" | "createdAt" | "updatedAt">,
+    helpers: FormikHelpers<typeof initialValues>
+  ) => void;
   buttonLabel?: string;
 }) => {
   const initValue = defaultValue
@@ -122,7 +125,7 @@ const PurchaseForm = ({
           products,
         };
 
-        onSubmit(payload as IPurchase, helpers);
+        onSubmit(payload as Omit<IPurchase, "_id" | "createdAt" | "updatedAt">, helpers);
       }}
     >
       {({ values, setFieldValue, touched, submitCount }) => (

@@ -43,8 +43,8 @@ const depositsApi = api.injectEndpoints({
       }),
       invalidatesTags: ["deposits"],
     }),
-    deleteDepositById: builder.mutation<{ data: IDeposit }, { depositId: string }>({
-      query: ({ depositId }) => ({
+    deleteDepositById: builder.mutation<{ data: IDeposit }, string>({
+      query: (depositId) => ({
         url: `/deposit/delete/${depositId}`,
         method: "DELETE",
       }),

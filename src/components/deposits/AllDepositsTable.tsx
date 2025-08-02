@@ -1,24 +1,24 @@
 "use client";
 
+import { useDebounce } from "@/hooks";
 import {
   useDeleteDepositByIdMutation,
   useGetAllDepositsQuery,
 } from "@/redux/features/deposits/deposits.api";
-import { useDebounce } from "@/hooks";
-import { useState } from "react";
-import Link from "next/link";
 import dateUtils from "@/utils/date";
+import Link from "next/link";
+import { useState } from "react";
 
 import { FaChevronDown, FaChevronUp } from "react-icons/fa";
 import { GoPencil } from "react-icons/go";
 import { RxMagnifyingGlass } from "react-icons/rx";
 
 import {
+  DeleteConfirmationDialog,
   HorizontalLine,
+  Pagination,
   TableDataNotFound,
   TableSkeleton,
-  Pagination,
-  DeleteConfirmationDialog,
 } from "@/components";
 
 const tableHead = [
@@ -213,7 +213,7 @@ const AllDepositsTable = () => {
                           entityId={deposit._id!}
                           entityName={deposit.partnerName}
                           entityLabel="Deposit"
-                          onDelete={(id) => deleteDeposit({ depositId: id })}
+                          onDelete={(id) => deleteDeposit(id)}
                           isLoading={isDeleting}
                         />
                       </div>

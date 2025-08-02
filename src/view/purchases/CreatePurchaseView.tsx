@@ -11,7 +11,6 @@ const CreatePurchaseView = () => {
   const router = useRouter();
 
   const handleSubmit = async (payload: Omit<IPurchase, "_id" | "createdAt" | "updatedAt">) => {
-    console.log("log from create function", payload);
     const res = await createPurchase(payload);
     const error = res.error as IQueryMutationErrorResponse;
     if (error) {

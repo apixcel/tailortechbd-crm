@@ -1,10 +1,10 @@
 "use client";
 
-import * as Yup from "yup";
-import { ErrorMessage, Field, FieldProps, Form, Formik, FormikHelpers } from "formik";
 import { ICosting } from "@/types";
+import { ErrorMessage, Field, FieldProps, Form, Formik, FormikHelpers } from "formik";
+import * as Yup from "yup";
 
-import { Input, ImageUploader, Button, SectionTitle, TextArea, PickDate } from "@/components";
+import { Button, ImageUploader, Input, PickDate, SectionTitle, TextArea } from "@/components";
 
 const initialValues: Omit<ICosting, "_id" | "createdAt" | "updatedAt"> = {
   partnerName: "",
@@ -89,9 +89,7 @@ const CostingForm = ({
                 {/* date picker */}
                 <div className="flex w-full flex-col gap-[5px]">
                   <label className="form-label">Costing Date</label>
-                  <Field name="costingDate">
-                    {(fieldProps: FieldProps) => <PickDate {...fieldProps} />}
-                  </Field>
+                  <Field name="costingDate">{(fieldProps: FieldProps) => <PickDate />}</Field>
                   <ErrorMessage
                     name="costingDate"
                     component="div"

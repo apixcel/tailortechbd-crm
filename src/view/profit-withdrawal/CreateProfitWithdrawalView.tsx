@@ -1,9 +1,8 @@
 "use client";
 
 import { useCreateProfitWithdrawalMutation } from "@/redux/features/profit-withdrawal/profit-withdrawal.api";
-import { IProfitWithdrawal, IQueryMutationErrorResponse } from "@/types";
+import { IProfitWithdrawal } from "@/types";
 import { useRouter } from "next/navigation";
-import { toast } from "sonner";
 
 import { PageHeadingTitle, ProfitWithdrawalForm } from "@/components";
 
