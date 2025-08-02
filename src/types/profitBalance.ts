@@ -1,8 +1,9 @@
-export interface IPartner {
+export interface IProfitBalance {
   _id: string;
   partnerName: string;
   partnerDesignation: string;
-  partnerJoiningDate: string;
+  profitAmount: number;
+  profitBalance: number;
   createdAt?: string;
   updatedAt?: string;
 }

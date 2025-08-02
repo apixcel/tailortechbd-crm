@@ -9,14 +9,3 @@ export interface ISupplier {
   createdAt?: string;
   updatedAt?: string;
 }
-
-export type SupplierFormType = {
-  _id?: string;
-  name: string;
-  address: string;
-  phoneNumber: string;
-  email: string;
-  logoUrl: string;
-  invoiceNumber?: string;
-};
-

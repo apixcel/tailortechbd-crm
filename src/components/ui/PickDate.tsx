@@ -1,30 +1,18 @@
 "use client";
 
-import { FieldProps } from "formik";
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
+import React, { useState } from "react";
+import DatePicker, { DateObject } from "react-multi-date-picker";
 
-const PickDate = ({ field, form, ...props }: FieldProps) => {
-  // Convert stored ISO string to Date object for display
-  const selectedDate = field.value ? new Date(field.value) : null;
-
-  const handleChange = (date: Date | null) => {
-    if (date) {
-      form.setFieldValue(field.name, date.toISOString());
-    }
-  };
+const PickDate = () => {
+  const [values, setValues] = useState([
+    new DateObject().subtract(4, "days"),
+    new DateObject().add(4, "days"),
+  ]);
 
   return (
-    <DatePicker
-      {...props}
-      selected={selectedDate}
-      onChange={handleChange}
-      maxDate={new Date()}
-      showTimeSelect={false}
-      dateFormat="yyyy-MM-dd"
-      className="w-full cursor-pointer appearance-none border-[1px] border-border-main bg-white bg-clip-padding px-[12px] py-[6px] text-base text-[12px] font-normal text-strong outline-none"
-      placeholderText="Select date"
-    />
+    <div>
+      <DatePicker value={values} onChange={setValues} range />
+    </div>
   );
 };
 

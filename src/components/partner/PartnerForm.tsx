@@ -9,13 +9,13 @@ import { Input, SectionTitle, Button, PickDate } from "@/components";
 const initialValues: Omit<IPartner, "_id" | "createdAt" | "updatedAt"> = {
   partnerName: "",
   partnerDesignation: "",
-  joiningDate: new Date().toISOString(),
+  partnerJoiningDate: new Date().toISOString(),
 };
 
 const validationSchema = Yup.object().shape({
   partnerName: Yup.string().required("Partner name is required"),
   partnerDesignation: Yup.string().required("Designation is required"),
-  joiningDate: Yup.string().required("Date is required"),
+  partnerJoiningDate: Yup.string().required("Date is required"),
 });
 
 const PartnerForm = ({
@@ -54,11 +54,7 @@ const PartnerForm = ({
               {/* designation */}
               <div className="flex w-full flex-col gap-[5px]">
                 <label className="form-label">Designation</label>
-                <Field
-                  as={Input}
-                  name="partnerDesignation"
-                  placeholder="Designation"
-                />
+                <Field as={Input} name="partnerDesignation" placeholder="Designation" />
                 <ErrorMessage
                   name="partnerDesignation"
                   component="div"
@@ -69,10 +65,14 @@ const PartnerForm = ({
               {/* joining date */}
               <div className="flex w-full flex-col gap-[5px]">
                 <label className="form-label">Joining Date</label>
-                <Field name="joiningDate">
+                <Field name="partnerJoiningDate">
                   {(fieldProps: FieldProps) => <PickDate {...fieldProps} />}
                 </Field>
-                <ErrorMessage name="joiningDate" component="div" className="text-sm text-danger" />
+                <ErrorMessage
+                  name="partnerJoiningDate"
+                  component="div"
+                  className="text-sm text-danger"
+                />
               </div>
             </div>
           </div>

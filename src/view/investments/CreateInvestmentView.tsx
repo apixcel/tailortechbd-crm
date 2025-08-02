@@ -17,22 +17,22 @@ const CreateInvestmentView = () => {
       investmentDate: payload.investmentDate.split("T")[0],
     };
 
-    const res = await createInvestment(formattedValues);
-    const error = res.error as IQueryMutationErrorResponse;
-    if (error) {
-      if (error?.data?.message) {
-        toast(error.data?.message);
-      } else {
-        toast("Something went wrong");
-      }
+    console.log(formattedValues);
 
-      return;
-    }
+    // const res = await createInvestment(formattedValues);
+    // const error = res.error as IQueryMutationErrorResponse;
+    // if (error) {
+    //   if (error?.data?.message) {
+    //     toast(error.data?.message);
+    //   } else {
+    //     toast("Something went wrong");
+    //   }
 
-    toast.success("Investment created successfully");
-    router.push("/investments");
+    //   return;
+    // }
 
-    return;
+    // toast.success("Investment created successfully");
+    // router.push("/investments");
   };
 
   return (
