@@ -2,7 +2,7 @@
 
 import * as Yup from "yup";
 import { ErrorMessage, Field, FieldArray, Form, Formik, FormikHelpers } from "formik";
-import { IPurchase, ISupplier, SupplierFormType } from "@/types";
+import { IPurchase, ISupplier } from "@/types";
 import { FaRegTrashAlt } from "react-icons/fa";
 import Link from "next/link";
 
@@ -15,7 +15,7 @@ import AddSupplierOnPurchase from "@/components/create-supplier/AddSupplierOnPur
 import SectionTitle from "@/components/shared/SectionTitle";
 
 const initialValues: Omit<IPurchase, "_id" | "createdAt" | "updatedAt" | "supplier"> & {
-  supplier: SupplierFormType;
+  supplier: Omit<ISupplier, "_id" | "createdAt" | "updatedAt">;
 } = {
   purchaseTitle: "",
   invoiceNumber: "",
@@ -113,14 +113,16 @@ const PurchaseForm = ({
           category: typeof product.category === "string" ? product.category : product.category._id,
         }));
 
-        const payload = {
+        const payload: Omit<IPurchase, "_id" | "createdAt" | "updatedAt" | "supplier"> & {
+          supplier: string;
+        } = {
           ...rest,
           supplier: supplierId,
-          invoiceNumber: values.supplier.invoiceNumber,
+          invoiceNumber: values.supplier.invoiceNumber || "",
           products,
         };
 
-        onSubmit(payload, helpers);
+        onSubmit(payload as IPurchase, helpers);
       }}
     >
       {({ values, setFieldValue, touched, submitCount }) => (

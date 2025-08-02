@@ -1,35 +1,34 @@
 "use client";
 
-import { HorizontalLine, Pagination, TableDataNotFound, TableSkeleton } from "@/components";
-import { FaChevronUp } from "react-icons/fa";
-import { FaChevronDown } from "react-icons/fa";
-import { RxMagnifyingGlass } from "react-icons/rx";
-import { useState } from "react";
-import dateUtils from "@/utils/date";
-import { ICapitals } from "@/types";
-import { mockCapitalsData } from "@/constants/capitalsData";
 import { useDebounce } from "@/hooks";
+import { IProfitBalance } from "@/types";
+import { useState } from "react";
+import HorizontalLine from "../ui/HorizontalLine";
+import { RxMagnifyingGlass } from "react-icons/rx";
+import { FaChevronDown, FaChevronUp } from "react-icons/fa6";
+import TableSkeleton from "../ui/TableSkeleton";
+import TableDataNotFound from "../ui/TableDataNotFound";
+import Pagination from "../ui/Pagination";
+import { mockProfitBalanceData } from "@/constants/profitBalanceData";
 
 const tableHead = [
   { label: "SL", field: "" },
-  { label: "Date", field: "capitalsDate" },
-  { label: "Time", field: "capitalsTime" },
-  { label: "Type", field: "" },
-  { label: "Description", field: "" },
-  { label: "Amount", field: "capitalsAmount" },
-  { label: "Balance", field: "capitalsBalance" },
+  { label: "Name", field: "" },
+  { label: "Designation", field: "" },
+  { label: "Profit Amount", field: "profitAmount" },
+  { label: "Profit Balance", field: "profitBalance" },
 ];
 
-const AllCapitalsListTable = () => {
+const AllProfitBalanceListTable = () => {
   const [searchTerm, setSearchTerm] = useDebounce("");
   const [sort, setSort] = useState({ field: "createdAt", order: "desc" });
   const [query, setQuery] = useState<Record<string, string | number>>({
     page: 1,
-    fields: "partnerName,costingAmount,costingDate,costingType,note,fileUrl,createdAt",
+    fields: "partnerName,partnerDesignation,profitAmount,profitBalance,createdAt",
     sort: `${sort.order === "desc" ? "-" : ""}${sort.field}`,
   });
 
-  const capitalsData: ICapitals[] = mockCapitalsData;
+  const profitBalanceData: IProfitBalance[] = mockProfitBalanceData;
 
   const metaData = { totalDoc: 0, page: 1 };
   const isLoading = false;
@@ -47,15 +46,15 @@ const AllCapitalsListTable = () => {
     <div className="flex flex-col gap-4">
       {/* current balance */}
       <div className="bg-white p-4">
-        <h1 className="text-[20px] font-bold text-dashboard">Current Balance: 31000 Tk</h1>
+        <h1 className="text-[20px] font-bold text-dashboard">Total Profit Amount: 50000 Tk</h1>
       </div>
 
       <div className="flex flex-col gap-[10px]">
         <div className="flex flex-col gap-[15px] bg-white p-4">
           <div className="flex flex-col gap-[5px]">
-            <h1 className="text-[16px] font-[600]">Balance History List</h1>
+            <h1 className="text-[16px] font-[600]">Profit Balance History List</h1>
             <p className="text-[12px] text-muted md:text-[14px]">
-              Displaying All the available balance history in your dashboard. There is total{" "}
+              Displaying All the available profit balance history in your dashboard. There is total{" "}
               <span className="font-bold text-dashboard">{metaData.totalDoc}</span> history. Data is
               Divided into{" "}
               <span className="font-bold text-dashboard">
@@ -75,7 +74,7 @@ const AllCapitalsListTable = () => {
                 type="text"
                 className="w-full bg-transparent outline-none"
                 placeholder="Search Capital"
-                // onChange={(e) => setSearchTerm(e.target.value)}
+                onChange={(e) => setSearchTerm(e.target.value)}
               />
               <RxMagnifyingGlass />
             </div>
@@ -125,45 +124,35 @@ const AllCapitalsListTable = () => {
               <tbody className="divide-y divide-gray-200 bg-white">
                 {isLoading ? (
                   <TableSkeleton columns={tableHead.length} />
-                ) : capitalsData?.length ? (
-                  capitalsData?.map((capital, index) => (
+                ) : profitBalanceData?.length ? (
+                  profitBalanceData?.map((profitBalance, index) => (
                     <tr key={index} className="hover:bg-gray-50">
                       {/* index */}
                       <td className="px-6 py-4 text-sm text-gray-900">{index + 1}</td>
 
                       {/* capital date */}
                       <td className="px-6 py-4">
-                        <span className="text-[14px]">{capital.capitalsDate}</span>
+                        <span className="text-[14px]">{profitBalance.partnerName}</span>
                       </td>
 
                       {/* capital time */}
                       <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
-                        <span className="text-sm">{capital.capitalsTime}</span>
+                        <span className="text-sm">{profitBalance.partnerDesignation}</span>
                       </td>
 
                       {/* capital type */}
                       <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
-                        <span className="text-sm">{capital.capitalsType}</span>
+                        <span className="text-sm">{profitBalance.profitAmount}</span>
                       </td>
 
                       {/* type */}
                       <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
-                        <span className="text-sm">{capital.capitalsDescription}</span>
-                      </td>
-
-                      {/* capital amount */}
-                      <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
-                        <span className="text-sm">{capital.capitalsAmount}</span>
-                      </td>
-
-                      {/* capital balance */}
-                      <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
-                        <span className="text-sm">{capital.capitalsBalance}</span>
+                        <span className="text-sm">{profitBalance.profitBalance}</span>
                       </td>
                     </tr>
                   ))
                 ) : (
-                  <TableDataNotFound span={tableHead.length} message="No Capital Found" />
+                  <TableDataNotFound span={tableHead.length} message="No Profit Balance Found" />
                 )}
               </tbody>
             </table>
@@ -178,4 +167,4 @@ const AllCapitalsListTable = () => {
   );
 };
 
-export default AllCapitalsListTable;
+export default AllProfitBalanceListTable;

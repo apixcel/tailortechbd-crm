@@ -148,7 +148,7 @@ const AllPartnerListTable = () => {
 
                     {/* investment date */}
                     <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
-                      <span className="text-sm">{partner.joiningDate}</span>
+                      <span className="text-sm">{partner.partnerJoiningDate}</span>
                     </td>
 
                     {/* actions */}
@@ -156,7 +156,7 @@ const AllPartnerListTable = () => {
                       <div className="flex items-center gap-2">
                         {/* update */}
                         <Link
-                          href={`/partners/${partner._id}`}
+                          href={`/partner-list/${partner._id}`}
                           className="center aspect-square w-[30px] cursor-pointer rounded-full border-[1px] border-dashboard bg-dashboard/5 text-dashboard"
                           title="Edit Partner"
                         >
@@ -168,7 +168,7 @@ const AllPartnerListTable = () => {
                           entityId={partner._id!}
                           entityName={partner.partnerName}
                           entityLabel="Partner"
-                          // onDelete={(id) => deletePartner({ partnerId: id })}
+                          onDelete={(id) => deletePartner({ partnerId: id })}
                           isLoading={false}
                         />
                       </div>

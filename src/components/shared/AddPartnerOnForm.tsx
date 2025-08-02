@@ -1,0 +1,93 @@
+"use client";
+
+import useDebounce from "@/hooks/useDebounce";
+import { useState } from "react";
+import { IPartner } from "@/types";
+
+import { FaPlus } from "react-icons/fa";
+import { RxMagnifyingGlass } from "react-icons/rx";
+import { toast } from "sonner";
+import { mockPartners } from "@/constants/partnerData";
+
+import { Loader, DialogProvider, HorizontalLine } from "@/components";
+
+interface IProps {
+  setFieldValue: (field: string, value: IPartner) => void;
+  values: Record<string, unknown>;
+}
+
+const AddPartnerOnForm = ({ setFieldValue }: IProps) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [searchValue, setSearchValue] = useDebounce("");
+
+  const partnerData = mockPartners;
+  const isLoading = false;
+
+  if (isLoading) return <Loader />;
+
+  const handleSelectPartner = (partner: Omit<IPartner, "createdAt" | "updatedAt">) => {
+    setFieldValue("partner", {
+      _id: partner._id,
+      partnerName: partner.partnerName,
+      partnerDesignation: partner.partnerDesignation,
+      partnerJoiningDate: partner.partnerJoiningDate,
+    });
+    setIsOpen(false);
+  };
+
+  return (
+    <>
+      <button
+        type="button"
+        onClick={() => setIsOpen(true)}
+        className="flex cursor-pointer items-center justify-center gap-3 rounded-[4px] bg-success/10 px-[8px] py-[4px] text-sm text-success"
+      >
+        <FaPlus /> Add Partner
+      </button>
+      <DialogProvider state={isOpen} setState={setIsOpen} className="w-[95vw] md:w-[700px]">
+        <div className="max-h-[50vh] w-full overflow-auto bg-white p-[16px]">
+          <h1 className="text-[18px] font-bold">Select a Partner</h1>
+          <HorizontalLine className="my-[20px]" />
+
+          <div className="sticky top-0 flex w-[300px] items-center justify-between rounded-[5px] border border-dashboard/20 bg-white p-[5px]">
+            <input
+              type="text"
+              className="w-full bg-transparent outline-none"
+              placeholder="Search Partner"
+              onChange={(e) => setSearchValue(e.target.value)}
+            />
+            <RxMagnifyingGlass />
+          </div>
+
+          <div className="mt-[20px] grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-2">
+            {partnerData
+              .filter((partner) =>
+                partner.partnerName.toLowerCase().includes(searchValue.toLowerCase())
+              )
+              .map((partner) => (
+                <div
+                  key={partner._id}
+                  onClick={() => handleSelectPartner(partner)}
+                  className="flex cursor-pointer items-center justify-between gap-[8px] rounded-[4px] border border-gray-200 p-[8px] hover:border-success"
+                >
+                  <div className="flex w-full flex-col items-center gap-[4px] text-sm">
+                    <p>
+                      <strong>Name:</strong> {partner.partnerName}
+                    </p>
+                    <p>
+                      <strong>Designation:</strong> {partner.partnerDesignation}
+                    </p>
+                    <p>
+                      <strong>Joining Date:</strong> {partner.partnerJoiningDate}
+                    </p>
+                  </div>
+                </div>
+              ))}
+          </div>
+        </div>
+      </DialogProvider>
+    </>
+  );
+};
+
+export default AddPartnerOnForm;

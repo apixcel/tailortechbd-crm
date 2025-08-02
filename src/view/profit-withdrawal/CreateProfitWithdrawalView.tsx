@@ -15,34 +15,30 @@ const CreateProfitWithdrawalView = () => {
     const formattedValues: IProfitWithdrawal = {
       ...payload,
       withdrawalDate: payload.withdrawalDate.split("T")[0],
-      profitPeriod: {
-        startDate: payload.profitPeriod.startDate.split("T")[0],
-        endDate: payload.profitPeriod.endDate.split("T")[0],
-      },
     };
 
-    const res = await createProfitWithdrawal(formattedValues);
-    const error = res.error as IQueryMutationErrorResponse;
-    if (error) {
-      if (error?.data?.message) {
-        toast(error.data?.message);
-      } else {
-        toast("Something went wrong");
-      }
+    console.log(formattedValues);
 
-      return;
-    }
+    // const res = await createProfitWithdrawal(formattedValues);
+    // const error = res.error as IQueryMutationErrorResponse;
+    // if (error) {
+    //   if (error?.data?.message) {
+    //     toast(error.data?.message);
+    //   } else {
+    //     toast("Something went wrong");
+    //   }
 
-    toast.success("Profit Withdrawal created successfully");
-    router.push("/profit-withdrawal");
+    //   return;
+    // }
 
-    return;
+    // toast.success("Profit Withdrawal created successfully");
+    // router.push("/profit-withdrawal");
   };
 
   return (
     <div className="flex flex-col gap-[10px]">
       <PageHeadingTitle title="Create Profit Withdrawal" />
-      <ProfitWithdrawalForm isLoading={isLoading} onSubmit={(value) => handleSubmit(value)} />
+      <ProfitWithdrawalForm isLoading={isLoading} onSubmit={handleSubmit} />
     </div>
   );
 };

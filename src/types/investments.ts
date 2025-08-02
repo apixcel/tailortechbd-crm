@@ -1,11 +1,11 @@
+import { IPartner } from "./partner";
+
 export interface IInvestment {
   _id: string;
-  partnerName: string;
   investmentAmount: number;
   investmentDate: string;
-  type: string;
-  note: string;
-  attachment: string;
+  investmentDescription: string;
+  partner: IPartner;
   createdAt?: string;
   updatedAt?: string;
 }

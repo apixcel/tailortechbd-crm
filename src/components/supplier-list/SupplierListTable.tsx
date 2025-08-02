@@ -19,7 +19,6 @@ import {
   TableSkeleton,
   Pagination,
   DeleteConfirmationDialog,
-  TimelineDropDown,
 } from "@/components";
 import { ViewSupplier } from "@/view";
 
@@ -91,22 +90,13 @@ const SupplierListTable = () => {
                 <input
                   type="text"
                   className="w-full bg-transparent outline-none"
-                  placeholder="Search Purchase"
+                  placeholder="Search Supplier"
                   onChange={(e) => {
                     setSearchTerm(e.target.value);
                     setPage(1);
                   }}
                 />
                 <RxMagnifyingGlass />
-              </div>
-              {/* timeline dropdown */}
-              <div>
-                <TimelineDropDown
-                  onSelect={({ value }) => {
-                    setQuery({ ...query, day_count: value });
-                    setPage(1);
-                  }}
-                />
               </div>
             </div>
 
