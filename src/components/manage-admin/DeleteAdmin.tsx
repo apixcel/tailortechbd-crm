@@ -20,16 +20,16 @@ const DeleteAdmin = ({ admin }: { admin: IUser }) => {
     // const res = await deleteAdmin(admin._id);
     // const error = res.error as IQueruMutationErrorResponse;
 
-    if (error) {
-      if (error.data?.message) {
-        toast.error(error.data?.message);
-      } else {
-        toast.error("Something went wrong");
-      }
-      return;
-    }
-    toast.success("Admin deleted successfully");
-    setIsOpen(false);
+    // if (error) {
+    //   if (error.data?.message) {
+    //     toast.error(error.data?.message);
+    //   } else {
+    //     toast.error("Something went wrong");
+    //   }
+    //   return;
+    // }
+    // toast.success("Admin deleted successfully");
+    // setIsOpen(false);
   };
 
   return (

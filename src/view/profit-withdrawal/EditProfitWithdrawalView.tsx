@@ -30,10 +30,6 @@ const EditProfitWithdrawalView = ({ slug }: { slug: string }) => {
     const formattedValues: IProfitWithdrawal = {
       ...payload,
       withdrawalDate: payload.withdrawalDate.split("T")[0],
-      profitPeriod: {
-        startDate: payload.profitPeriod.startDate.split("T")[0],
-        endDate: payload.profitPeriod.endDate.split("T")[0],
-      },
     };
 
     if (isUpdating) {

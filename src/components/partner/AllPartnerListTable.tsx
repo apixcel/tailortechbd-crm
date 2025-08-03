@@ -24,7 +24,7 @@ const tableHead = [
 ];
 
 const AllPartnerListTable = () => {
-  const [searchTerm, setSearchTerm] = useDebounce("");
+  const [/* searchTerm */, setSearchTerm] = useDebounce("");
   const [sort, setSort] = useState({ field: "createdAt", order: "desc" });
   const [query, setQuery] = useState<Record<string, string | number>>({
     page: 1,
@@ -164,13 +164,13 @@ const AllPartnerListTable = () => {
                         </Link>
 
                         {/* delete */}
-                        <DeleteConfirmationDialog
+                        {/* <DeleteConfirmationDialog
                           entityId={partner._id!}
                           entityName={partner.partnerName}
                           entityLabel="Partner"
                           onDelete={(id) => deletePartner({ partnerId: id })}
                           isLoading={false}
-                        />
+                        /> */}
                       </div>
                     </td>
                   </tr>

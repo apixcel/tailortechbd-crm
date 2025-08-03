@@ -23,13 +23,11 @@ import {
 } from "@/components";
 
 const tableHead = [
-  { label: "#", field: "" },
-  { label: "Partner Name", field: "" },
+  { label: "SL", field: "" },
   { label: "Costing Amount", field: "costingAmount" },
   { label: "Date", field: "costingDate" },
   { label: "Type", field: "" },
-  { label: "Note", field: "" },
-  { label: "Attachment", field: "" },
+  { label: "Description", field: "" },
   { label: "Create Date", field: "createdAt" },
   { label: "Actions", field: "" },
 ];
@@ -139,11 +137,6 @@ const CostingListTable = () => {
                     {/* index */}
                     <td className="px-6 py-4 text-sm text-gray-900">{index + 1}</td>
 
-                    {/* partner name */}
-                    <td className="px-6 py-4">
-                      <span className="line-clamp-1 text-[14px]">{costing.partnerName}</span>
-                    </td>
-
                     {/* costing amount */}
                     <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
                       <span className="text-sm">{costing.costingAmount}</span>
@@ -159,24 +152,9 @@ const CostingListTable = () => {
                       <span className="text-sm">{costing.costingType}</span>
                     </td>
 
-                    {/* note */}
+                    {/* description */}
                     <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
-                      <span className="text-sm">{truncateWords(costing.note || "-", 10)}</span>
-                    </td>
-
-                    {/* attachment */}
-                    <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
-                      {costing.fileUrl?.length ? (
-                        <Link
-                          href={costing.fileUrl}
-                          target="_blank"
-                          className="text-sm hover:underline"
-                        >
-                          link
-                        </Link>
-                      ) : (
-                        "-"
-                      )}
+                      <span className="text-sm">{truncateWords(costing.description || "-", 10)}</span>
                     </td>
 
                     {/* updated time */}
@@ -201,7 +179,7 @@ const CostingListTable = () => {
                         {/* delete */}
                         <DeleteConfirmationDialog
                           entityId={costing._id!}
-                          entityName={costing.partnerName}
+                          entityName={costing.costingType}
                           entityLabel="Costing"
                           onDelete={(id) => deleteCosting({ costingId: id })}
                           isLoading={isDeleting}

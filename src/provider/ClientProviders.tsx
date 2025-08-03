@@ -13,7 +13,7 @@ const ClientProviders = ({ children }: { children: React.ReactNode }) => {
       <Toaster position="top-center" richColors />
       <PersistGate loading={null} persistor={persistor}>
         <AuthProvider>
-          <ProtectedRoute role="admin">{children}</ProtectedRoute>
+          <ProtectedRoute>{children}</ProtectedRoute>
         </AuthProvider>
       </PersistGate>
     </Provider>
