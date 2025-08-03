@@ -1,11 +1,10 @@
-export interface ICapitals {
+export interface ICapital {
   _id: string;
-  capitalsDate: string;
-  capitalsTime: string;
-  capitalsType: string;
-  capitalsDescription: string;
-  capitalsAmount: number;
-  capitalsBalance: number;
-  createdAt?: string;
-  updatedAt?: string;
+  date: string;
+  type: "credit" | "debit";
+  description: string;
+  amount: number;
+  balance: number;
+  createdAt: string;
+  updatedAt: string;
 }

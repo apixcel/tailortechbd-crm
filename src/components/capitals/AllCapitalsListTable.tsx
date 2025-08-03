@@ -1,14 +1,12 @@
 "use client";
 
 import { HorizontalLine, Pagination, TableDataNotFound, TableSkeleton } from "@/components";
-import { FaChevronUp } from "react-icons/fa";
-import { FaChevronDown } from "react-icons/fa";
-import { RxMagnifyingGlass } from "react-icons/rx";
-import { useState } from "react";
-import dateUtils from "@/utils/date";
-import { ICapitals } from "@/types";
-import { mockCapitalsData } from "@/constants/capitalsData";
 import { useDebounce } from "@/hooks";
+import { useGetAllCapitalJournalQuery } from "@/redux/features/capital/capital.api";
+import dateUtils from "@/utils/date";
+import { useState } from "react";
+import { FaChevronDown, FaChevronUp } from "react-icons/fa";
+import { RxMagnifyingGlass } from "react-icons/rx";
 
 const tableHead = [
   { label: "SL", field: "" },
@@ -22,14 +20,13 @@ const tableHead = [
 
 const AllCapitalsListTable = () => {
   const [searchTerm, setSearchTerm] = useDebounce("");
-  const [sort, setSort] = useState({ field: "createdAt", order: "desc" });
+  const [sort, setSort] = useState({ field: "date", order: "asc" });
   const [query, setQuery] = useState<Record<string, string | number>>({
     page: 1,
-    fields: "partnerName,costingAmount,costingDate,costingType,note,fileUrl,createdAt",
     sort: `${sort.order === "desc" ? "-" : ""}${sort.field}`,
   });
 
-  const capitalsData: ICapitals[] = mockCapitalsData;
+  const { data } = useGetAllCapitalJournalQuery(query);
 
   const metaData = { totalDoc: 0, page: 1 };
   const isLoading = false;
@@ -42,6 +39,8 @@ const AllCapitalsListTable = () => {
       sort: `${newOrder === "desc" ? "-" : ""}${field}`,
     }));
   };
+
+  const capitalData = data?.data;
 
   return (
     <div className="flex flex-col gap-4">
@@ -125,43 +124,56 @@ const AllCapitalsListTable = () => {
               <tbody className="divide-y divide-gray-200 bg-white">
                 {isLoading ? (
                   <TableSkeleton columns={tableHead.length} />
-                ) : capitalsData?.length ? (
-                  capitalsData?.map((capital, index) => (
-                    <tr key={index} className="hover:bg-gray-50">
-                      {/* index */}
-                      <td className="px-6 py-4 text-sm text-gray-900">{index + 1}</td>
+                ) : capitalData?.length ? (
+                  capitalData?.map((capital, index) => {
+                    const isCredit = capital.type === "credit";
+                    return (
+                      <tr key={index} className="hover:bg-gray-50">
+                        {/* index */}
+                        <td className="px-6 py-4 text-sm text-gray-900">{index + 1}</td>
 
-                      {/* capital date */}
-                      <td className="px-6 py-4">
-                        <span className="text-[14px]">{capital.capitalsDate}</span>
-                      </td>
+                        {/* capital date */}
+                        <td className="px-6 py-4">
+                          <span className="text-[14px]">{capital.date}</span>
+                        </td>
 
-                      {/* capital time */}
-                      <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
-                        <span className="text-sm">{capital.capitalsTime}</span>
-                      </td>
+                        {/* capital time */}
+                        <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
+                          <span className="text-sm">
+                            {dateUtils.getTimeFromISOString(capital.date)}
+                          </span>
+                        </td>
 
-                      {/* capital type */}
-                      <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
-                        <span className="text-sm">{capital.capitalsType}</span>
-                      </td>
+                        {/* capital type */}
+                        <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
+                          <span
+                            className={`rounded-[18px] px-[10px] py-[2px] text-sm capitalize ${isCredit ? "bg-green-100 text-green-600" : "bg-red-100 text-red-600"}`}
+                          >
+                            {capital.type}
+                          </span>
+                        </td>
 
-                      {/* type */}
-                      <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
-                        <span className="text-sm">{capital.capitalsDescription}</span>
-                      </td>
+                        {/* type */}
+                        <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
+                          <span className="text-sm">{capital.description}</span>
+                        </td>
 
-                      {/* capital amount */}
-                      <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
-                        <span className="text-sm">{capital.capitalsAmount}</span>
-                      </td>
+                        {/* capital amount */}
+                        <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
+                          <span
+                            className={`text-sm ${isCredit ? "text-green-600" : "text-red-600"}`}
+                          >
+                            {isCredit ? "+" : "-"} {capital.amount}
+                          </span>
+                        </td>
 
-                      {/* capital balance */}
-                      <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
-                        <span className="text-sm">{capital.capitalsBalance}</span>
-                      </td>
-                    </tr>
-                  ))
+                        {/* capital balance */}
+                        <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
+                          <span className="text-sm">{capital.balance}</span>
+                        </td>
+                      </tr>
+                    );
+                  })
                 ) : (
                   <TableDataNotFound span={tableHead.length} message="No Capital Found" />
                 )}

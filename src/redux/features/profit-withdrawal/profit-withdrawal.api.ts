@@ -13,7 +13,7 @@ const profitWithdrawalApi = api.injectEndpoints({
         method: "POST",
         body: payload,
       }),
-      invalidatesTags: ["profit-withdrawal"],
+      invalidatesTags: ["finance"],
     }),
     getAllProfitWithdrawal: builder.query<
       { data: IProfitWithdrawal[]; meta?: IMeta },
@@ -26,7 +26,7 @@ const profitWithdrawalApi = api.injectEndpoints({
           method: "GET",
         };
       },
-      providesTags: ["profit-withdrawal"],
+      providesTags: ["finance"],
     }),
     getProfitWithdrawalById: builder.query<
       { data: IProfitWithdrawal },
@@ -36,7 +36,7 @@ const profitWithdrawalApi = api.injectEndpoints({
         url: `/profit-withdrawal/get/${profitWithdrawalId}`,
         method: "GET",
       }),
-      providesTags: ["profit-withdrawal"],
+      providesTags: ["finance"],
     }),
     updateProfitWithdrawalById: builder.mutation<
       { data: IProfitWithdrawal },
@@ -47,7 +47,7 @@ const profitWithdrawalApi = api.injectEndpoints({
         method: "PATCH",
         body: { _id: undefined, ...payload },
       }),
-      invalidatesTags: ["profit-withdrawal"],
+      invalidatesTags: ["finance"],
     }),
     deleteProfitWithdrawalById: builder.mutation<
       { data: IProfitWithdrawal },
@@ -57,7 +57,7 @@ const profitWithdrawalApi = api.injectEndpoints({
         url: `/profit-withdrawal/delete/${profitWithdrawalId}`,
         method: "DELETE",
       }),
-      invalidatesTags: ["profit-withdrawal"],
+      invalidatesTags: ["finance"],
     }),
   }),
 });

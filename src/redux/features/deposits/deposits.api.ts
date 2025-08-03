@@ -10,7 +10,7 @@ const depositsApi = api.injectEndpoints({
         method: "POST",
         body: payload,
       }),
-      invalidatesTags: ["deposits"],
+      invalidatesTags: ["finance"],
     }),
     getAllDeposits: builder.query<
       { data: IDeposit[]; meta?: IMeta },
@@ -23,14 +23,14 @@ const depositsApi = api.injectEndpoints({
           method: "GET",
         };
       },
-      providesTags: ["deposits"],
+      providesTags: ["finance"],
     }),
     getDepositById: builder.query<{ data: IDeposit }, { depositId: string }>({
       query: ({ depositId }) => ({
         url: `/deposit/get/${depositId}`,
         method: "GET",
       }),
-      providesTags: ["deposits"],
+      providesTags: ["finance"],
     }),
     updateDepositById: builder.mutation<
       { data: IDeposit },
@@ -41,14 +41,14 @@ const depositsApi = api.injectEndpoints({
         method: "PATCH",
         body: { _id: undefined, ...payload },
       }),
-      invalidatesTags: ["deposits"],
+      invalidatesTags: ["finance"],
     }),
     deleteDepositById: builder.mutation<{ data: IDeposit }, string>({
       query: (depositId) => ({
         url: `/deposit/delete/${depositId}`,
         method: "DELETE",
       }),
-      invalidatesTags: ["deposits"],
+      invalidatesTags: ["finance"],
     }),
   }),
 });

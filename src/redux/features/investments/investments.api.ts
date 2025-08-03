@@ -10,7 +10,7 @@ const investmentsApi = api.injectEndpoints({
         method: "POST",
         body: payload,
       }),
-      invalidatesTags: ["investments"],
+      invalidatesTags: ["finance"],
     }),
     getAllInvestments: builder.query<
       { data: IInvestment[]; meta?: IMeta },
@@ -23,14 +23,14 @@ const investmentsApi = api.injectEndpoints({
           method: "GET",
         };
       },
-      providesTags: ["investments"],
+      providesTags: ["finance"],
     }),
     getInvestmentById: builder.query<{ data: IInvestment }, { investmentId: string }>({
       query: ({ investmentId }) => ({
         url: `/investments/get/${investmentId}`,
         method: "GET",
       }),
-      providesTags: ["investments"],
+      providesTags: ["finance"],
     }),
     updateInvestmentById: builder.mutation<
       { data: IInvestment },
@@ -41,14 +41,14 @@ const investmentsApi = api.injectEndpoints({
         method: "PATCH",
         body: { _id: undefined, ...payload },
       }),
-      invalidatesTags: ["investments"],
+      invalidatesTags: ["finance"],
     }),
     deleteInvestmentById: builder.mutation<{ data: IInvestment }, { investmentId: string }>({
       query: ({ investmentId }) => ({
         url: `/investments/delete/${investmentId}`,
         method: "DELETE",
       }),
-      invalidatesTags: ["investments"],
+      invalidatesTags: ["finance"],
     }),
   }),
 });
