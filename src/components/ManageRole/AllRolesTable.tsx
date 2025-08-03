@@ -1,9 +1,9 @@
 "use client";
 
-import { useDebounce } from "@/hooks";
+import { useAppSelector, useDebounce } from "@/hooks";
 import { useState } from "react";
 
-import { FaChevronDown, FaChevronUp, FaTrashAlt } from "react-icons/fa";
+import { FaChevronDown, FaChevronUp } from "react-icons/fa";
 
 import HorizontalLine from "@/components/ui/HorizontalLine";
 import { useGetAllRolesQuery } from "@/redux/features/role/role.api";
@@ -11,10 +11,13 @@ import { useGetAllRolesQuery } from "@/redux/features/role/role.api";
 import TableDataNotFound from "@/components/ui/TableDataNotFound";
 import TableSkeleton from "@/components/ui/TableSkeleton";
 
+import { ROLE_ACTIONS } from "@/constants/roleAction";
+import { hasPermission } from "@/utils/role";
 import Link from "next/link";
 import { FiEdit, FiUsers } from "react-icons/fi";
 import { RxMagnifyingGlass } from "react-icons/rx";
-import RoleSelector from "./RoleSelector";
+import CreateRole from "./CreateRole";
+import DeleteRole from "./DeleteRole";
 
 const tableHead = [
   { label: "Name", field: "name" },
@@ -26,6 +29,10 @@ const tableHead = [
 const AllRolesTable = () => {
   const [searchTerm, setSearchTerm] = useDebounce("");
   const [sort, setSort] = useState({ field: "createdAt", order: "desc" });
+
+  const { role: myRole } = useAppSelector((state) => state.user);
+
+  const hasAccess = hasPermission(ROLE_ACTIONS.MANAGE_ROLES.value, myRole);
 
   const [query, setQuery] = useState<Record<string, string | number | undefined>>({
     page: 1,
@@ -64,7 +71,8 @@ const AllRolesTable = () => {
             />
             <RxMagnifyingGlass />
           </div>
-        
+
+          <CreateRole />
         </div>
         <div className="overflow-x-auto">
           <table className="w-full divide-y divide-dashboard/20">
@@ -125,15 +133,19 @@ const AllRolesTable = () => {
                     <td className="px-6 py-4">{role.actions.length}</td>
                     <td className="flex items-center justify-start gap-[10px] px-6 py-4">
                       <span className="flex items-center gap-[10px]">
-                        <Link
-                          href={`/manage-roles/${role._id}`}
-                          className="cursor-pointer text-green-600"
-                        >
-                          <FiEdit />
-                        </Link>
-                        <button className="cursor-pointer text-danger">
-                          <FaTrashAlt />
-                        </button>
+                        {hasAccess ? (
+                          <>
+                            <Link
+                              href={`/manage-roles/${role._id}`}
+                              className="cursor-pointer text-green-600"
+                            >
+                              <FiEdit />
+                            </Link>
+                            <DeleteRole role={role} />
+                          </>
+                        ) : (
+                          "N/A"
+                        )}
                       </span>
                     </td>
                   </tr>

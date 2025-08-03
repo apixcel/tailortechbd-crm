@@ -13,21 +13,19 @@ const superAdminApi = api.injectEndpoints({
       },
       invalidatesTags: ["role"],
     }),
-    loginSuperAdmin: builder.mutation<
-      { data: { result: IUser; accessToken: string } },
-      { email?: string; phoneNumber?: string; mode?: "email" | "phoneNumber"; password: string }
-    >({
-      query: (post) => ({
-        url: "/super-admin/login-super-admin",
-        method: "POST",
-        body: post,
-      }),
-      invalidatesTags: ["user"],
-    }),
-    deleteSuperAdminById: builder.mutation<{ data: IUser }, string>({
-      query: (userId) => ({
-        url: `/super-admin/delete/${userId}`,
+
+    deleteRoleById: builder.mutation<{ data: IUser }, string>({
+      query: (roleId) => ({
+        url: `/role/delete/${roleId}`,
         method: "DELETE",
+      }),
+      invalidatesTags: ["role"],
+    }),
+    createRole: builder.mutation<{ data: IRole }, Pick<IRole, "name">>({
+      query: (payload) => ({
+        url: `/role/create`,
+        method: "POST",
+        body: payload,
       }),
       invalidatesTags: ["role"],
     }),
@@ -88,10 +86,10 @@ const superAdminApi = api.injectEndpoints({
 export const {
   useGetMyRoleQuery,
   useToggleSuperAdminAccountActivationMutation,
-  useLoginSuperAdminMutation,
-  useDeleteSuperAdminByIdMutation,
+  useCreateRoleMutation,
   useGetAllRolesQuery,
   useGetAllRoleActionsQuery,
   useGetRoleDetailsByRoleIdQuery,
+  useDeleteRoleByIdMutation,
   useUpdateRoleActionsByRoleIdMutation,
 } = superAdminApi;

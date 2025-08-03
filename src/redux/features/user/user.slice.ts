@@ -1,7 +1,7 @@
 import { IRole, IRoleAction, IUser } from "@/types";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-type TUserRole = Omit<IRole, "actions"> & { actions: IRoleAction[] };
+export type TUserRole = Omit<IRole, "actions"> & { actions: IRoleAction[] };
 type TAuthState = {
   user: IUser | null;
   isLoading: boolean;

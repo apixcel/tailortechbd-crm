@@ -11,7 +11,7 @@ const baseQuery = fetchBaseQuery({
 const baseQueryWithRefreshToken = async (args: any, api: any, extraOptions: any) => {
   let result = await baseQuery(args, api, extraOptions);
 
-  if (result?.error?.status === 401) {
+  if (result?.error?.status === 498) {
     const res = await fetch(`${baseUrl}/auth/refresh-token`, {
       method: "POST",
       credentials: "include",
