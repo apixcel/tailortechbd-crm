@@ -1,4 +1,4 @@
-import { AllInvestmentsTable,PageHeadingTitle } from "@/components";
+import { AllInvestmentsTable, PageHeadingTitle } from "@/components";
 
 const InvestmentsView = () => {
   return (

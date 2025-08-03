@@ -1,7 +1,4 @@
-import {
-  AllProfitWithdrawalTable,
-  PageHeadingTitle,
-} from "@/components";
+import { AllProfitWithdrawalTable, PageHeadingTitle } from "@/components";
 
 const ProfitWithdrawalView = () => {
   return (

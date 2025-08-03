@@ -17,7 +17,7 @@ const TotalSalesAmountCard = ({
         <p className="text-[14px] font-semibold text-info capitalize">{selectedFilter}</p>
       </div>
 
-      <div className="mt-8 flex w-full items-center gap-4 mb-5">
+      <div className="mt-8 mb-5 flex w-full items-center gap-4">
         <div className="w-fit">
           <div className="flex h-[60px] w-[60px] items-center justify-center rounded-[5px] bg-cyan-200/80 font-bold text-sky-400">
             <MdOutlineTrendingUp className="size-[25px] 2xl:size-[30px]" />
@@ -28,8 +28,8 @@ const TotalSalesAmountCard = ({
         </div>
       </div>
       <p className="text-[14px] font-bold 2xl:text-[16px]">
-          <span className="text-success">{increase}%</span> increase
-        </p>
+        <span className="text-success">{increase}%</span> increase
+      </p>
     </div>
   );
 };

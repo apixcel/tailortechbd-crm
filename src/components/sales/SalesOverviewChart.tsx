@@ -1,13 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import {
-  PieChart,
-  Pie,
-  Cell,
-  ResponsiveContainer,
-  Legend,
-} from "recharts";
+import { PieChart, Pie, Cell, ResponsiveContainer, Legend } from "recharts";
 import { TbTrendingUp, TbTrendingDown } from "react-icons/tb";
 
 type PieLabelPropsSafe = {
@@ -70,7 +64,7 @@ const SalesOverviewChart: React.FC<SalesOverviewChartProps> = ({
     return (
       <>
         <p
-          className={`text-sm flex justify-center items-center gap-1 ${
+          className={`flex items-center justify-center gap-1 text-sm ${
             isLoss ? "text-red-500" : "text-success"
           }`}
         >
@@ -111,10 +105,8 @@ const SalesOverviewChart: React.FC<SalesOverviewChartProps> = ({
 
   return (
     <div className="w-[350px] bg-white p-4">
-      <h2 className="mb-1 text-center text-lg font-semibold text-primary">
-        Sales Overview
-      </h2>
-      <p className="mb-4 text-[14px] font-semibold text-info capitalize text-center">
+      <h2 className="mb-1 text-center text-lg font-semibold text-primary">Sales Overview</h2>
+      <p className="mb-4 text-center text-[14px] font-semibold text-info capitalize">
         {selectedFilterLabel}
       </p>
 
@@ -137,11 +129,7 @@ const SalesOverviewChart: React.FC<SalesOverviewChartProps> = ({
               isAnimationActive={false}
             >
               {data.map((_, index) => (
-                <Cell
-                  key={`cell-${index}`}
-                  fill={COLORS[index % COLORS.length]}
-                  cursor="pointer"
-                />
+                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} cursor="pointer" />
               ))}
             </Pie>
             <Legend

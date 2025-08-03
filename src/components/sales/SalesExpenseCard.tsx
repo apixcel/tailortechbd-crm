@@ -16,7 +16,7 @@ const SalesExpenseCard = ({
         <p className="text-[14px] font-semibold text-info capitalize">{selectedFilter}</p>
       </div>
 
-      <div className="mt-8 flex w-full items-center gap-4 mb-5">
+      <div className="mt-8 mb-5 flex w-full items-center gap-4">
         <div className="w-fit">
           <div className="flex h-[60px] w-[60px] items-center justify-center rounded-[5px] bg-danger/10 font-bold text-danger">
             <MdOutlineTrendingDown className="size-[20px] 2xl:size-[25px]" />
@@ -27,8 +27,8 @@ const SalesExpenseCard = ({
         </div>
       </div>
       <p className="text-[14px] font-bold 2xl:text-[16px]">
-            <span className="text-success">{increase}%</span> increase
-          </p>
+        <span className="text-success">{increase}%</span> increase
+      </p>
     </div>
   );
 };

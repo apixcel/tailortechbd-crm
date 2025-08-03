@@ -72,10 +72,6 @@ export { default as AllInvestmentsTable } from "./investments/AllInvestmentsTabl
 export { default as InvestmentsForm } from "./investments/InvestmentsForm";
 export { default as OverallInvestmentStatistics } from "./investments/OverallInvestmentStatistics";
 
-// deposits
-export { default as AllDepositsTable } from "./deposits/AllDepositsTable";
-export { default as DepositsForm } from "./deposits/DepositsForm";
-
 // profit withdrawal
 export { default as AllProfitWithdrawalTable } from "./profit-withdrawal/AllProfitWithdrawalTable";
 export { default as ProfitWithdrawalForm } from "./profit-withdrawal/ProfitWithdrawalForm";
@@ -84,10 +80,6 @@ export { default as OverallProfitWithdrawalsStatistics } from "./profit-withdraw
 
 // profit balance
 export { default as AllProfitBalanceListTable } from "./profit-balance/AllProfitBalanceListTable";
-
-// partner dedication
-export { default as AllPartnerDedicationTable } from "./partner-dedication/AllPartnerDedicationTable";
-export { default as PartnerDedicationForm } from "./partner-dedication/PartnerDedicationForm";
 
 // partner
 export { default as AllPartnerListTable } from "./partner/AllPartnerListTable";

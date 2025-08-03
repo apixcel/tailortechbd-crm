@@ -51,7 +51,7 @@ const InvestmentsForm = ({
             <div className="flex flex-col gap-4 bg-white p-4">
               <SectionTitle>Investment Information</SectionTitle>
 
-              {/* partner name and amount */}
+              {/* amount */}
               <div className="flex w-full flex-col items-start justify-start gap-[16px] sm:flex-row">
                 {/* investment amount */}
                 <div className="flex w-full flex-col gap-[5px]">

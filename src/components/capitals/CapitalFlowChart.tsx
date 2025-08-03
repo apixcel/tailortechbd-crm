@@ -1,4 +1,5 @@
 "use client";
+
 import {
   BarChart,
   Bar,
@@ -22,7 +23,16 @@ const formattedData = mockCapitalsData.map((item) => ({
   balance: item.capitalsBalance,
 }));
 
-const getColor = (type: string) => (type.toLowerCase().includes("debit") ? "#f87171" : "#4ade80");
+const colors = {
+  debit: "var(--secondary, #e93a3c)",
+  credit: "var(--primary, #101949)",
+  balance: "var(--success, #23c57a)",
+  background: "var(--color-background, #f2f2f2)",
+  grid: "var(--color-tertiary, #e9e9e9)",
+};
+
+const getBarColor = (type: string) =>
+  type.toLowerCase().includes("debit") ? colors.debit : colors.credit;
 
 interface TooltipPayloadItem {
   dataKey: string;
@@ -41,49 +51,98 @@ interface CustomTooltipProps {
 
 const CustomTooltip = ({ active, payload, label }: CustomTooltipProps) => {
   if (!active || !payload || !payload.length) return null;
-
   const change = payload.find((p) => p.dataKey === "amount");
   const balance = payload.find((p) => p.dataKey === "balance");
-
   const isDebit = change?.payload?.type?.toLowerCase().includes("debit");
   const labelType = isDebit ? "Debit" : "Credit";
 
   return (
-    <div className="rounded bg-gray-900 p-2 text-sm text-white shadow-md">
-      <p className="mb-1">Date: 07/{label}</p>
+    <div className="min-w-[150px] rounded-xl bg-[var(--primary,#101949)]/95 p-4 text-sm text-white shadow-lg">
+      <p className="mb-1 font-semibold tracking-wide">Date: {label}</p>
       {change && (
         <p>
-          {labelType}: {Math.abs(change.value)}
+          <span className="font-medium">{labelType}:</span>{" "}
+          <span className={isDebit ? "text-red-400" : "text-green-400"}>
+            ৳{Math.abs(change.value).toLocaleString()}
+          </span>
         </p>
       )}
-      {balance && <p>Main Balance: {balance.value}</p>}
+      {balance && (
+        <p className="pt-1">
+          <span className="font-medium">Main Balance:</span>{" "}
+          <span className="text-blue-300">৳{balance.value.toLocaleString()}</span>
+        </p>
+      )}
     </div>
   );
 };
 
 const CapitalFlowChart = () => {
   return (
-    <div className="rounded-xl bg-white p-4 shadow-sm">
-      <h2 className="mb-4 text-lg font-semibold text-gray-800">Capital Flow Overview</h2>
+    <div className="bg-white p-6">
+      <h2 className="mb-6 text-[1.15rem] font-bold tracking-tight text-[var(--primary,#101949)]">
+        Capital Flow Overview
+      </h2>
       <div style={{ width: "100%", height: 400 }}>
         <ResponsiveContainer>
-          <BarChart data={formattedData} margin={{ top: 10, right: 40, left: 0, bottom: 10 }}>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="date" />
-            <YAxis />
-            <Tooltip content={<CustomTooltip />} />
-            <Legend />
-            <Bar dataKey="amount" name="Capital Change">
+          <BarChart
+            data={formattedData}
+            margin={{ top: 20, right: 40, left: 0, bottom: 24 }}
+            barSize={38}
+          >
+            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={colors.grid} />
+            <XAxis
+              dataKey="date"
+              tick={{ fill: "var(--primary,#101949)", fontWeight: 600, fontSize: 14 }}
+              axisLine={false}
+              tickLine={false}
+            />
+            <YAxis
+              tick={{ fill: "var(--muted,#6f6f6f)", fontSize: 14 }}
+              axisLine={false}
+              tickLine={false}
+              tickFormatter={(v) => "৳" + v}
+            />
+            <Tooltip content={<CustomTooltip />} cursor={{ fill: "#e9ecef", opacity: 0.5 }} />
+            <Legend
+              iconType="circle"
+              wrapperStyle={{ paddingTop: 18 }}
+              formatter={(value) =>
+                value === "amount" ? "Capital Change" : value === "balance" ? "Main Balance" : value
+              }
+            />
+            <Bar
+              dataKey="amount"
+              name="Capital Change"
+              radius={[8, 8, 0, 0]}
+              // Add animation & subtle hover effect
+              isAnimationActive
+            >
               {formattedData.map((entry, index) => (
-                <Cell key={`cell-${index}`} fill={getColor(entry.type)} />
+                <Cell
+                  key={`cell-${index}`}
+                  fill={getBarColor(entry.type)}
+                  className="cursor-pointer transition-all duration-200 hover:opacity-80"
+                />
               ))}
             </Bar>
             <Line
               type="monotone"
               dataKey="balance"
-              stroke="#3b82f6"
-              strokeWidth={2}
-              dot={{ r: 4 }}
+              stroke={colors.balance}
+              strokeWidth={3}
+              dot={{
+                r: 5,
+                fill: "#fff",
+                stroke: colors.balance,
+                strokeWidth: 2,
+              }}
+              activeDot={{
+                r: 7,
+                fill: "var(--primary,#101949)",
+                stroke: "#fff",
+                strokeWidth: 3,
+              }}
               name="Main Balance"
             />
           </BarChart>

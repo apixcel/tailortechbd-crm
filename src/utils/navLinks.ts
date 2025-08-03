@@ -82,10 +82,6 @@ export const admin: INavLinks[] = [
         label: "Investments",
         path: "/investments",
       },
-      // {
-      //   label: "Deposits",
-      //   path: "/deposits",
-      // },
       {
         label: "Profit Withdrawal",
         path: "/profit-withdrawal",
@@ -98,10 +94,6 @@ export const admin: INavLinks[] = [
         label: "Partner List",
         path: "/partner-list",
       },
-      // {
-      //   label: "Partner Dedication",
-      //   path: "/partner-dedication",
-      // },
     ],
   },
   {

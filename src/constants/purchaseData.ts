@@ -1,5 +1,3 @@
-import { IPurchase } from "@/types";
-
 export const mockPurchases = [
   {
     _id: "1",

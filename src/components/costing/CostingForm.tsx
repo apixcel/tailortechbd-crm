@@ -2,26 +2,28 @@
 
 import * as Yup from "yup";
 import { ErrorMessage, Field, FieldProps, Form, Formik, FormikHelpers } from "formik";
-import { ICosting } from "@/types";
 
-import { Input, ImageUploader, Button, SectionTitle, TextArea, PickDate } from "@/components";
+import { ICosting, IPartner } from "@/types";
+
+import { Input, Button, SectionTitle, TextArea, PickDate, SelectionBox } from "@/components";
+
+const costingTypeOptions = [
+  { label: "Credit", value: "credit" },
+  { label: "Debit", value: "debit" },
+];
 
 const initialValues: Omit<ICosting, "_id" | "createdAt" | "updatedAt"> = {
-  partnerName: "",
   costingAmount: 0,
   costingDate: new Date().toISOString(),
   costingType: "",
-  note: "",
-  fileUrl: "",
+  description: "",
 };
 
 const validationSchema = Yup.object().shape({
-  partnerName: Yup.string().required("Partner name is required"),
   costingAmount: Yup.number().required("Amount is required").min(1, "Amount must be >= 1"),
   costingDate: Yup.string().required("Date is required"),
   costingType: Yup.string().required("Type is required"),
-  note: Yup.string().required("Note is required"),
-  fileUrl: Yup.string().required("Attachment is required"),
+  description: Yup.string().required("Description is required"),
 });
 
 const CostingForm = ({
@@ -32,97 +34,64 @@ const CostingForm = ({
 }: {
   isLoading: boolean;
   defaultValue?: typeof initialValues;
-  onSubmit: (values: ICosting, { resetForm }: FormikHelpers<typeof initialValues>) => void;
+  onSubmit: (values: ICosting, helpers: FormikHelpers<typeof initialValues>) => void;
   buttonLabel?: string;
 }) => {
   return (
     <Formik
       initialValues={defaultValue || initialValues}
       validationSchema={validationSchema}
-      onSubmit={(values) => {
-        onSubmit(values as ICosting, {} as FormikHelpers<typeof initialValues>);
+      enableReinitialize
+      onSubmit={(values, helpers) => {
+        onSubmit(values as ICosting, helpers);
       }}
     >
-      {({ setFieldValue }) => (
+      {({ setFieldValue, values }) => (
         <Form className="flex flex-col gap-4">
-          <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-            <div className="flex flex-col gap-4 bg-white p-4">
-              <SectionTitle>Costing Information</SectionTitle>
-
-              {/* partner name and amount */}
-              <div className="flex w-full flex-col items-start justify-start gap-[16px] sm:flex-row">
-                {/* partner name */}
-                <div className="flex w-full flex-col gap-[5px]">
-                  <label className="form-label">Partner Name</label>
-                  <Field as={Input} name="partnerName" placeholder="Partner name" />
-                  <ErrorMessage
-                    name="partnerName"
-                    component="div"
-                    className="text-sm text-danger"
-                  />
-                </div>
-
-                {/* amount */}
-                <div className="flex w-full flex-col gap-[5px]">
-                  <label className="form-label">Costing Amount</label>
-                  <Field as={Input} type="number" name="costingAmount" placeholder="Amount" />
-                  <ErrorMessage
-                    name="costingAmount"
-                    component="div"
-                    className="text-sm text-danger"
-                  />
-                </div>
-              </div>
-
-              {/* type and date picker */}
-              <div className="flex w-full flex-col items-start justify-start gap-[16px] sm:flex-row">
-                <div className="flex w-full flex-col gap-[5px]">
-                  <label className="form-label">Costing Type</label>
-                  <Field as={Input} name="costingType" placeholder="Costing Type" />
-                  <ErrorMessage
-                    name="costingType"
-                    component="div"
-                    className="text-sm text-danger"
-                  />
-                </div>
-
-                {/* date picker */}
-                <div className="flex w-full flex-col gap-[5px]">
-                  <label className="form-label">Costing Date</label>
-                  <Field name="costingDate">
-                    {(fieldProps: FieldProps) => <PickDate {...fieldProps} />}
-                  </Field>
-                  <ErrorMessage
-                    name="costingDate"
-                    component="div"
-                    className="text-sm text-danger"
-                  />
-                </div>
-              </div>
-
-              {/* note */}
+          <div className="flex flex-col gap-4 bg-white p-4">
+            <SectionTitle>Costing Information</SectionTitle>
+            {/* amount, date, type */}
+            <div className="flex w-full flex-col items-start justify-start gap-[16px] sm:flex-row">
               <div className="flex w-full flex-col gap-[5px]">
-                <label className="form-label">Note</label>
-                <Field as={TextArea} name="note" placeholder="Note" rows={4} />
-                <ErrorMessage name="note" component="div" className="text-sm text-danger" />
+                <label className="form-label">Costing Amount</label>
+                <Field as={Input} type="number" name="costingAmount" placeholder="Amount" />
+                <ErrorMessage
+                  name="costingAmount"
+                  component="div"
+                  className="text-sm text-danger"
+                />
+              </div>
+
+              <div className="flex w-full flex-col gap-[5px]">
+                <label className="form-label">Costing Date</label>
+                <Field name="costingDate">
+                  {(fieldProps: FieldProps) => <PickDate {...fieldProps} />}
+                </Field>
+                <ErrorMessage name="costingDate" component="div" className="text-sm text-danger" />
+              </div>
+
+              <div className="flex w-full flex-col gap-[5px]">
+                <label className="form-label">Costing Type</label>
+                <SelectionBox
+                  data={costingTypeOptions}
+                  onSelect={(option) => setFieldValue("costingType", option.value)}
+                  defaultValue={costingTypeOptions.find((opt) => opt.value === values.costingType)}
+                  displayValue={
+                    costingTypeOptions.find((opt) => opt.value === values.costingType)?.label
+                  }
+                  showSearch={false}
+                />
+                <ErrorMessage name="costingType" component="div" className="text-sm text-danger" />
               </div>
             </div>
 
-            <div className="flex flex-col gap-4 bg-white p-4">
-              <SectionTitle>Attachment</SectionTitle>
-              <div>
-                <ImageUploader
-                  inputId="investment-attachment"
-                  mode="single"
-                  onChange={(urls) => setFieldValue("fileUrl", urls?.[0] || "")}
-                  title="Upload Attachment"
-                  acceptPDF
-                />
-                <ErrorMessage name="fileUrl" component="div" className="text-sm text-danger" />
-              </div>
+            {/* description */}
+            <div className="flex w-full flex-col gap-[5px]">
+              <label className="form-label">Description</label>
+              <Field as={TextArea} name="description" placeholder="Description" rows={4} />
+              <ErrorMessage name="description" component="div" className="text-sm text-danger" />
             </div>
           </div>
-
           <Button type="submit" isLoading={isLoading} className="mt-2">
             {buttonLabel}
           </Button>
