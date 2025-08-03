@@ -53,18 +53,18 @@ interface PurchaseReportOverviewProps {
 const PurchaseReportOverview = ({ selectedRange }: PurchaseReportOverviewProps) => {
   const [selectedFilter, setSelectedFilter] = useState(options[2]);
 
-    // Filter sales data by selected date range
-    const filteredData = purchaseChartData.filter((item) => {
-      if (!selectedRange || selectedRange.length !== 2) return true;
-  
-      const from = selectedRange[0].toDate();
-      const to = selectedRange[1].toDate();
-      const itemDate = new Date(item.time);
-  
-      return itemDate >= from && itemDate <= to;
-    });
+  // Filter sales data by selected date range
+  const filteredData = purchaseChartData.filter((item) => {
+    if (!selectedRange || selectedRange.length !== 2) return true;
 
-      // Calculate totals
+    const from = selectedRange[0].toDate();
+    const to = selectedRange[1].toDate();
+    const itemDate = new Date(item.time);
+
+    return itemDate >= from && itemDate <= to;
+  });
+
+  // Calculate totals
   const totals = {
     quantity: filteredData.reduce((acc, item) => acc + item.totalPurchase, 0),
     amount: filteredData.reduce((acc, item) => acc + item.totalPurchaseAmount, 0),
@@ -87,7 +87,7 @@ const PurchaseReportOverview = ({ selectedRange }: PurchaseReportOverviewProps) 
           increase={increase}
         />
         <PurchaseAmountCard
-            value={totals.amount}
+          value={totals.amount}
           selectedFilter={selectedFilter.value}
           increase={increase}
         />

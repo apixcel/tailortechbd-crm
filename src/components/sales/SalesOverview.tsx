@@ -70,15 +70,17 @@ const SalesOverview = ({ selectedRange }: SalesOverviewProps) => {
   return (
     <section className="flex flex-col gap-4">
       <div className="flex h-full items-stretch justify-between gap-4">
-        <div className="flex flex-col gap-4 flex-1">
-        <div className="flex h-full items-center justify-between bg-white p-4">
-  <h1 className="text-lg font-semibold flex items-center gap-2">
-    <span className="text-2xl animate-waving-hand">👋</span>
-    <span>Hi, <span className="mr-1 font-bold">Admin!</span> Welcome to the Dashboard.</span>
-  </h1>
-</div>
+        <div className="flex flex-1 flex-col gap-4">
+          <div className="flex h-full items-center justify-between bg-white p-4">
+            <h1 className="flex items-center gap-2 text-lg font-semibold">
+              <span className="animate-waving-hand text-2xl">👋</span>
+              <span>
+                Hi, <span className="mr-1 font-bold">Admin!</span> Welcome to the Dashboard.
+              </span>
+            </h1>
+          </div>
 
-          <div className="grid flex-1 grid-cols-1 gap-4 sm:grid-cols-2 2xl:grid-cols-4 min-h-[250px]">
+          <div className="grid min-h-[250px] flex-1 grid-cols-1 gap-4 sm:grid-cols-2 2xl:grid-cols-4">
             <SalesCapitalsCard
               value={totals.capitals}
               selectedFilter={selectedFilterLabel}
@@ -108,16 +110,15 @@ const SalesOverview = ({ selectedRange }: SalesOverviewProps) => {
           selectedFilterLabel={selectedFilterLabel}
         />
       </div>
-     
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 2xl:grid-cols-2">
-      <CapitalFlowChart />
-      <OverallSalesStatistics />
+        <CapitalFlowChart />
+        <OverallSalesStatistics />
       </div>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 2xl:grid-cols-2">
-      <OverallInvestmentStatistics />
-      <OverallProfitWithdrawalsStatistics />
+        <OverallInvestmentStatistics />
+        <OverallProfitWithdrawalsStatistics />
       </div>
 
       <ProductSalesOverview />

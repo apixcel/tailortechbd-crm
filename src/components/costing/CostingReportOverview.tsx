@@ -61,17 +61,16 @@ const CostingReportOverview = ({ selectedRange }: CostingReportOverviewProps) =>
     amount: filteredData.reduce((acc, item) => acc + item.totalCostingAmount, 0),
   };
 
-    // Format the selected filter label
-    const formatDate = (dateObj: DateObject) => dateObj?.format("DD-MM-YYYY");
+  // Format the selected filter label
+  const formatDate = (dateObj: DateObject) => dateObj?.format("DD-MM-YYYY");
 
-    const selectedFilterLabel =
-      selectedRange && selectedRange.length === 2
-        ? `${formatDate(selectedRange[0])} to ${formatDate(selectedRange[1])}`
-        : "Custom";
+  const selectedFilterLabel =
+    selectedRange && selectedRange.length === 2
+      ? `${formatDate(selectedRange[0])} to ${formatDate(selectedRange[1])}`
+      : "Custom";
 
   return (
     <section>
-
       <div className="mb-4 grid gap-4 sm:grid-cols-2">
         <CostingQuantityCard
           value={totals.quantity}

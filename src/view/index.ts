@@ -28,11 +28,6 @@ export { default as CreateInvestmentView } from "./investments/CreateInvestmentV
 export { default as EditInvestmentView } from "./investments/EditInvestmentView";
 export { default as InvestmentsView } from "./investments/InvestmentsView";
 
-// deposits
-export { default as CreateDepositView } from "./deposits/CreateDepositView";
-export { default as DepositsView } from "./deposits/DepositsView";
-export { default as EditDepositView } from "./deposits/EditDepositView";
-
 // profit withdrawal
 export { default as CreateProfitWithdrawalView } from "./profit-withdrawal/CreateProfitWithdrawalView";
 export { default as EditProfitWithdrawalView } from "./profit-withdrawal/EditProfitWithdrawalView";
@@ -40,11 +35,6 @@ export { default as ProfitWithdrawalView } from "./profit-withdrawal/ProfitWithd
 
 // profit balance
 export { default as ProfitBalanceView } from "./profit-balance/ProfitBalanceView";
-
-// partner dedication
-export { default as CreatePartnerDedicationView } from "./partner-dedication/CreatePartnerDedicationView";
-export { default as EditPartnerDedicationView } from "./partner-dedication/EditPartnerDedicationView";
-export { default as PartnerDedicationView } from "./partner-dedication/PartnerDedicationView";
 
 // partner
 export { default as CreatePartnerView } from "./partner/CreatePartnerView";

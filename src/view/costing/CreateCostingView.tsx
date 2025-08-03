@@ -17,6 +17,8 @@ const CreateCostingView = () => {
       costingDate: payload.costingDate.split("T")[0],
     };
 
+    console.log(formattedValues);
+
     const res = await createCosting(formattedValues);
     const error = res.error as IQueryMutationErrorResponse;
     if (error) {

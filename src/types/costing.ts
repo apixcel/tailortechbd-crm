@@ -1,11 +1,9 @@
 export interface ICosting {
   _id: string;
-  partnerName: string;
   costingAmount: number;
   costingDate: string;
-  costingType: string;
-  note: string;
-  fileUrl?: string;
+  costingType: "";
+  description: string;
   createdAt?: string;
   updatedAt?: string;
 }

@@ -95,11 +95,6 @@ export const adminNavlinks: INavLinks[] = [
         path: "/investments",
         action: ROLE_ACTIONS.VIEW_INVESTMENT_LIST.value,
       },
-      // {
-      //   label: "Deposits",
-      //   path: "/deposits",
-      //   action: ROLE_ACTIONS.VIEW_DEPOSITS.value,
-      // },
       {
         label: "Profit Withdrawal",
         path: "/profit-withdrawal",
@@ -115,11 +110,6 @@ export const adminNavlinks: INavLinks[] = [
         path: "/partner-list",
         action: ROLE_ACTIONS.VIEW_PARTNERS.value,
       },
-      // {
-      //   label: "Partner Dedication",
-      //   path: "/partner-dedication",
-      //   action: ROLE_ACTIONS.VIEW_PARTNER_DEDICATION.value,
-      // },
     ],
   },
   {

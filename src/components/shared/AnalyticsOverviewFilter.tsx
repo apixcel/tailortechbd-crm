@@ -99,7 +99,7 @@ const AnalyticsOverviewFilter = ({ value, onChange }: AnalyticsOverviewFilterPro
     const lastMonthEnd = new DateObject(lastDayOfLastMonth);
     const lastMonthStart = new DateObject(lastDayOfLastMonth).set("day", 1);
     const thisWeekStart = new DateObject(today).subtract(today.weekDay.index, "days");
-const thisMonthStart = new DateObject(today).set("day", 1);
+    const thisMonthStart = new DateObject(today).set("day", 1);
 
     const presets = [
       { label: "This Week", start: thisWeekStart, end: today },
