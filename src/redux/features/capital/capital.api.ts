@@ -4,10 +4,7 @@ import { generateQueryParams } from "@/utils";
 
 const capitalApi = api.injectEndpoints({
   endpoints: (builder) => ({
-    createCapital: builder.mutation<
-      { data: ICapital},
-      ICapitalPayload
-    >({
+    createCapital: builder.mutation<{ data: ICapital }, ICapitalPayload>({
       query: (payload) => ({
         url: "/finance/create/capital-journal",
         method: "POST",

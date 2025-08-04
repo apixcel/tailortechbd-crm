@@ -1,5 +1,7 @@
 "use client";
 
+import { useState } from "react";
+
 import {
   CartesianGrid,
   Legend,
@@ -14,6 +16,13 @@ import {
 import CostingQuantityCard from "./CostingQuantityCard";
 import CostingAmountCard from "./CostingAmountCard";
 import { DateObject } from "react-multi-date-picker";
+
+const options = [
+  { value: "overall", label: "Overall" },
+  { value: "today", label: "Today" },
+  { value: "this-month", label: "This Month" },
+  { value: "this-year", label: "This Year" },
+];
 
 // dummy data
 const totals = {
@@ -42,7 +51,7 @@ interface CostingReportOverviewProps {
 }
 
 const CostingReportOverview = ({ selectedRange }: CostingReportOverviewProps) => {
-  const increase = 10;
+  const [selectedFilter, setSelectedFilter] = useState(options[2]);
 
   // Filter sales data by selected date range
   const filteredData = costingChartData.filter((item) => {
@@ -74,7 +83,7 @@ const CostingReportOverview = ({ selectedRange }: CostingReportOverviewProps) =>
       <div className="mb-4 grid gap-4 sm:grid-cols-2">
         <CostingQuantityCard
           value={totals.quantity}
-          selectedFilter={selectedFilterLabel}
+          selectedFilter={selectedFilter.value}
           increase={increase}
         />
         <CostingAmountCard
@@ -89,29 +98,83 @@ const CostingReportOverview = ({ selectedRange }: CostingReportOverviewProps) =>
           Overall Costing Statistics
         </h1>
         <ResponsiveContainer width="100%" height="100%">
-          <LineChart data={costingChartData} margin={{ top: 5, right: 20, left: 20, bottom: 5 }}>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="time" />
-            <YAxis yAxisId="left" />
-            <YAxis yAxisId="right" orientation="right" />
-            <Tooltip />
-            <Legend />
+          <LineChart
+            data={costingChartData}
+            margin={{ top: 10, right: 24, left: 8, bottom: 12 }}
+            style={{
+              fontFamily: "var(--font-primary), 'Source Sans Pro', sans-serif",
+            }}
+          >
+            <CartesianGrid stroke="var(--border-main)" />
+            <XAxis
+              dataKey="time"
+              stroke="var(--primary)"
+              tick={{
+                fill: "var(--primary)",
+                fontFamily: "var(--font-primary), 'Source Sans Pro', sans-serif",
+                fontSize: 12,
+              }}
+              axisLine={{ stroke: "var(--primary)" }}
+            />
+            <YAxis
+              yAxisId="left"
+              stroke="var(--primary)"
+              tick={{
+                fill: "var(--primary)",
+                fontFamily: "var(--font-primary), 'Source Sans Pro', sans-serif",
+                fontSize: 12,
+              }}
+              axisLine={{ stroke: "var(--primary)" }}
+            />
+            <YAxis
+              yAxisId="right"
+              orientation="right"
+              stroke="var(--danger)"
+              tick={{
+                fill: "var(--danger)",
+                fontFamily: "var(--font-primary), 'Source Sans Pro', sans-serif",
+                fontSize: 12,
+              }}
+              axisLine={{ stroke: "var(--danger)" }}
+            />
+            <Tooltip
+              contentStyle={{
+                fontFamily: "var(--font-primary), 'Source Sans Pro', sans-serif",
+                borderRadius: 8,
+                background: "#fff",
+                border: "1px solid var(--border-main)",
+                color: "var(--primary)",
+              }}
+              labelStyle={{
+                fontFamily: "var(--font-primary), 'Source Sans Pro', sans-serif",
+                color: "var(--primary)",
+                fontWeight: 700,
+              }}
+            />
+            <Legend
+              wrapperStyle={{
+                fontFamily: "var(--font-primary), 'Source Sans Pro', sans-serif",
+                fontSize: 13,
+                color: "var(--primary)",
+              }}
+            />
             <Line
               type="monotone"
               yAxisId="left"
-              dataKey="totalCosting"
-              name="Total Costing"
-              stroke="#3B82F6"
-              strokeWidth={2}
+              dataKey="totalPurchase"
+              name="Total Purchase"
+              stroke="var(--primary)"
+              strokeWidth={3}
               activeDot={{ r: 6 }}
             />
             <Line
               type="monotone"
               yAxisId="right"
-              dataKey="totalCostingAmount"
-              name="Costing Amount"
-              stroke="#10B981"
-              strokeWidth={2}
+              dataKey="totalPurchaseAmount"
+              name="Purchase Amount"
+              stroke="var(--danger)"
+              strokeWidth={3}
+              dot={{ r: 4 }}
             />
           </LineChart>
         </ResponsiveContainer>
