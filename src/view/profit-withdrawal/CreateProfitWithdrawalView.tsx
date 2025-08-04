@@ -1,37 +1,37 @@
 "use client";
 
 import { useCreateProfitWithdrawalMutation } from "@/redux/features/profit-withdrawal/profit-withdrawal.api";
-import { IProfitWithdrawal } from "@/types";
+import { IProfitWithdrawal, IProfitWithdrawalPayload, IQueryMutationErrorResponse } from "@/types";
 import { useRouter } from "next/navigation";
 
 import { PageHeadingTitle, ProfitWithdrawalForm } from "@/components";
+import { toast } from "sonner";
 
 const CreateProfitWithdrawalView = () => {
   const [createProfitWithdrawal, { isLoading }] = useCreateProfitWithdrawalMutation();
   const router = useRouter();
 
   const handleSubmit = async (payload: IProfitWithdrawal) => {
-    const formattedValues: IProfitWithdrawal = {
+    const formattedValues: IProfitWithdrawalPayload = {
       ...payload,
-      withdrawalDate: payload.withdrawalDate.split("T")[0],
+      partner: payload.partner._id,
+      attachment: payload.attachment || "",
     };
 
-    console.log(formattedValues);
+    const res = await createProfitWithdrawal(formattedValues);
+    const error = res.error as IQueryMutationErrorResponse;
+    if (error) {
+      if (error?.data?.message) {
+        toast(error.data?.message);
+      } else {
+        toast("Something went wrong");
+      }
 
-    // const res = await createProfitWithdrawal(formattedValues);
-    // const error = res.error as IQueryMutationErrorResponse;
-    // if (error) {
-    //   if (error?.data?.message) {
-    //     toast(error.data?.message);
-    //   } else {
-    //     toast("Something went wrong");
-    //   }
+      return;
+    }
 
-    //   return;
-    // }
-
-    // toast.success("Profit Withdrawal created successfully");
-    // router.push("/profit-withdrawal");
+    toast.success("Withdrawal created successfully");
+    router.push("/profit-withdrawal");
   };
 
   return (

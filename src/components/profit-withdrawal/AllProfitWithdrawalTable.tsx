@@ -1,16 +1,12 @@
 "use client";
 
-import {
-  useDeleteProfitWithdrawalByIdMutation,
-  useGetAllProfitWithdrawalQuery,
-} from "@/redux/features/profit-withdrawal/profit-withdrawal.api";
+import { useGetAllProfitWithdrawalQuery } from "@/redux/features/profit-withdrawal/profit-withdrawal.api";
 import { useDebounce } from "@/hooks";
 import { useState } from "react";
 import Link from "next/link";
 import dateUtils from "@/utils/date";
 
 import { FaChevronDown, FaChevronUp } from "react-icons/fa";
-import { GoPencil } from "react-icons/go";
 import { RxMagnifyingGlass } from "react-icons/rx";
 
 import {
@@ -18,36 +14,45 @@ import {
   TableDataNotFound,
   TableSkeleton,
   Pagination,
-  DeleteConfirmationDialog,
-  ProfitWithdrawalDropdown,
+  PartnerDropDown,
 } from "@/components";
-import { profitDistributions } from "@/constants/profitDistributionData";
 
 const tableHead = [
   { label: "SL", field: "" },
-  { label: "Date", field: "profitWithdrawalDate" },
-  { label: "Amount", field: "profitWithdrawalAmount" },
-  { label: "Description", field: "" },
-  // { label: "Actions", field: "" },
+  { label: "Profit Period", field: "" },
+  { label: "Profit Amount", field: "totalProfitAmount" },
+  { label: "Percentage", field: "percentage" },
+  { label: "Get Amount", field: "" },
+  { label: "Withdrawal Date", field: "withdrawalDate" },
+  { label: "Status", field: "status" },
+  { label: "Comment", field: "" },
+  { label: "Attachment", field: "" },
 ];
 
 const AllProfitWithdrawalTable = () => {
+  const [selectedPartner, setSelectedPartner] = useState<{
+    label: string;
+    value: string;
+    partnerDesignation?: string;
+    joiningDate?: string;
+  } | null>(null);
+
   const [searchTerm, setSearchTerm] = useDebounce("");
   const [sort, setSort] = useState({ field: "createdAt", order: "desc" });
   const [query, setQuery] = useState<Record<string, string | number>>({
     page: 1,
-    fields:
-      "partnerName,totalProfitAmount,percentage,withdrawalDate,profitPeriod,status,comment,attachment,createdAt",
     sort: `${sort.order === "desc" ? "-" : ""}${sort.field}`,
+    partner: "",
   });
 
-  const [deleteProfitWithdrawal, { isLoading: isDeleting }] =
-    useDeleteProfitWithdrawalByIdMutation();
-  // const { data, isLoading } = useGetAllProfitWithdrawalQuery({ ...query, searchTerm });
-  const profitWithdrawalData = profitDistributions || [];
-  const metaData = { totalDoc: 0, page: 1 };
+  const { data, isLoading } = useGetAllProfitWithdrawalQuery({
+    ...query,
+    searchTerm,
+    ...(selectedPartner?.value ? { partner: selectedPartner.value } : {}),
+  });
 
-  const isLoading = false;
+  const profitWithdrawalData = data?.data || [];
+  const metaData = data?.meta || { totalDoc: 0, page: 1 };
 
   const handleSort = (field: string) => {
     const newOrder = sort.field === field && sort.order === "asc" ? "desc" : "asc";
@@ -62,9 +67,23 @@ const AllProfitWithdrawalTable = () => {
     <div className="flex flex-col gap-[10px]">
       <div className="flex flex-col gap-[15px] bg-white p-[16px]">
         <div className="flex flex-col-reverse flex-wrap items-end justify-between gap-y-5 lg:flex-row">
-          <ProfitWithdrawalDropdown onSelect={() => {}} />
+          <PartnerDropDown
+            onSelect={(item) => {
+              setSelectedPartner(item);
+              setQuery((prev) => ({
+                ...prev,
+                partner: item.value,
+                page: 1,
+              }));
+            }}
+            defaultValue={
+              selectedPartner
+                ? { label: selectedPartner.label, value: selectedPartner.value }
+                : undefined
+            }
+          />
 
-          {/* create profit distribution link */}
+          {/* create profit withdrawal link */}
           <Link
             href="/profit-withdrawal/create"
             className="rounded-[5px] bg-primary px-[20px] py-[6px] text-white"
@@ -75,29 +94,50 @@ const AllProfitWithdrawalTable = () => {
 
         <div className="mb-4 flex justify-center">
           <div className="flex flex-col items-center gap-[5px]">
-            <h1 className="text-[16px] font-[600]">Withdrawer: Munnaf Ali</h1>
-            <p className="text-[12px] text-muted md:text-[14px]">Designation: CEO</p>
-            <span className="text-[12px] text-muted md:text-[14px]">Joining Date: 01-05-2025</span>
+            <h1 className="text-[16px] font-[600]">
+              Withdrawer: {selectedPartner?.label || "N/A"}
+            </h1>
+            <p className="text-[12px] text-muted md:text-[14px]">
+              Designation: {selectedPartner?.partnerDesignation || "N/A"}
+            </p>
+            <span className="text-[12px] text-muted md:text-[14px]">
+              Joining Date:{" "}
+              {selectedPartner?.joiningDate
+                ? dateUtils.formateCreateOrUpdateDate(selectedPartner.joiningDate)
+                : "N/A"}
+            </span>
           </div>
         </div>
 
         <HorizontalLine className="my-[10px]" />
 
+        {/* table Title */}
         <div className="flex flex-col gap-[5px]">
           <h1 className="text-[16px] font-[600]">Profit Withdrawal List</h1>
           <p className="text-[12px] text-muted md:text-[14px]">
-            Displaying All the available profit withdrawals in your store. There is total{" "}
+            Displaying all available profit withdrawals in your store. There is a total of{" "}
             <span className="font-bold text-dashboard">{metaData.totalDoc}</span> profit
-            withdrawals. Data is Divided into{" "}
-            <span className="font-bold text-dashboard">
-              {Math.ceil(metaData.totalDoc / 10)} pages
-            </span>{" "}
-            & currently showing page{" "}
+            withdrawals. Data is divided into{" "}
+            <span className="font-bold text-dashboard">{Math.ceil(metaData.totalDoc / 10)}</span>{" "}
+            pages &amp; currently showing page{" "}
             <span className="font-bold text-dashboard">{metaData.page}.</span>
           </p>
         </div>
 
         <HorizontalLine className="my-[10px]" />
+
+        <div className="flex flex-wrap items-center justify-between gap-y-5">
+          {/* search input */}
+          <div className="flex w-full max-w-[300px] items-center justify-between rounded-[5px] border-[1px] border-dashboard/20 p-[5px] outline-none">
+            <input
+              type="text"
+              className="w-full bg-transparent outline-none"
+              placeholder="Search Profit Withdrawal"
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+            <RxMagnifyingGlass />
+          </div>
+        </div>
 
         {/* table */}
         <div className="overflow-x-auto">
@@ -144,49 +184,72 @@ const AllProfitWithdrawalTable = () => {
             <tbody className="divide-y divide-gray-200 bg-white">
               {isLoading ? (
                 <TableSkeleton columns={tableHead.length} />
-              ) : profitWithdrawalData?.length ? (
-                profitWithdrawalData?.map((profitWithdrawal, index) => (
-                  <tr key={index} className="hover:bg-gray-50">
+              ) : profitWithdrawalData.length ? (
+                profitWithdrawalData.map((pw, index) => (
+                  <tr key={pw._id} className="hover:bg-gray-50">
                     {/* index */}
                     <td className="px-6 py-4 text-sm text-gray-900">{index + 1}</td>
 
-                    {/* profit withdrawal date */}
+                    {/* profit period */}
                     <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
-                      <span className="text-sm">{profitWithdrawal.profitWithdrawalDate}</span>
+                      {dateUtils.formateCreateOrUpdateDate?.(pw.profitPeriod?.startDate)}
+                      {" - "}
+                      {dateUtils.formateCreateOrUpdateDate?.(pw.profitPeriod?.endDate)}
                     </td>
 
-                    {/* profit withdrawal amount */}
+                    {/* profit amount */}
                     <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
-                      <span className="text-sm">{profitWithdrawal.profitWithdrawalAmount}</span>
+                      {pw.totalProfitAmount}
                     </td>
 
-                    {/* description */}
+                    {/* percentage */}
                     <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
-                      <span className="text-sm">{profitWithdrawal.description}</span>
+                      {pw.percentage}%
                     </td>
 
-                    {/* actions */}
-                    {/* <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700"> */}
-                    {/* <div className="flex items-center gap-2"> */}
-                    {/* update */}
-                    {/* <Link
-                          href={`/profit-withdrawal/${profitWithdrawal._id}`}
-                          className="center aspect-square w-[30px] cursor-pointer rounded-full border-[1px] border-dashboard bg-dashboard/5 text-dashboard"
-                          title="Edit Profit Withdrawal"
+                    {/* get amount */}
+                    <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
+                      {(pw.totalProfitAmount * (pw.percentage / 100)).toLocaleString()}
+                    </td>
+
+                    {/* withdrawal date */}
+                    <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
+                      {dateUtils.formateCreateOrUpdateDate?.(pw.withdrawalDate)}
+                    </td>
+
+                    {/* status */}
+                    <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700 capitalize">
+                      <span
+                        className={
+                          pw.status === "paid"
+                            ? "font-semibold text-green-600"
+                            : "font-semibold text-yellow-500"
+                        }
+                      >
+                        {pw.status.replace("_", " ")}
+                      </span>
+                    </td>
+
+                    {/* comment */}
+                    <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
+                      {pw.comment}
+                    </td>
+
+                    {/* attachment */}
+                    <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
+                      {pw.attachment ? (
+                        <a
+                          href={pw.attachment}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-primary underline"
                         >
-                          <GoPencil />
-                        </Link> */}
-
-                    {/* delete */}
-                    {/* <DeleteConfirmationDialog
-                          entityId={profitWithdrawal._id!}
-                          entityName={profitWithdrawal.partnerName}
-                          entityLabel="Profit Withdrawal"
-                          onDelete={(id) => deleteProfitWithdrawal({ profitWithdrawalId: id })}
-                          isLoading={isDeleting}
-                        /> */}
-                    {/* </div> */}
-                    {/* </td> */}
+                          View
+                        </a>
+                      ) : (
+                        <span className="text-gray-300">—</span>
+                      )}
+                    </td>
                   </tr>
                 ))
               ) : (

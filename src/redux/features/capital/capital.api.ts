@@ -1,12 +1,12 @@
 import { api } from "@/redux/api/api";
-import { ICapital, IMeta } from "@/types";
+import { ICapital, ICapitalPayload, IMeta } from "@/types";
 import { generateQueryParams } from "@/utils";
 
 const capitalApi = api.injectEndpoints({
   endpoints: (builder) => ({
     createCapital: builder.mutation<
-      { data: Omit<ICapital, "id" | "createdAt" | "updatedAt"> },
-      ICapital
+      { data: ICapital},
+      ICapitalPayload
     >({
       query: (payload) => ({
         url: "/finance/create/capital-journal",

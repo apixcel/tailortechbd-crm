@@ -4,18 +4,19 @@ import { HorizontalLine, Pagination, TableDataNotFound, TableSkeleton } from "@/
 import { useDebounce } from "@/hooks";
 import { useGetAllCapitalJournalQuery } from "@/redux/features/capital/capital.api";
 import dateUtils from "@/utils/date";
+import Link from "next/link";
 import { useState } from "react";
 import { FaChevronDown, FaChevronUp } from "react-icons/fa";
 import { RxMagnifyingGlass } from "react-icons/rx";
 
 const tableHead = [
   { label: "SL", field: "" },
-  { label: "Date", field: "capitalsDate" },
-  { label: "Time", field: "capitalsTime" },
-  { label: "Type", field: "" },
+  { label: "Date", field: "date" },
+  { label: "Time", field: "" },
+  { label: "Type", field: "type" },
   { label: "Description", field: "" },
-  { label: "Amount", field: "capitalsAmount" },
-  { label: "Balance", field: "capitalsBalance" },
+  { label: "Amount", field: "amount" },
+  { label: "Balance", field: "balance" },
 ];
 
 const AllCapitalsListTable = () => {
@@ -26,10 +27,10 @@ const AllCapitalsListTable = () => {
     sort: `${sort.order === "desc" ? "-" : ""}${sort.field}`,
   });
 
-  const { data } = useGetAllCapitalJournalQuery(query);
+  const { data, isLoading } = useGetAllCapitalJournalQuery({ ...query, searchTerm });
 
-  const metaData = { totalDoc: 0, page: 1 };
-  const isLoading = false;
+  const capitalData = data?.data;
+  const metaData = data?.meta || { totalDoc: 0, page: 1 };
 
   const handleSort = (field: string) => {
     const newOrder = sort.field === field && sort.order === "asc" ? "desc" : "asc";
@@ -40,13 +41,18 @@ const AllCapitalsListTable = () => {
     }));
   };
 
-  const capitalData = data?.data;
+  const totalCapitalBalance = capitalData?.reduce(
+    (acc, curr) => acc + (curr.type === "credit" ? curr.amount : -curr.amount),
+    0
+  );
 
   return (
     <div className="flex flex-col gap-4">
       {/* current balance */}
       <div className="bg-white p-4">
-        <h1 className="text-[20px] font-bold text-dashboard">Current Balance: 31000 Tk</h1>
+        <h1 className="text-[20px] font-bold text-dashboard">
+          Current Balance: {totalCapitalBalance} Tk
+        </h1>
       </div>
 
       <div className="flex flex-col gap-[10px]">
@@ -74,10 +80,18 @@ const AllCapitalsListTable = () => {
                 type="text"
                 className="w-full bg-transparent outline-none"
                 placeholder="Search Capital"
-                // onChange={(e) => setSearchTerm(e.target.value)}
+                onChange={(e) => setSearchTerm(e.target.value)}
               />
               <RxMagnifyingGlass />
             </div>
+
+            {/* create capitals link */}
+            <Link
+              href="/capitals/create"
+              className="rounded-[5px] bg-primary px-[20px] py-[6px] text-white"
+            >
+              Create Capital
+            </Link>
           </div>
 
           {/* table */}
@@ -134,7 +148,9 @@ const AllCapitalsListTable = () => {
 
                         {/* capital date */}
                         <td className="px-6 py-4">
-                          <span className="text-[14px]">{capital.date}</span>
+                          <span className="text-[14px]">
+                            {dateUtils.formateCreateOrUpdateDate(capital.date)}
+                          </span>
                         </td>
 
                         {/* capital time */}

@@ -1,12 +1,12 @@
 import { api } from "@/redux/api/api";
-import { IInvestment, IMeta } from "@/types";
+import { IInvestment, IInvestmentPayload, IMeta } from "@/types";
 import { generateQueryParams } from "@/utils";
 
 const investmentsApi = api.injectEndpoints({
   endpoints: (builder) => ({
-    createInvestment: builder.mutation<{ data: IInvestment }, Partial<IInvestment>>({
+    createInvestment: builder.mutation<{ data: IInvestment }, IInvestmentPayload>({
       query: (payload) => ({
-        url: "/investments/create",
+        url: "/finance/create/investment",
         method: "POST",
         body: payload,
       }),
@@ -17,46 +17,20 @@ const investmentsApi = api.injectEndpoints({
       Record<string, string | number>
     >({
       query: (query) => {
-        const queryString = generateQueryParams(query);
+        const params = { ...query };
+        if (params.partnerId) {
+          params.partner = params.partnerId;
+          delete params.partnerId;
+        }
+        const queryString = generateQueryParams(params);
         return {
-          url: `/investments/get?${queryString}`,
+          url: `/finance/get/investment?${queryString}`,
           method: "GET",
         };
       },
       providesTags: ["finance"],
     }),
-    getInvestmentById: builder.query<{ data: IInvestment }, { investmentId: string }>({
-      query: ({ investmentId }) => ({
-        url: `/investments/get/${investmentId}`,
-        method: "GET",
-      }),
-      providesTags: ["finance"],
-    }),
-    updateInvestmentById: builder.mutation<
-      { data: IInvestment },
-      { investmentId: string; payload: Partial<IInvestment> }
-    >({
-      query: ({ investmentId, payload }) => ({
-        url: `/investments/update/${investmentId}`,
-        method: "PATCH",
-        body: { _id: undefined, ...payload },
-      }),
-      invalidatesTags: ["finance"],
-    }),
-    deleteInvestmentById: builder.mutation<{ data: IInvestment }, { investmentId: string }>({
-      query: ({ investmentId }) => ({
-        url: `/investments/delete/${investmentId}`,
-        method: "DELETE",
-      }),
-      invalidatesTags: ["finance"],
-    }),
   }),
 });
 
-export const {
-  useCreateInvestmentMutation,
-  useGetAllInvestmentsQuery,
-  useDeleteInvestmentByIdMutation,
-  useGetInvestmentByIdQuery,
-  useUpdateInvestmentByIdMutation,
-} = investmentsApi;
+export const { useCreateInvestmentMutation, useGetAllInvestmentsQuery } = investmentsApi;

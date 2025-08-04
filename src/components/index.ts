@@ -30,6 +30,7 @@ export { default as PathSearchBar } from "./shared/PathSearchBar";
 export { default as SectionTitle } from "./shared/SectionTitle";
 export { default as SideBar } from "./shared/SideBar";
 export { default as TimelineDropDown } from "./shared/TimelineDropDown";
+export { default as FormikDateRangePicker } from "./shared/FormikDateRangePicker";
 
 // home
 export { default as OverallSalesStatistics } from "./sales/OverallSalesStatistics";
@@ -66,6 +67,7 @@ export { default as SupplierListTable } from "./supplier-list/SupplierListTable"
 
 // capitals
 export { default as AllCapitalsListTable } from "./capitals/AllCapitalsListTable";
+export { default as CapitalsForm } from "./capitals/CapitalsForm";
 
 // investments
 export { default as AllInvestmentsTable } from "./investments/AllInvestmentsTable";

@@ -8,3 +8,10 @@ export interface ICapital {
   createdAt: string;
   updatedAt: string;
 }
+
+export interface ICapitalPayload {
+  date: string;
+  type: "credit" | "debit";
+  description: string;
+  amount: number;
+}

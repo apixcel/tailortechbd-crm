@@ -1,16 +1,12 @@
 "use client";
 
-import {
-  useDeleteInvestmentByIdMutation,
-  useGetAllInvestmentsQuery,
-} from "@/redux/features/investments/investments.api";
+import { useGetAllInvestmentsQuery } from "@/redux/features/investments/investments.api";
 import { useDebounce } from "@/hooks";
 import { useState } from "react";
 import Link from "next/link";
 import dateUtils from "@/utils/date";
 
 import { FaChevronDown, FaChevronUp } from "react-icons/fa";
-import { GoPencil } from "react-icons/go";
 import { RxMagnifyingGlass } from "react-icons/rx";
 
 import {
@@ -18,36 +14,42 @@ import {
   TableDataNotFound,
   TableSkeleton,
   Pagination,
-  DeleteConfirmationDialog,
   PartnerDropDown,
 } from "@/components";
-import { mockInvestmentData } from "@/constants/investmentsData";
 
 const tableHead = [
   { label: "SL", field: "" },
   { label: "Date", field: "investmentDate" },
   { label: "Amount", field: "investmentAmount" },
-  { label: "Description", field: "" },
-  // { label: "Actions", field: "" },
+  { label: "Note", field: "" },
+  { label: "Attachment", field: "" },
 ];
 
 const AllInvestmentsTable = () => {
+  const [selectedPartner, setSelectedPartner] = useState<{
+    label: string;
+    value: string;
+    partnerDesignation?: string;
+    joiningDate?: string;
+  } | null>(null);
+
   const [searchTerm, setSearchTerm] = useDebounce("");
   const [sort, setSort] = useState({ field: "createdAt", order: "desc" });
   const [query, setQuery] = useState<Record<string, string | number>>({
     page: 1,
-    fields: "investmentAmount,investmentDate,type,note,attachment,createdAt",
+    fields: "investmentAmount,investmentDate,type,note,attachment,createdAt,partner",
     sort: `${sort.order === "desc" ? "-" : ""}${sort.field}`,
+    partner: "",
   });
 
-  const [deleteInvestment, { isLoading: isDeleting }] = useDeleteInvestmentByIdMutation();
-  // const { data, isLoading } = useGetAllInvestmentsQuery({ ...query, searchTerm });
+  const { data, isLoading } = useGetAllInvestmentsQuery({
+    ...query,
+    searchTerm,
+    ...(selectedPartner?.value ? { partner: selectedPartner.value } : {}),
+  });
 
-  const investmentData = mockInvestmentData || [];
-  // const metaData = data?.meta || { totalDoc: 0, page: 1 };
-
-  const metaData = { totalDoc: 0, page: 1 };
-  const isLoading = false;
+  const investmentData = data?.data || [];
+  const metaData = data?.meta || { totalDoc: 0, page: 1 };
 
   const handleSort = (field: string) => {
     const newOrder = sort.field === field && sort.order === "asc" ? "desc" : "asc";
@@ -62,7 +64,17 @@ const AllInvestmentsTable = () => {
     <div className="flex flex-col gap-[10px]">
       <div className="flex flex-col gap-[15px] bg-white p-[16px]">
         <div className="flex flex-col-reverse flex-wrap items-end justify-between gap-y-5 lg:flex-row">
-          <PartnerDropDown onSelect={() => {}} />
+          <PartnerDropDown
+            onSelect={(item) => {
+              setSelectedPartner(item);
+              setQuery((prev) => ({ ...prev, partnerId: item.value, page: 1 }));
+            }}
+            defaultValue={
+              selectedPartner
+                ? { label: selectedPartner.label, value: selectedPartner.value }
+                : undefined
+            }
+          />
 
           {/* create investment link */}
           <Link
@@ -75,9 +87,16 @@ const AllInvestmentsTable = () => {
 
         <div className="mb-4 flex justify-center">
           <div className="flex flex-col items-center gap-[5px]">
-            <h1 className="text-[16px] font-[600]">Investor: Munnaf Ali</h1>
-            <p className="text-[12px] text-muted md:text-[14px]">Designation: CEO</p>
-            <span className="text-[12px] text-muted md:text-[14px]">Joining Date: 01-05-2025</span>
+            <h1 className="text-[16px] font-[600]">Investor: {selectedPartner?.label || "N/A"}</h1>
+            <p className="text-[12px] text-muted md:text-[14px]">
+              Designation: {selectedPartner?.partnerDesignation || "N/A"}
+            </p>
+            <span className="text-[12px] text-muted md:text-[14px]">
+              Joining Date:{" "}
+              {selectedPartner?.joiningDate
+                ? dateUtils.formateCreateOrUpdateDate(selectedPartner.joiningDate)
+                : "N/A"}
+            </span>
           </div>
         </div>
 
@@ -98,6 +117,19 @@ const AllInvestmentsTable = () => {
         </div>
 
         <HorizontalLine className="my-[10px]" />
+
+        <div className="flex flex-wrap items-center justify-between gap-y-5">
+          {/* search input */}
+          <div className="flex w-full max-w-[300px] items-center justify-between rounded-[5px] border-[1px] border-dashboard/20 p-[5px] outline-none">
+            <input
+              type="text"
+              className="w-full bg-transparent outline-none"
+              placeholder="Search Investment"
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+            <RxMagnifyingGlass />
+          </div>
+        </div>
 
         {/* table */}
         <div className="overflow-x-auto">
@@ -152,7 +184,9 @@ const AllInvestmentsTable = () => {
 
                     {/* investment date */}
                     <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
-                      <span className="text-sm">{investment.investmentDate}</span>
+                      <span className="text-sm">
+                        {dateUtils.formateCreateOrUpdateDate(investment.investmentDate)}
+                      </span>
                     </td>
 
                     {/* investment amount */}
@@ -160,9 +194,24 @@ const AllInvestmentsTable = () => {
                       <span className="text-sm">{investment.investmentAmount}</span>
                     </td>
 
-                    {/* investment remark */}
+                    {/* investment note */}
                     <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
-                      <span className="text-sm">{investment.investmentRemark}</span>
+                      <span className="text-sm">{investment.note}</span>
+                    </td>
+
+                    {/* attachment */}
+                    <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
+                      {investment.attachment ? (
+                        <Link
+                          target="_blank"
+                          href={investment.attachment}
+                          className="text-primary underline"
+                        >
+                          View
+                        </Link>
+                      ) : (
+                        <span className="text-sm text-gray-300">—</span>
+                      )}
                     </td>
 
                     {/* actions */}

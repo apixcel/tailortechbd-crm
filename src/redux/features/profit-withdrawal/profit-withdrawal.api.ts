@@ -1,20 +1,19 @@
 import { api } from "@/redux/api/api";
-import { IMeta, IProfitWithdrawal } from "@/types";
+import { IMeta, IProfitWithdrawal, IProfitWithdrawalPayload } from "@/types";
 import { generateQueryParams } from "@/utils";
 
 const profitWithdrawalApi = api.injectEndpoints({
   endpoints: (builder) => ({
-    createProfitWithdrawal: builder.mutation<
-      { data: IProfitWithdrawal },
-      Partial<IProfitWithdrawal>
-    >({
-      query: (payload) => ({
-        url: "/profit-withdrawal/create",
-        method: "POST",
-        body: payload,
-      }),
-      invalidatesTags: ["finance"],
-    }),
+    createProfitWithdrawal: builder.mutation<{ data: IProfitWithdrawal }, IProfitWithdrawalPayload>(
+      {
+        query: (payload) => ({
+          url: "/finance/create/withdrawal",
+          method: "POST",
+          body: payload,
+        }),
+        invalidatesTags: ["finance"],
+      }
+    ),
     getAllProfitWithdrawal: builder.query<
       { data: IProfitWithdrawal[]; meta?: IMeta },
       Record<string, string | number>
@@ -22,7 +21,7 @@ const profitWithdrawalApi = api.injectEndpoints({
       query: (query) => {
         const queryString = generateQueryParams(query);
         return {
-          url: `/profit-withdrawal/get?${queryString}`,
+          url: `/finance/get/withdrawal?${queryString}`,
           method: "GET",
         };
       },

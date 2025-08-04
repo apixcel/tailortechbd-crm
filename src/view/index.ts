@@ -25,7 +25,6 @@ export { default as CapitalsView } from "./capitals/CapitalsView";
 
 // investments
 export { default as CreateInvestmentView } from "./investments/CreateInvestmentView";
-export { default as EditInvestmentView } from "./investments/EditInvestmentView";
 export { default as InvestmentsView } from "./investments/InvestmentsView";
 
 // profit withdrawal

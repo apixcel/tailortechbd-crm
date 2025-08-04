@@ -47,7 +47,7 @@ export const api = createApi({
     "finance",
     "supplier",
     "costing",
-    "partner",
+    "partners",
   ],
   endpoints: () => ({}),
 });

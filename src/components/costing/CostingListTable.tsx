@@ -154,7 +154,9 @@ const CostingListTable = () => {
 
                     {/* description */}
                     <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
-                      <span className="text-sm">{truncateWords(costing.description || "-", 10)}</span>
+                      <span className="text-sm">
+                        {truncateWords(costing.description || "-", 10)}
+                      </span>
                     </td>
 
                     {/* updated time */}

@@ -3,7 +3,7 @@
 import * as Yup from "yup";
 import { ErrorMessage, Field, FieldProps, Form, Formik, FormikHelpers } from "formik";
 
-import { ICosting, IPartner } from "@/types";
+import { ICosting } from "@/types";
 
 import { Input, Button, SectionTitle, TextArea, PickDate, SelectionBox } from "@/components";
 

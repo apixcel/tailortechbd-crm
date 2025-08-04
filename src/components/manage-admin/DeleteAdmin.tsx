@@ -19,7 +19,6 @@ const DeleteAdmin = ({ admin }: { admin: IUser }) => {
   const handleDelete = async () => {
     // const res = await deleteAdmin(admin._id);
     // const error = res.error as IQueruMutationErrorResponse;
-
     // if (error) {
     //   if (error.data?.message) {
     //     toast.error(error.data?.message);

@@ -6,10 +6,10 @@ import { IPartner } from "@/types";
 
 import { FaPlus } from "react-icons/fa";
 import { RxMagnifyingGlass } from "react-icons/rx";
-import { toast } from "sonner";
-import { mockPartners } from "@/constants/partnerData";
 
 import { Loader, DialogProvider, HorizontalLine } from "@/components";
+import dateUtils from "@/utils/date";
+import { useGetAllPartnersQuery } from "@/redux/features/partners/partner.api";
 
 interface IProps {
   setFieldValue: (field: string, value: IPartner) => void;
@@ -18,10 +18,10 @@ interface IProps {
 
 const AddPartnerOnForm = ({ setFieldValue }: IProps) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [searchValue, setSearchValue] = useDebounce("");
+  const [searchTerm, setSearchTerm] = useDebounce("");
 
-  const partnerData = mockPartners;
-  const isLoading = false;
+  const { data, isLoading } = useGetAllPartnersQuery({ searchTerm });
+  const partnerData = data?.data || [];
 
   if (isLoading) return <Loader />;
 
@@ -30,7 +30,7 @@ const AddPartnerOnForm = ({ setFieldValue }: IProps) => {
       _id: partner._id,
       partnerName: partner.partnerName,
       partnerDesignation: partner.partnerDesignation,
-      partnerJoiningDate: partner.partnerJoiningDate,
+      joiningDate: partner.joiningDate,
     });
     setIsOpen(false);
   };
@@ -54,7 +54,7 @@ const AddPartnerOnForm = ({ setFieldValue }: IProps) => {
               type="text"
               className="w-full bg-transparent outline-none"
               placeholder="Search Partner"
-              onChange={(e) => setSearchValue(e.target.value)}
+              onChange={(e) => setSearchTerm(e.target.value)}
             />
             <RxMagnifyingGlass />
           </div>
@@ -62,7 +62,7 @@ const AddPartnerOnForm = ({ setFieldValue }: IProps) => {
           <div className="mt-[20px] grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-2">
             {partnerData
               .filter((partner) =>
-                partner.partnerName.toLowerCase().includes(searchValue.toLowerCase())
+                partner.partnerName.toLowerCase().includes(searchTerm.toLowerCase())
               )
               .map((partner) => (
                 <div
@@ -78,7 +78,8 @@ const AddPartnerOnForm = ({ setFieldValue }: IProps) => {
                       <strong>Designation:</strong> {partner.partnerDesignation}
                     </p>
                     <p>
-                      <strong>Joining Date:</strong> {partner.partnerJoiningDate}
+                      <strong>Joining Date:</strong>{" "}
+                      {dateUtils.formateCreateOrUpdateDate(partner.joiningDate)}
                     </p>
                   </div>
                 </div>

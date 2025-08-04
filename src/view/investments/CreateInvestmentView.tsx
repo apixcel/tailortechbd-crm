@@ -1,7 +1,7 @@
 "use client";
 
 import { useCreateInvestmentMutation } from "@/redux/features/investments/investments.api";
-import { IInvestment, IQueryMutationErrorResponse } from "@/types";
+import { IInvestment, IInvestmentPayload, IQueryMutationErrorResponse } from "@/types";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
@@ -12,27 +12,30 @@ const CreateInvestmentView = () => {
   const router = useRouter();
 
   const handleSubmit = async (payload: IInvestment) => {
-    const formattedValues = {
-      ...payload,
-      investmentDate: payload.investmentDate.split("T")[0],
+    const formattedValues: IInvestmentPayload = {
+      investmentAmount: payload.investmentAmount,
+      investmentDate: payload.investmentDate,
+      note: payload.note,
+      partner: payload.partner._id,
     };
 
-    console.log(formattedValues);
+    const res = await createInvestment(formattedValues);
 
-    // const res = await createInvestment(formattedValues);
-    // const error = res.error as IQueryMutationErrorResponse;
-    // if (error) {
-    //   if (error?.data?.message) {
-    //     toast(error.data?.message);
-    //   } else {
-    //     toast("Something went wrong");
-    //   }
+    if (res.error) {
+      const error = res.error as IQueryMutationErrorResponse;
+      if (error) {
+        if (error?.data?.message) {
+          toast(error.data?.message);
+        } else {
+          toast("Something went wrong");
+        }
 
-    //   return;
-    // }
-
-    // toast.success("Investment created successfully");
-    // router.push("/investments");
+        return;
+      }
+    } else {
+      toast.success("Investment created successfully");
+      router.push("/investments");
+    }
   };
 
   return (
