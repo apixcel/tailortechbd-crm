@@ -1,98 +1,119 @@
 "use client";
 
-import { useState } from "react";
-
 import {
-  CartesianGrid,
-  Legend,
-  Line,
-  LineChart,
   ResponsiveContainer,
-  Tooltip,
+  LineChart,
+  CartesianGrid,
   XAxis,
   YAxis,
+  Tooltip,
+  Legend,
+  Line,
 } from "recharts";
-
 import PurchaseQuantityCard from "./PurchaseQuantityCard";
 import PurchaseAmountCard from "./PurchaseAmountCard";
 import { DateObject } from "react-multi-date-picker";
-
-const options = [
-  { value: "overall", label: "Overall" },
-  { value: "today", label: "Today" },
-  { value: "this-month", label: "This Month" },
-  { value: "this-year", label: "This Year" },
-];
-
-// dummy data
-const totals = {
-  Sales: 100,
-  Earnings: 100,
-  Customers: 100,
-  Sms: 100,
-};
-
-const increase = 10;
-
-// dummy data for purchase chart
-const purchaseChartData = [
-  { time: "2025-07-01", totalPurchase: 100, totalPurchaseAmount: 2000 },
-  { time: "2025-07-02", totalPurchase: 140, totalPurchaseAmount: 28000 },
-  { time: "2025-07-03", totalPurchase: 170, totalPurchaseAmount: 34000 },
-  { time: "2025-07-04", totalPurchase: 180, totalPurchaseAmount: 36000 },
-  { time: "2025-07-05", totalPurchase: 200, totalPurchaseAmount: 40000 },
-  { time: "2025-07-06", totalPurchase: 180, totalPurchaseAmount: 38000 },
-  { time: "2025-07-07", totalPurchase: 240, totalPurchaseAmount: 48000 },
-  { time: "2025-07-08", totalPurchase: 260, totalPurchaseAmount: 52000 },
-];
+import { useMemo } from "react";
+import { useGetPurchaseStatisticsQuery } from "@/redux/features/purchase/purchase.api";
 
 interface PurchaseReportOverviewProps {
-  selectedRange: DateObject[] | undefined;
+  selectedRange: DateObject[] | null | undefined;
+}
+
+// Helper to create correct query params, never including undefined
+function getParamsFromSelectedRange(selectedRange?: DateObject[] | null): Record<string, string | number> {
+  if (selectedRange && selectedRange.length === 2) {
+    return {
+      from: selectedRange[0].format("YYYY-MM-DD"),
+      to: selectedRange[1].format("YYYY-MM-DD"),
+    };
+  }
+  return { timeFilter: "last7days" };
 }
 
 const PurchaseReportOverview = ({ selectedRange }: PurchaseReportOverviewProps) => {
-  const [selectedFilter, setSelectedFilter] = useState(options[2]);
+  // Memoize params so the API isn't called needlessly
+  const params = useMemo(() => getParamsFromSelectedRange(selectedRange), [selectedRange]);
 
-  // Filter sales data by selected date range
-  const filteredData = purchaseChartData.filter((item) => {
-    if (!selectedRange || selectedRange.length !== 2) return true;
+  // Fetch data
+  const { data, isLoading, error } = useGetPurchaseStatisticsQuery(params);
 
-    const from = selectedRange[0].toDate();
-    const to = selectedRange[1].toDate();
-    const itemDate = new Date(item.time);
+  // Get start and end dates as strings (for display, logging, etc.)
+  let startDate: string | undefined = undefined;
+  let endDate: string | undefined = undefined;
+  if (selectedRange && selectedRange.length === 2) {
+    startDate = selectedRange[0].format("YYYY-MM-DD");
+    endDate = selectedRange[1].format("YYYY-MM-DD");
+  }
 
-    return itemDate >= from && itemDate <= to;
-  });
+  const chartData =
+    data?.data?.chartData?.map((item) => ({
+      time: item.time,
+      totalPurchase: item["Total Purchase"],
+      totalPurchaseAmount: item["Purchase Amount"],
+    })) || [];
 
-  // Calculate totals
-  const totals = {
-    quantity: filteredData.reduce((acc, item) => acc + item.totalPurchase, 0),
-    amount: filteredData.reduce((acc, item) => acc + item.totalPurchaseAmount, 0),
+  const totalPurchaseQuantity = data?.data?.totalPurchaseQuantity ?? 0;
+  const totalPurchaseAmount = data?.data?.totalPurchaseAmount ?? 0;
+
+
+  const getSelectedFilterLabel = () => {
+    if ("timeFilter" in params && params.timeFilter) {
+      switch (params.timeFilter) {
+        case "last7days":
+          return "Last 7 Days";
+        case "last14days":
+          return "Last 14 Days";
+        case "last30days":
+          return "Last 30 Days";
+        default:
+          return String(params.timeFilter)
+            .replace(/([A-Z])/g, " $1")
+            .replace(/^./, (str) => str.toUpperCase());
+      }
+    }
+    if ("from" in params && "to" in params && params.from && params.to) {
+      return `${params.from} to ${params.to}`;
+    }
+    return "Custom";
   };
 
-  // Format the selected filter label
-  const formatDate = (dateObj: DateObject) => dateObj?.format("DD-MM-YYYY");
-
-  const selectedFilterLabel =
-    selectedRange && selectedRange.length === 2
-      ? `${formatDate(selectedRange[0])} to ${formatDate(selectedRange[1])}`
-      : "Custom";
+  if (isLoading)
+    return (
+      <div className="min-h-[300px] flex items-center justify-center">
+        Loading...
+      </div>
+    );
+  if (error)
+    return (
+      <div className="min-h-[300px] flex items-center justify-center text-error">
+        Failed to load data.
+      </div>
+    );
 
   return (
     <section>
+      {/* Optional: Displaying extracted startDate and endDate */}
+      {/* <div>
+        <span>Start Date: {startDate || "N/A"}</span>
+        <span>End Date: {endDate || "N/A"}</span>
+      </div> */}
+
+      {/* Cards */}
       <div className="mb-4 grid gap-4 sm:grid-cols-2">
         <PurchaseQuantityCard
-          value={totals.quantity}
-          selectedFilter={selectedFilter.value}
-          increase={increase}
+          value={totalPurchaseQuantity}
+          selectedFilter={getSelectedFilterLabel()}
+          increase={0}
         />
         <PurchaseAmountCard
-          value={totals.amount}
-          selectedFilter={selectedFilter.value}
-          increase={increase}
+          value={totalPurchaseAmount}
+          selectedFilter={getSelectedFilterLabel()}
+          increase={0}
         />
       </div>
 
+      {/* Chart */}
       <div className="2x:h-[400px] h-[360px] bg-white pt-[50px] pr-4 pb-[70px] 2xl:h-[500px]">
         <h1 className="mb-[20px] pl-[45px] text-[14px] font-semibold text-primary md:text-[16px]">
           Overall Purchase Statistics
@@ -100,7 +121,7 @@ const PurchaseReportOverview = ({ selectedRange }: PurchaseReportOverviewProps) 
         <div className="h-[360px] px-4 pb-8 md:h-[420px]">
           <ResponsiveContainer width="100%" height="100%">
             <LineChart
-              data={purchaseChartData}
+              data={chartData}
               margin={{ top: 10, right: 24, left: 8, bottom: 12 }}
               style={{
                 fontFamily: "var(--font-primary), 'Source Sans Pro', sans-serif",
@@ -112,7 +133,8 @@ const PurchaseReportOverview = ({ selectedRange }: PurchaseReportOverviewProps) 
                 stroke="var(--primary)"
                 tick={{
                   fill: "var(--primary)",
-                  fontFamily: "var(--font-primary), 'Source Sans Pro', sans-serif",
+                  fontFamily:
+                    "var(--font-primary), 'Source Sans Pro', sans-serif",
                   fontSize: 12,
                 }}
                 axisLine={{ stroke: "var(--primary)" }}
@@ -122,7 +144,8 @@ const PurchaseReportOverview = ({ selectedRange }: PurchaseReportOverviewProps) 
                 stroke="var(--primary)"
                 tick={{
                   fill: "var(--primary)",
-                  fontFamily: "var(--font-primary), 'Source Sans Pro', sans-serif",
+                  fontFamily:
+                    "var(--font-primary), 'Source Sans Pro', sans-serif",
                   fontSize: 12,
                 }}
                 axisLine={{ stroke: "var(--primary)" }}
@@ -133,28 +156,32 @@ const PurchaseReportOverview = ({ selectedRange }: PurchaseReportOverviewProps) 
                 stroke="var(--success)"
                 tick={{
                   fill: "var(--success)",
-                  fontFamily: "var(--font-primary), 'Source Sans Pro', sans-serif",
+                  fontFamily:
+                    "var(--font-primary), 'Source Sans Pro', sans-serif",
                   fontSize: 12,
                 }}
                 axisLine={{ stroke: "var(--success)" }}
               />
               <Tooltip
                 contentStyle={{
-                  fontFamily: "var(--font-primary), 'Source Sans Pro', sans-serif",
+                  fontFamily:
+                    "var(--font-primary), 'Source Sans Pro', sans-serif",
                   borderRadius: 8,
                   background: "#fff",
                   border: "1px solid var(--border-main)",
                   color: "var(--primary)",
                 }}
                 labelStyle={{
-                  fontFamily: "var(--font-primary), 'Source Sans Pro', sans-serif",
+                  fontFamily:
+                    "var(--font-primary), 'Source Sans Pro', sans-serif",
                   color: "var(--primary)",
                   fontWeight: 700,
                 }}
               />
               <Legend
                 wrapperStyle={{
-                  fontFamily: "var(--font-primary), 'Source Sans Pro', sans-serif",
+                  fontFamily:
+                    "var(--font-primary), 'Source Sans Pro', sans-serif",
                   fontSize: 13,
                   color: "var(--primary)",
                 }}

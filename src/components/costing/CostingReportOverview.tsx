@@ -24,14 +24,6 @@ const options = [
   { value: "this-year", label: "This Year" },
 ];
 
-// dummy data
-const totals = {
-  Sales: 100,
-  Earnings: 100,
-  Customers: 100,
-  Sms: 100,
-};
-
 const increase = 10;
 
 // dummy data for purchase chart

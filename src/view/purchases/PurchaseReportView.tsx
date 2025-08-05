@@ -6,11 +6,10 @@ import { useState } from "react";
 
 const PurchaseReportView = () => {
   const today = new DateObject();
-
   const copyDate = (date: DateObject) => new DateObject(date.toDate());
-
   const last7Days = [copyDate(today).subtract(6, "days"), copyDate(today)];
   const [selectedRange, setSelectedRange] = useState<DateObject[] | null>(last7Days);
+  
   return (
     <div className="flex flex-col gap-4">
       <div className="flex justify-between">
@@ -20,6 +19,7 @@ const PurchaseReportView = () => {
           Filter by: <AnalyticsOverviewFilter value={selectedRange} onChange={setSelectedRange} />
         </div>
       </div>
+
       <PurchaseReportOverview selectedRange={selectedRange || undefined} />
     </div>
   );

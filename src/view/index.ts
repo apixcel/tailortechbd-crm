@@ -37,7 +37,6 @@ export { default as ProfitBalanceView } from "./profit-balance/ProfitBalanceView
 
 // partner
 export { default as CreatePartnerView } from "./partner/CreatePartnerView";
-export { default as EditPartnerView } from "./partner/EditPartnerView";
 export { default as PartnerListView } from "./partner/PartnerListView";
 
 // admin
