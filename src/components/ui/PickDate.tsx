@@ -20,7 +20,7 @@ const PickDate: React.FC<PickDateProps> = ({ field, form }) => {
       onChange={(dateObj: DateObject | null) => {
         form.setFieldValue(field.name, dateObj ? dateObj.toDate().toISOString() : "");
       }}
-       maxDate={new Date()}
+      maxDate={new Date()}
       format="YYYY-MM-DD"
     />
   );

@@ -1,5 +1,5 @@
 import { api } from "@/redux/api/api";
-import { IMeta, IPurchase } from "@/types";
+import { IMeta, IPurchase, IPurchaseStatistics } from "@/types";
 import { generateQueryParams } from "@/utils";
 
 const purchaseApi = api.injectEndpoints({
@@ -20,6 +20,19 @@ const purchaseApi = api.injectEndpoints({
         const queryString = generateQueryParams(query);
         return {
           url: `/purchase/get?${queryString}`,
+          method: "GET",
+        };
+      },
+      providesTags: ["purchase"],
+    }),
+    getPurchaseStatistics: builder.query<
+      { data: IPurchaseStatistics[] },
+      Record<string, string | number>
+    >({
+      query: (query) => {
+        const queryString = generateQueryParams(query);
+        return {
+          url: `/purchase/get/report?${queryString}`,
           method: "GET",
         };
       },

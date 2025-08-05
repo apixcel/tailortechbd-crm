@@ -97,33 +97,89 @@ const PurchaseReportOverview = ({ selectedRange }: PurchaseReportOverviewProps) 
         <h1 className="mb-[20px] pl-[45px] text-[14px] font-semibold text-primary md:text-[16px]">
           Overall Purchase Statistics
         </h1>
-        <ResponsiveContainer width="100%" height="100%">
-          <LineChart data={purchaseChartData} margin={{ top: 5, right: 20, left: 20, bottom: 5 }}>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="time" />
-            <YAxis yAxisId="left" />
-            <YAxis yAxisId="right" orientation="right" />
-            <Tooltip />
-            <Legend />
-            <Line
-              type="monotone"
-              yAxisId="left"
-              dataKey="totalPurchase"
-              name="Total Purchase"
-              stroke="#3B82F6"
-              strokeWidth={2}
-              activeDot={{ r: 6 }}
-            />
-            <Line
-              type="monotone"
-              yAxisId="right"
-              dataKey="totalPurchaseAmount"
-              name="Purchase Amount"
-              stroke="#10B981"
-              strokeWidth={2}
-            />
-          </LineChart>
-        </ResponsiveContainer>
+        <div className="h-[360px] px-4 pb-8 md:h-[420px]">
+          <ResponsiveContainer width="100%" height="100%">
+            <LineChart
+              data={purchaseChartData}
+              margin={{ top: 10, right: 24, left: 8, bottom: 12 }}
+              style={{
+                fontFamily: "var(--font-primary), 'Source Sans Pro', sans-serif",
+              }}
+            >
+              <CartesianGrid stroke="var(--border-main)" />
+              <XAxis
+                dataKey="time"
+                stroke="var(--primary)"
+                tick={{
+                  fill: "var(--primary)",
+                  fontFamily: "var(--font-primary), 'Source Sans Pro', sans-serif",
+                  fontSize: 12,
+                }}
+                axisLine={{ stroke: "var(--primary)" }}
+              />
+              <YAxis
+                yAxisId="left"
+                stroke="var(--primary)"
+                tick={{
+                  fill: "var(--primary)",
+                  fontFamily: "var(--font-primary), 'Source Sans Pro', sans-serif",
+                  fontSize: 12,
+                }}
+                axisLine={{ stroke: "var(--primary)" }}
+              />
+              <YAxis
+                yAxisId="right"
+                orientation="right"
+                stroke="var(--success)"
+                tick={{
+                  fill: "var(--success)",
+                  fontFamily: "var(--font-primary), 'Source Sans Pro', sans-serif",
+                  fontSize: 12,
+                }}
+                axisLine={{ stroke: "var(--success)" }}
+              />
+              <Tooltip
+                contentStyle={{
+                  fontFamily: "var(--font-primary), 'Source Sans Pro', sans-serif",
+                  borderRadius: 8,
+                  background: "#fff",
+                  border: "1px solid var(--border-main)",
+                  color: "var(--primary)",
+                }}
+                labelStyle={{
+                  fontFamily: "var(--font-primary), 'Source Sans Pro', sans-serif",
+                  color: "var(--primary)",
+                  fontWeight: 700,
+                }}
+              />
+              <Legend
+                wrapperStyle={{
+                  fontFamily: "var(--font-primary), 'Source Sans Pro', sans-serif",
+                  fontSize: 13,
+                  color: "var(--primary)",
+                }}
+              />
+              <Line
+                type="monotone"
+                yAxisId="left"
+                dataKey="totalPurchase"
+                name="Total Purchase"
+                stroke="var(--primary)"
+                strokeWidth={3}
+                activeDot={{ r: 6 }}
+              />
+              <Line
+                type="monotone"
+                yAxisId="right"
+                dataKey="totalPurchaseAmount"
+                name="Purchase Amount"
+                stroke="var(--success)"
+                strokeWidth={3}
+                dot={{ r: 4 }}
+              />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
       </div>
     </section>
   );

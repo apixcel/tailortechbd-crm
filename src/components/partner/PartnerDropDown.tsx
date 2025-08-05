@@ -20,12 +20,12 @@ const PartnerDropDown: React.FC<IProps> = ({ onSelect, defaultValue }) => {
     })) || [];
 
   return (
-    <div className="flex w-full flex-col gap-[5px] lg:max-w-[300px] xl:max-w-[400px]">
+    <div className="flex w-full flex-col gap-[5px] lg:max-w-[300px] xl:max-w-[350px]">
       <span className="text-[12px] font-[700] text-primary">Select Partner</span>
       <SelectionBox
         data={partnerOptions}
         onSelect={onSelect}
-        defaultValue={defaultValue || partnerOptions[0]}
+        defaultValue={defaultValue}
         showSearch={true}
       />
     </div>

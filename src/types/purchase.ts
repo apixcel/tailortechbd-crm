@@ -30,3 +30,13 @@ export interface IPurchase {
   createdAt?: string;
   updatedAt?: string;
 }
+
+export interface IPurchaseStatistics {
+  totalPurchaseQuantity: number;
+  totalPurchaseAmount: number;
+  chartData: {
+    time: string;
+    totalPurchase: number;
+    purchaseAmount: number;
+  }[]
+}
