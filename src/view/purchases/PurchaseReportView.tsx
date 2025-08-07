@@ -6,9 +6,7 @@ import { useState } from "react";
 
 const PurchaseReportView = () => {
   const today = new DateObject();
-
   const copyDate = (date: DateObject) => new DateObject(date.toDate());
-
   const last7Days = [copyDate(today).subtract(6, "days"), copyDate(today)];
   const [selectedRange, setSelectedRange] = useState<DateObject[] | null>(last7Days);
   

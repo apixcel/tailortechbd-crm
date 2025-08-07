@@ -32,7 +32,7 @@ const initialValues: Omit<IProfitWithdrawal, "_id" | "createdAt" | "updatedAt" |
   totalProfitAmount: 0,
   percentage: 0,
   withdrawalDate: new Date().toISOString(),
-  status: "",
+  status: "not_paid",
   comment: "",
   attachment: "",
   profitPeriod: {

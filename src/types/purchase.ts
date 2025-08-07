@@ -31,12 +31,21 @@ export interface IPurchase {
   updatedAt?: string;
 }
 
+export interface IPurchaseStatisticsChartItem {
+  time: string;
+  "Total Purchase": number;
+  "Purchase Amount": number;
+}
+
 export interface IPurchaseStatistics {
   totalPurchaseQuantity: number;
   totalPurchaseAmount: number;
-  chartData: {
-    time: string;
-    totalPurchase: number;
-    purchaseAmount: number;
-  }[]
+  chartData: IPurchaseStatisticsChartItem[];
+}
+
+export interface IPurchaseStatisticsResponse {
+  success: boolean;
+  statusCode: number;
+  message: string;
+  data: IPurchaseStatistics;
 }
