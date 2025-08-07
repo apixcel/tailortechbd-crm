@@ -170,7 +170,7 @@ const AllAdminTable = () => {
 
                     <td className="px-6 py-4">
                       <span className="text-[14px]">
-                        {dateUtils.formateCreateOrUpdateDate(user.createdAt) || "N/A"}
+                        {dateUtils.formatDate(user.createdAt) || "N/A"}
                       </span>
                     </td>
                     <td className="flex items-center justify-start gap-[10px] px-6 py-4">

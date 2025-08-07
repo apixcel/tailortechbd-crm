@@ -27,6 +27,18 @@ const profitWithdrawalApi = api.injectEndpoints({
       },
       providesTags: ["finance"],
     }),
+
+    updateProfiteWithdrawalStatusById: builder.mutation<
+      { data: IProfitWithdrawal },
+      { id: string; payload: Pick<IProfitWithdrawal, "status"> }
+    >({
+      query: ({ id, payload }) => ({
+        url: `/finance/update/withdrawal/status/${id}`,
+        method: "PUT",
+        body: { status: payload.status },
+      }),
+      invalidatesTags: ["finance"],
+    }),
     getProfitWithdrawalById: builder.query<
       { data: IProfitWithdrawal },
       { profitWithdrawalId: string }
@@ -66,5 +78,6 @@ export const {
   useGetAllProfitWithdrawalQuery,
   useGetProfitWithdrawalByIdQuery,
   useUpdateProfitWithdrawalByIdMutation,
+  useUpdateProfiteWithdrawalStatusByIdMutation,
   useDeleteProfitWithdrawalByIdMutation,
 } = profitWithdrawalApi;

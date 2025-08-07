@@ -1,19 +1,19 @@
 "use client";
 
-import * as Yup from "yup";
+import { IPartner, IProfitWithdrawal } from "@/types";
 import { ErrorMessage, Field, FieldProps, Form, Formik, FormikHelpers } from "formik";
-import { IProfitWithdrawal, IPartner } from "@/types";
+import * as Yup from "yup";
 
 import {
-  Input,
-  Button,
-  SectionTitle,
-  TextArea,
-  PickDate,
   AddPartnerOnForm,
-  SelectionBox,
+  Button,
   FormikDateRangePicker,
   ImageUploader,
+  Input,
+  PickDate,
+  SectionTitle,
+  SelectionBox,
+  TextArea,
 } from "@/components";
 import dateUtils from "@/utils/date";
 
@@ -36,8 +36,8 @@ const initialValues: Omit<IProfitWithdrawal, "_id" | "createdAt" | "updatedAt" |
   comment: "",
   attachment: "",
   profitPeriod: {
-    startDate: today.toISOString(),
-    endDate: tomorrow.toISOString(),
+    endDate: today.toISOString(),
+    startDate: tomorrow.toISOString(),
   },
   partner: {
     _id: "",
@@ -50,17 +50,23 @@ const initialValues: Omit<IProfitWithdrawal, "_id" | "createdAt" | "updatedAt" |
 const validationSchema = Yup.object().shape({
   totalProfitAmount: Yup.number()
     .required("Profit amount is required")
-    .min(1, "Profit amount must be >= 1"),
+    .min(1, "Profit amount must be at least 1"),
   percentage: Yup.number()
     .required("Percentage is required")
-    .min(1, "Percentage must be >= 1")
-    .max(100, "Percentage must be <= 100"),
+    .min(1, "Percentage must be at least 1")
+    .max(100, "Percentage must be at most 100"),
   withdrawalDate: Yup.string().required("Date is required"),
   comment: Yup.string().required("Comment is required"),
   status: Yup.string().required("Status is required"),
   profitPeriod: Yup.object().shape({
     startDate: Yup.string().required("Start date is required"),
     endDate: Yup.string().required("End date is required"),
+  }),
+  partner: Yup.object().shape({
+    _id: Yup.string().required("Invalid partner"),
+    partnerName: Yup.string().required("Partner name is required"),
+    partnerDesignation: Yup.string().required("Designation is required"),
+    joiningDate: Yup.string().required("Date is required"),
   }),
 });
 
@@ -189,7 +195,7 @@ const ProfitWithdrawalForm = ({
                     </div>
                     <div>
                       <strong>Joining Date:</strong>{" "}
-                      {dateUtils.formateCreateOrUpdateDate(values.partner.joiningDate)}
+                      {dateUtils.formatDate(values.partner.joiningDate)}
                     </div>
                   </div>
                 )}

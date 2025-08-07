@@ -1,31 +1,32 @@
 "use client";
 
+import { useDebounce } from "@/hooks";
 import {
   useDeletePurchaseByIdMutation,
   useGetAllPurchasesQuery,
 } from "@/redux/features/purchase/purchase.api";
-import { useDebounce } from "@/hooks";
-import dateUtils from "@/utils/date";
-import { useEffect, useState } from "react";
 import { IPurchase } from "@/types";
+import dateUtils from "@/utils/date";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 
-import { RxMagnifyingGlass } from "react-icons/rx";
-import { GoPencil } from "react-icons/go";
 import { FiEye } from "react-icons/fi";
+import { GoPencil } from "react-icons/go";
+import { RxMagnifyingGlass } from "react-icons/rx";
 
 import {
+  DeleteConfirmationDialog,
   HorizontalLine,
+  Pagination,
   TableDataNotFound,
   TableSkeleton,
-  Pagination,
-  DeleteConfirmationDialog,
   TimelineDropDown,
 } from "@/components";
 import { ViewPurchase } from "@/view";
 
 const tableHead = [
-  { label: "Supplier Info", field: "companyInfo" },
+  { label: "#INV", field: "invoiceNumber" },
+  { label: "Supplier Info", field: "" },
   { label: "Purchase Title", field: "name" },
   { label: "Purchased Qty", field: "quantityPurchased" },
   { label: "Total Amount", field: "totalAmount" },
@@ -133,6 +134,7 @@ const AllPurchaseListTable = () => {
                   ) : purchaseData.length ? (
                     purchaseData.map((purchase) => (
                       <tr key={purchase._id} className="hover:bg-gray-50">
+                        <td className="px-6 py-4">{purchase.invoiceNumber}</td>
                         <td className="px-6 py-4">
                           <div className="text-sm font-medium text-gray-900">
                             {purchase.supplier?.name}
@@ -182,7 +184,7 @@ const AllPurchaseListTable = () => {
                           BDT
                         </td>
                         <td className="px-6 py-4 text-sm text-gray-500">
-                          {dateUtils.formateCreateOrUpdateDate(purchase.createdAt)}
+                          {dateUtils.formatDate(purchase.createdAt)}
                         </td>
                         <td className="px-6 py-4">
                           <div className="flex items-center gap-[8px]">

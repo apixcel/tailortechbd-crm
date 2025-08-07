@@ -3,7 +3,7 @@ export interface ICosting {
   costingAmount: number;
   costingDate: string;
   costingType: "";
-  description: string;
+  note: string;
   createdAt?: string;
   updatedAt?: string;
 }

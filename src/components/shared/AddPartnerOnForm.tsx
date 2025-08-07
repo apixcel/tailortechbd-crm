@@ -1,15 +1,15 @@
 "use client";
 
 import useDebounce from "@/hooks/useDebounce";
-import { useState } from "react";
 import { IPartner } from "@/types";
+import { useState } from "react";
 
 import { FaPlus } from "react-icons/fa";
 import { RxMagnifyingGlass } from "react-icons/rx";
 
-import { Loader, DialogProvider, HorizontalLine } from "@/components";
-import dateUtils from "@/utils/date";
+import { DialogProvider, HorizontalLine, Loader } from "@/components";
 import { useGetAllPartnersQuery } from "@/redux/features/partners/partner.api";
+import dateUtils from "@/utils/date";
 
 interface IProps {
   setFieldValue: (field: string, value: IPartner) => void;
@@ -78,8 +78,7 @@ const AddPartnerOnForm = ({ setFieldValue }: IProps) => {
                       <strong>Designation:</strong> {partner.partnerDesignation}
                     </p>
                     <p>
-                      <strong>Joining Date:</strong>{" "}
-                      {dateUtils.formateCreateOrUpdateDate(partner.joiningDate)}
+                      <strong>Joining Date:</strong> {dateUtils.formatDate(partner.joiningDate)}
                     </p>
                   </div>
                 </div>

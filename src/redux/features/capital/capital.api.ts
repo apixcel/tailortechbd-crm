@@ -13,7 +13,7 @@ const capitalApi = api.injectEndpoints({
       invalidatesTags: ["finance"],
     }),
     getAllCapitalJournal: builder.query<
-      { data: ICapital[]; meta?: IMeta },
+      { data: { data: ICapital[]; currentCapitalBalance: number }; meta?: IMeta },
       Record<string, string | number>
     >({
       query: (query) => {

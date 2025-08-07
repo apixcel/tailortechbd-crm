@@ -1,11 +1,11 @@
 "use client";
 
-import * as Yup from "yup";
 import { ErrorMessage, Field, FieldProps, Form, Formik, FormikHelpers } from "formik";
+import * as Yup from "yup";
 
 import { ICosting } from "@/types";
 
-import { Input, Button, SectionTitle, TextArea, PickDate, SelectionBox } from "@/components";
+import { Button, Input, PickDate, SectionTitle, SelectionBox, TextArea } from "@/components";
 
 const costingTypeOptions = [
   { label: "Credit", value: "credit" },
@@ -16,14 +16,16 @@ const initialValues: Omit<ICosting, "_id" | "createdAt" | "updatedAt"> = {
   costingAmount: 0,
   costingDate: new Date().toISOString(),
   costingType: "",
-  description: "",
+  note: "",
 };
 
 const validationSchema = Yup.object().shape({
-  costingAmount: Yup.number().required("Amount is required").min(1, "Amount must be >= 1"),
+  costingAmount: Yup.number()
+    .required("Amount is required")
+    .min(1, "Amount must be greater than 1"),
   costingDate: Yup.string().required("Date is required"),
   costingType: Yup.string().required("Type is required"),
-  description: Yup.string().required("Description is required"),
+  note: Yup.string().required("Note description is required"),
 });
 
 const CostingForm = ({
@@ -88,8 +90,8 @@ const CostingForm = ({
             {/* description */}
             <div className="flex w-full flex-col gap-[5px]">
               <label className="form-label">Description</label>
-              <Field as={TextArea} name="description" placeholder="Description" rows={4} />
-              <ErrorMessage name="description" component="div" className="text-sm text-danger" />
+              <Field as={TextArea} name="note" placeholder="Eg. Need to pay some money" rows={4} />
+              <ErrorMessage name="note" component="div" className="text-sm text-danger" />
             </div>
           </div>
           <Button type="submit" isLoading={isLoading} className="mt-2">

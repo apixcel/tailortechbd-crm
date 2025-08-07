@@ -1,25 +1,25 @@
 "use client";
 
+import { useDebounce } from "@/hooks";
 import {
   useDeleteCostingByIdMutation,
   useGetAllCostingsQuery,
 } from "@/redux/features/costing/costing.api";
-import { useDebounce } from "@/hooks";
-import { useState } from "react";
-import Link from "next/link";
 import { truncateWords } from "@/utils";
 import dateUtils from "@/utils/date";
+import Link from "next/link";
+import { useState } from "react";
 
 import { FaChevronDown, FaChevronUp } from "react-icons/fa";
 import { GoPencil } from "react-icons/go";
 import { RxMagnifyingGlass } from "react-icons/rx";
 
 import {
+  DeleteConfirmationDialog,
   HorizontalLine,
+  Pagination,
   TableDataNotFound,
   TableSkeleton,
-  Pagination,
-  DeleteConfirmationDialog,
 } from "@/components";
 
 const tableHead = [
@@ -162,7 +162,7 @@ const CostingListTable = () => {
                     {/* updated time */}
                     <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
                       <span className="text-sm">
-                        {dateUtils.formateCreateOrUpdateDate(costing.createdAt || "")}
+                        {dateUtils.formatDate(costing.createdAt || "")}
                       </span>
                     </td>
 

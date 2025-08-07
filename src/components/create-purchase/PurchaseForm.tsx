@@ -6,19 +6,21 @@ import Link from "next/link";
 import { FaRegTrashAlt } from "react-icons/fa";
 import * as Yup from "yup";
 
-import AddSupplierOnPurchase from "@/components/create-supplier/AddSupplierOnPurchase";
 import CategorySelector from "@/components/shared/CategorySelector";
 import ImageUploader from "@/components/shared/ImageUploader";
 import SectionTitle from "@/components/shared/SectionTitle";
 import Button from "@/components/ui/Button";
 import HorizontalLine from "@/components/ui/HorizontalLine";
 import Input from "@/components/ui/Input";
+import AddSupplierOnPurchase from "../create-supplier/AddSupplierOnPurchase";
 
-const initialValues: Omit<IPurchase, "_id" | "createdAt" | "updatedAt" | "supplier"> & {
+const initialValues: Omit<
+  IPurchase,
+  "_id" | "createdAt" | "updatedAt" | "supplier" | "invoiceNumber"
+> & {
   supplier: Omit<ISupplier, "_id" | "createdAt" | "updatedAt">;
 } = {
   purchaseTitle: "",
-  invoiceNumber: "",
   supplier: {
     name: "",
     address: "",
@@ -47,7 +49,7 @@ const validationSchema = Yup.object().shape({
   products: Yup.array().of(
     Yup.object().shape({
       productName: Yup.string().required("Name is required"),
-      price: Yup.number().required("Price is required").min(1, "Price must be >= 1"),
+      price: Yup.number().required("Price is required").min(1, "Price must be greater than 1"),
       category: Yup.string().required("Category is required"),
       images: Yup.array()
         .min(1, "At least one image is required")
@@ -64,7 +66,7 @@ const validationSchema = Yup.object().shape({
                   size: Yup.string().required("Size is required"),
                   quantity: Yup.number()
                     .required("Quantity is required")
-                    .min(1, "Quantity must be >= 1"),
+                    .min(1, "Quantity must be at least 1"),
                 })
               ),
           })
@@ -82,7 +84,7 @@ const PurchaseForm = ({
   isLoading?: boolean;
   defaultValue?: typeof initialValues;
   onSubmit: (
-    values: Omit<IPurchase, "_id" | "createdAt" | "updatedAt">,
+    values: Omit<IPurchase, "_id" | "createdAt" | "updatedAt" | "invoiceNumber">,
     helpers: FormikHelpers<typeof initialValues>
   ) => void;
   buttonLabel?: string;
@@ -116,16 +118,21 @@ const PurchaseForm = ({
           category: typeof product.category === "string" ? product.category : product.category._id,
         }));
 
-        const payload: Omit<IPurchase, "_id" | "createdAt" | "updatedAt" | "supplier"> & {
+        const payload: Omit<
+          IPurchase,
+          "_id" | "createdAt" | "updatedAt" | "supplier" | "invoiceNumber"
+        > & {
           supplier: string;
         } = {
           ...rest,
           supplier: supplierId,
-          invoiceNumber: values.supplier.invoiceNumber || "",
           products,
         };
 
-        onSubmit(payload as Omit<IPurchase, "_id" | "createdAt" | "updatedAt">, helpers);
+        onSubmit(
+          payload as Omit<IPurchase, "_id" | "createdAt" | "updatedAt" | "invoiceNumber">,
+          helpers
+        );
       }}
     >
       {({ values, setFieldValue, touched, submitCount }) => (
@@ -151,15 +158,11 @@ const PurchaseForm = ({
             <div className="flex flex-col gap-4 bg-white p-4">
               <SectionTitle>Supplier Information</SectionTitle>
 
-              {!values.supplier?.name && (
-                <AddSupplierOnPurchase setFieldValue={setFieldValue} values={values} />
-              )}
-
               {values.supplier?.name && (
                 <div className="flex flex-col gap-2 p-3 text-sm">
-                  <div>
+                  <span>
                     <strong>Name:</strong> {values.supplier.name}
-                  </div>
+                  </span>
                   <div>
                     <strong>Address:</strong> {values.supplier.address}
                   </div>
@@ -169,11 +172,9 @@ const PurchaseForm = ({
                   <Link href={`mailto:${values.supplier.email}`}>
                     <strong>Email:</strong> {values.supplier.email}
                   </Link>
-                  <div>
-                    <strong>Invoice Number:</strong> {values.supplier.invoiceNumber}
-                  </div>
                 </div>
               )}
+              <AddSupplierOnPurchase setFieldValue={setFieldValue} values={values} />
 
               {/* Error if no supplier added */}
               {(touched.supplier || submitCount > 0) && !values.supplier?.name && (

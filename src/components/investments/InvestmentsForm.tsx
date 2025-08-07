@@ -1,16 +1,16 @@
 "use client";
 
-import * as Yup from "yup";
-import { ErrorMessage, Field, FieldProps, Form, Formik, FormikHelpers } from "formik";
 import { IInvestment, IPartner } from "@/types";
+import { ErrorMessage, Field, FieldProps, Form, Formik, FormikHelpers } from "formik";
+import * as Yup from "yup";
 
 import {
-  Input,
-  Button,
-  SectionTitle,
-  PickDate,
   AddPartnerOnForm,
+  Button,
   ImageUploader,
+  Input,
+  PickDate,
+  SectionTitle,
 } from "@/components";
 import dateUtils from "@/utils/date";
 
@@ -30,7 +30,9 @@ const initialValues: Omit<IInvestment, "_id" | "createdAt" | "updatedAt" | "part
 };
 
 const validationSchema = Yup.object().shape({
-  investmentAmount: Yup.number().required("Amount is required").min(1, "Amount must be >= 1"),
+  investmentAmount: Yup.number()
+    .required("Amount is required")
+    .min(1, "Amount must be greater than 1"),
   investmentDate: Yup.string().required("Date is required"),
   note: Yup.string().required("Note is required"),
 });
@@ -115,7 +117,7 @@ const InvestmentsForm = ({
                     </div>
                     <div>
                       <strong>Joining Date:</strong>{" "}
-                      {dateUtils.formateCreateOrUpdateDate(values.partner.joiningDate)}
+                      {dateUtils.formatDate(values.partner.joiningDate)}
                     </div>
                   </div>
                 )}

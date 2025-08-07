@@ -5,7 +5,7 @@ import { useDebounce } from "@/hooks";
 import { useGetAllCapitalJournalQuery } from "@/redux/features/capital/capital.api";
 import dateUtils from "@/utils/date";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FaChevronDown, FaChevronUp } from "react-icons/fa";
 import { RxMagnifyingGlass } from "react-icons/rx";
 
@@ -29,7 +29,7 @@ const AllCapitalsListTable = () => {
 
   const { data, isLoading } = useGetAllCapitalJournalQuery({ ...query, searchTerm });
 
-  const capitalData = data?.data;
+  const capitalData = data?.data?.data || [];
   const metaData = data?.meta || { totalDoc: 0, page: 1 };
 
   const handleSort = (field: string) => {
@@ -41,10 +41,12 @@ const AllCapitalsListTable = () => {
     }));
   };
 
-  const totalCapitalBalance = capitalData?.reduce(
-    (acc, curr) => acc + (curr.type === "credit" ? curr.amount : -curr.amount),
-    0
-  );
+  const totalCapitalBalance = data?.data?.currentCapitalBalance || 0;
+  useEffect(() => {
+    const totalPage = Math.ceil(metaData.totalDoc / 10);
+    setQuery((prev) => ({ ...prev, page: totalPage ? totalPage : 1 }));
+    console.log(totalPage, "set");
+  }, [metaData.totalDoc]);
 
   return (
     <div className="flex flex-col gap-4">
@@ -148,9 +150,7 @@ const AllCapitalsListTable = () => {
 
                         {/* capital date */}
                         <td className="px-6 py-4">
-                          <span className="text-[14px]">
-                            {dateUtils.formateCreateOrUpdateDate(capital.date)}
-                          </span>
+                          <span className="text-[14px]">{dateUtils.formatDate(capital.date)}</span>
                         </td>
 
                         {/* capital time */}
@@ -198,6 +198,8 @@ const AllCapitalsListTable = () => {
           </div>
         </div>
         <Pagination
+          page={(query.page as number) || 1}
+          setPage={(page) => setQuery({ ...query, page })}
           totalDocs={metaData.totalDoc}
           onPageChange={(page) => setQuery({ ...query, page })}
         />

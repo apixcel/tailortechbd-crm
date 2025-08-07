@@ -1,20 +1,20 @@
 "use client";
 
-import { useGetAllInvestmentsQuery } from "@/redux/features/investments/investments.api";
 import { useDebounce } from "@/hooks";
-import { useState } from "react";
-import Link from "next/link";
+import { useGetAllInvestmentsQuery } from "@/redux/features/investments/investments.api";
 import dateUtils from "@/utils/date";
+import Link from "next/link";
+import { useState } from "react";
 
 import { FaChevronDown, FaChevronUp } from "react-icons/fa";
 import { RxMagnifyingGlass } from "react-icons/rx";
 
 import {
   HorizontalLine,
-  TableDataNotFound,
-  TableSkeleton,
   Pagination,
   PartnerDropDown,
+  TableDataNotFound,
+  TableSkeleton,
 } from "@/components";
 
 const tableHead = [
@@ -94,7 +94,7 @@ const AllInvestmentsTable = () => {
             <span className="text-[12px] text-muted md:text-[14px]">
               Joining Date:{" "}
               {selectedPartner?.joiningDate
-                ? dateUtils.formateCreateOrUpdateDate(selectedPartner.joiningDate)
+                ? dateUtils.formatDate(selectedPartner.joiningDate)
                 : "N/A"}
             </span>
           </div>
@@ -185,7 +185,7 @@ const AllInvestmentsTable = () => {
                     {/* investment date */}
                     <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
                       <span className="text-sm">
-                        {dateUtils.formateCreateOrUpdateDate(investment.investmentDate)}
+                        {dateUtils.formatDate(investment.investmentDate)}
                       </span>
                     </td>
 

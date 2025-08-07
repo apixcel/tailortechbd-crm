@@ -3,11 +3,11 @@
 import { HorizontalLine, Pagination, TableDataNotFound, TableSkeleton } from "@/components";
 import { useDebounce } from "@/hooks";
 
-import { RxMagnifyingGlass } from "react-icons/rx";
-import React, { useState } from "react";
-import Link from "next/link";
 import { useGetAllPartnersQuery } from "@/redux/features/partners/partner.api";
 import dateUtils from "@/utils/date";
+import Link from "next/link";
+import { useState } from "react";
+import { RxMagnifyingGlass } from "react-icons/rx";
 
 const tableHead = [
   { label: "SL", field: "" },
@@ -105,9 +105,7 @@ const AllPartnerListTable = () => {
 
                     {/* joining date */}
                     <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
-                      <span className="text-sm">
-                        {dateUtils.formateCreateOrUpdateDate(partner.joiningDate)}
-                      </span>
+                      <span className="text-sm">{dateUtils.formatDate(partner.joiningDate)}</span>
                     </td>
                   </tr>
                 ))

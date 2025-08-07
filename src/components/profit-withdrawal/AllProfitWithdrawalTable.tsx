@@ -1,21 +1,22 @@
 "use client";
 
-import { useGetAllProfitWithdrawalQuery } from "@/redux/features/profit-withdrawal/profit-withdrawal.api";
 import { useDebounce } from "@/hooks";
-import { useState } from "react";
-import Link from "next/link";
+import { useGetAllProfitWithdrawalQuery } from "@/redux/features/profit-withdrawal/profit-withdrawal.api";
 import dateUtils from "@/utils/date";
+import Link from "next/link";
+import { useState } from "react";
 
 import { FaChevronDown, FaChevronUp } from "react-icons/fa";
 import { RxMagnifyingGlass } from "react-icons/rx";
 
 import {
   HorizontalLine,
-  TableDataNotFound,
-  TableSkeleton,
   Pagination,
   PartnerDropDown,
+  TableDataNotFound,
+  TableSkeleton,
 } from "@/components";
+import UpdateProfitWithdrawalStatus from "./UpdateProfitWithdrawalStatus";
 
 const tableHead = [
   { label: "SL", field: "" },
@@ -103,7 +104,7 @@ const AllProfitWithdrawalTable = () => {
             <span className="text-[12px] text-muted md:text-[14px]">
               Joining Date:{" "}
               {selectedPartner?.joiningDate
-                ? dateUtils.formateCreateOrUpdateDate(selectedPartner.joiningDate)
+                ? dateUtils.formatDate(selectedPartner.joiningDate)
                 : "N/A"}
             </span>
           </div>
@@ -192,9 +193,9 @@ const AllProfitWithdrawalTable = () => {
 
                     {/* profit period */}
                     <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
-                      {dateUtils.formateCreateOrUpdateDate?.(pw.profitPeriod?.startDate)}
+                      {dateUtils.formatDate?.(pw.profitPeriod?.startDate)}
                       {" - "}
-                      {dateUtils.formateCreateOrUpdateDate?.(pw.profitPeriod?.endDate)}
+                      {dateUtils.formatDate?.(pw.profitPeriod?.endDate)}
                     </td>
 
                     {/* profit amount */}
@@ -214,19 +215,26 @@ const AllProfitWithdrawalTable = () => {
 
                     {/* withdrawal date */}
                     <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
-                      {dateUtils.formateCreateOrUpdateDate?.(pw.withdrawalDate)}
+                      {dateUtils.formatDate?.(pw.withdrawalDate)}
                     </td>
 
                     {/* status */}
                     <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700 capitalize">
-                      <span
-                        className={
-                          pw.status === "paid"
-                            ? "font-semibold text-green-600"
-                            : "font-semibold text-yellow-500"
-                        }
-                      >
-                        {pw.status.replace("_", " ")}
+                      <span className="flex flex-col gap-[5px]">
+                        <span
+                          className={
+                            pw.status === "paid"
+                              ? "font-semibold text-green-600"
+                              : "font-semibold text-yellow-500"
+                          }
+                        >
+                          {pw.status.replace("_", " ")}
+                        </span>
+                        {pw.status === "not_paid" ? (
+                          <UpdateProfitWithdrawalStatus profitWithdrawal={pw} />
+                        ) : (
+                          ""
+                        )}
                       </span>
                     </td>
 
@@ -247,7 +255,7 @@ const AllProfitWithdrawalTable = () => {
                           View
                         </a>
                       ) : (
-                        <span className="text-gray-300">—</span>
+                        <span className="text-primary">—</span>
                       )}
                     </td>
                   </tr>

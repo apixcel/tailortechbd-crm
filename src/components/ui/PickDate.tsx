@@ -1,7 +1,7 @@
+import { ICosting } from "@/types";
+import { FieldInputProps, FieldMetaProps, FormikProps } from "formik";
 import React from "react";
 import DatePicker, { DateObject } from "react-multi-date-picker";
-import { FieldInputProps, FormikProps, FieldMetaProps } from "formik";
-import { ICosting } from "@/types";
 
 interface PickDateProps {
   field: FieldInputProps<string>;
@@ -21,7 +21,7 @@ const PickDate: React.FC<PickDateProps> = ({ field, form }) => {
         form.setFieldValue(field.name, dateObj ? dateObj.toDate().toISOString() : "");
       }}
       maxDate={new Date()}
-      format="YYYY-MM-DD"
+      format="MMM dd, YYYY"
     />
   );
 };
