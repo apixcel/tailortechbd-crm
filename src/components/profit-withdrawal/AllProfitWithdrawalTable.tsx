@@ -16,6 +16,7 @@ import {
   TableDataNotFound,
   TableSkeleton,
 } from "@/components";
+import DownloadProfitWithdrawalReport from "./DownloadProfitWithdrawalReport";
 import UpdateProfitWithdrawalStatus from "./UpdateProfitWithdrawalStatus";
 
 const tableHead = [
@@ -138,6 +139,7 @@ const AllProfitWithdrawalTable = () => {
             />
             <RxMagnifyingGlass />
           </div>
+          <DownloadProfitWithdrawalReport />
         </div>
 
         {/* table */}

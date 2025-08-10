@@ -5,7 +5,16 @@ import * as Yup from "yup";
 
 import { ICosting } from "@/types";
 
-import { Button, Input, PickDate, SectionTitle, SelectionBox, TextArea } from "@/components";
+import {
+  Button,
+  ImageUploader,
+  Input,
+  PartnerDropDown,
+  PickDate,
+  SectionTitle,
+  SelectionBox,
+  TextArea,
+} from "@/components";
 
 const costingTypeOptions = [
   { label: "Credit", value: "credit" },
@@ -17,6 +26,8 @@ const initialValues: Omit<ICosting, "_id" | "createdAt" | "updatedAt"> = {
   costingDate: new Date().toISOString(),
   costingType: "",
   note: "",
+  fileUrl: "",
+  partner: "",
 };
 
 const validationSchema = Yup.object().shape({
@@ -26,6 +37,8 @@ const validationSchema = Yup.object().shape({
   costingDate: Yup.string().required("Date is required"),
   costingType: Yup.string().required("Type is required"),
   note: Yup.string().required("Note description is required"),
+  partner: Yup.string().required("Please select a partner"),
+  fileUrl: Yup.string().url("Must be a valid URL").optional(),
 });
 
 const CostingForm = ({
@@ -53,47 +66,81 @@ const CostingForm = ({
           <div className="flex flex-col gap-4 bg-white p-4">
             <SectionTitle>Costing Information</SectionTitle>
             {/* amount, date, type */}
-            <div className="flex w-full flex-col items-start justify-start gap-[16px] sm:flex-row">
-              <div className="flex w-full flex-col gap-[5px]">
-                <label className="form-label">Costing Amount</label>
-                <Field as={Input} type="number" name="costingAmount" placeholder="Amount" />
-                <ErrorMessage
-                  name="costingAmount"
-                  component="div"
-                  className="text-sm text-danger"
-                />
+            <div className="flex items-start gap-[20px]">
+              <div className="flex w-full flex-col items-start justify-start gap-[16px]">
+                <div className="flex w-full flex-col gap-[5px]">
+                  <label className="form-label">Costing Amount</label>
+                  <Field as={Input} type="number" name="costingAmount" placeholder="Amount" />
+                  <ErrorMessage
+                    name="costingAmount"
+                    component="div"
+                    className="text-sm text-danger"
+                  />
+                </div>
+
+                <div className="flex w-full flex-col gap-[5px]">
+                  <label className="form-label">Costing Date</label>
+                  <Field name="costingDate">
+                    {(fieldProps: FieldProps) => <PickDate {...fieldProps} />}
+                  </Field>
+                  <ErrorMessage
+                    name="costingDate"
+                    component="div"
+                    className="text-sm text-danger"
+                  />
+                </div>
+
+                <div className="flex w-full flex-col gap-[5px]">
+                  <label className="form-label">Costing Type</label>
+                  <SelectionBox
+                    data={costingTypeOptions}
+                    onSelect={(option) => setFieldValue("costingType", option.value)}
+                    defaultValue={costingTypeOptions.find(
+                      (opt) => opt.value === values.costingType
+                    )}
+                    displayValue={
+                      costingTypeOptions.find((opt) => opt.value === values.costingType)?.label
+                    }
+                    showSearch={false}
+                  />
+                  <ErrorMessage
+                    name="costingType"
+                    component="div"
+                    className="text-sm text-danger"
+                  />
+                </div>
               </div>
 
+              {/* description */}
               <div className="flex w-full flex-col gap-[5px]">
-                <label className="form-label">Costing Date</label>
-                <Field name="costingDate">
-                  {(fieldProps: FieldProps) => <PickDate {...fieldProps} />}
-                </Field>
-                <ErrorMessage name="costingDate" component="div" className="text-sm text-danger" />
-              </div>
-
-              <div className="flex w-full flex-col gap-[5px]">
-                <label className="form-label">Costing Type</label>
-                <SelectionBox
-                  data={costingTypeOptions}
-                  onSelect={(option) => setFieldValue("costingType", option.value)}
-                  defaultValue={costingTypeOptions.find((opt) => opt.value === values.costingType)}
-                  displayValue={
-                    costingTypeOptions.find((opt) => opt.value === values.costingType)?.label
-                  }
-                  showSearch={false}
+                <label className="form-label">Description</label>
+                <Field
+                  as={TextArea}
+                  name="note"
+                  placeholder="Eg. Need to pay some money"
+                  rows={4}
+                  className={"min-h-[180px]"}
                 />
-                <ErrorMessage name="costingType" component="div" className="text-sm text-danger" />
+                <ErrorMessage name="note" component="div" className="text-sm text-danger" />
               </div>
             </div>
+            <PartnerDropDown
+              className="lg:max-w-[unset] xl:max-w-[unset]"
+              onSelect={(item) => {
+                setFieldValue("partner", item.value);
+              }}
+            />
+            <ImageUploader
+              inputId="supplier-logo"
+              mode="single"
+              defaultImages={defaultValue?.fileUrl ? [defaultValue.fileUrl] : []}
+              onChange={(urls) => setFieldValue("fileUrl", urls?.[0] || "")}
+              title="Upload Image"
+            />
 
-            {/* description */}
-            <div className="flex w-full flex-col gap-[5px]">
-              <label className="form-label">Description</label>
-              <Field as={TextArea} name="note" placeholder="Eg. Need to pay some money" rows={4} />
-              <ErrorMessage name="note" component="div" className="text-sm text-danger" />
-            </div>
+            <ErrorMessage name="partner" component="span" className="text-sm text-danger" />
           </div>
+
           <Button type="submit" isLoading={isLoading} className="mt-2">
             {buttonLabel}
           </Button>

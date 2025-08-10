@@ -12,11 +12,12 @@ import { useGetAllPartnersQuery } from "@/redux/features/partners/partner.api";
 import dateUtils from "@/utils/date";
 
 interface IProps {
-  setFieldValue: (field: string, value: IPartner) => void;
+  setFieldValue?: (field: string, value: IPartner) => void;
   values: Record<string, unknown>;
+  onSelect?: (partner: Omit<IPartner, "createdAt" | "updatedAt">) => void;
 }
 
-const AddPartnerOnForm = ({ setFieldValue }: IProps) => {
+const AddPartnerOnForm = ({ setFieldValue, onSelect }: IProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useDebounce("");
 
@@ -26,12 +27,13 @@ const AddPartnerOnForm = ({ setFieldValue }: IProps) => {
   if (isLoading) return <Loader />;
 
   const handleSelectPartner = (partner: Omit<IPartner, "createdAt" | "updatedAt">) => {
-    setFieldValue("partner", {
+    setFieldValue?.("partner", {
       _id: partner._id,
       partnerName: partner.partnerName,
       partnerDesignation: partner.partnerDesignation,
       joiningDate: partner.joiningDate,
     });
+    onSelect?.(partner);
     setIsOpen(false);
   };
 

@@ -76,6 +76,7 @@ const profitWithdrawalApi = api.injectEndpoints({
 export const {
   useCreateProfitWithdrawalMutation,
   useGetAllProfitWithdrawalQuery,
+  useLazyGetAllProfitWithdrawalQuery,
   useGetProfitWithdrawalByIdQuery,
   useUpdateProfitWithdrawalByIdMutation,
   useUpdateProfiteWithdrawalStatusByIdMutation,

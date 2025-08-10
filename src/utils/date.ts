@@ -11,7 +11,7 @@ function formatSecondsToMMSS(totalSeconds: number): string {
 const formatDate = (dateString?: string | Date | undefined) => {
   if (!dateString) return "";
   const date = new Date(dateString);
-  return date.toLocaleDateString("en-US", { month: "long", year: "numeric", day: "numeric" });
+  return date.toLocaleDateString("en-US", { month: "short", year: "numeric", day: "numeric" });
 };
 
 function getTimeFromISOString(isoString: string): string {

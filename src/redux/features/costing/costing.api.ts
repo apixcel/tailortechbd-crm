@@ -56,6 +56,7 @@ const costingApi = api.injectEndpoints({
 export const {
   useCreateCostingMutation,
   useGetAllCostingsQuery,
+  useLazyGetAllCostingsQuery,
   useGetCostingByIdQuery,
   useUpdateCostingByIdMutation,
   useDeleteCostingByIdMutation,

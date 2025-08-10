@@ -38,6 +38,7 @@ const purchaseApi = api.injectEndpoints({
       },
       providesTags: ["purchase"],
     }),
+
     getPurchaseById: builder.query<{ data: IPurchase }, { purchaseId: string }>({
       query: ({ purchaseId }) => ({
         url: `/purchase/get/${purchaseId}`,
@@ -72,5 +73,6 @@ export const {
   useDeletePurchaseByIdMutation,
   useGetPurchaseByIdQuery,
   useGetAllPurchasesQuery,
+  useLazyGetAllPurchasesQuery,
   useGetPurchaseStatisticsQuery,
 } = purchaseApi;

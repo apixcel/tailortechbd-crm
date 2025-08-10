@@ -15,6 +15,7 @@ const CreateCostingView = () => {
     const formattedValues = {
       ...payload,
       costingDate: payload.costingDate.split("T")[0],
+      fileUrl: payload.fileUrl || undefined,
     };
 
     const res = await createCosting(formattedValues);

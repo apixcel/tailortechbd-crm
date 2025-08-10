@@ -26,8 +26,8 @@ function getParamsFromSelectedRange(
 ): Record<string, string | number> {
   if (selectedRange && selectedRange.length === 2) {
     return {
-      from: selectedRange[0].format("YYYY-MM-DD"),
-      to: selectedRange[1].format("YYYY-MM-DD"),
+      startDate: selectedRange[0].format("YYYY-MM-DD"),
+      endDate: selectedRange[1].format("YYYY-MM-DD"),
     };
   }
   return { timeFilter: "last7days" };

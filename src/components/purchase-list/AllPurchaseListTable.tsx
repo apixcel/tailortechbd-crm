@@ -23,6 +23,7 @@ import {
   TimelineDropDown,
 } from "@/components";
 import { ViewPurchase } from "@/view";
+import DownloadPurchseReport from "./DownloadPurchseReport";
 
 const tableHead = [
   { label: "#INV", field: "invoiceNumber" },
@@ -102,14 +103,14 @@ const AllPurchaseListTable = () => {
                 <RxMagnifyingGlass />
               </div>
 
-              {/* timeline dropdown */}
-              <div>
+              <div className="flex items-end gap-[10px]">
                 <TimelineDropDown
                   onSelect={({ value }) => {
                     setQuery({ ...query, day_count: value });
                     setPage(1);
                   }}
                 />
+                <DownloadPurchseReport />
               </div>
             </div>
 

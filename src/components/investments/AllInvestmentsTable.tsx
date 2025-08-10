@@ -16,6 +16,7 @@ import {
   TableDataNotFound,
   TableSkeleton,
 } from "@/components";
+import DownloadInvestmentReport from "./DownloadInvestmentReport";
 
 const tableHead = [
   { label: "SL", field: "" },
@@ -129,6 +130,7 @@ const AllInvestmentsTable = () => {
             />
             <RxMagnifyingGlass />
           </div>
+          <DownloadInvestmentReport />
         </div>
 
         {/* table */}

@@ -21,13 +21,16 @@ import {
   TableDataNotFound,
   TableSkeleton,
 } from "@/components";
+import DownloadCostingReport from "./DownloadCostingReport";
 
 const tableHead = [
   { label: "SL", field: "" },
+  { label: "Partner", field: "" },
   { label: "Costing Amount", field: "costingAmount" },
   { label: "Date", field: "costingDate" },
   { label: "Type", field: "" },
   { label: "Description", field: "" },
+  { label: "Attachment", field: "" },
   { label: "Create Date", field: "createdAt" },
   { label: "Actions", field: "" },
 ];
@@ -85,6 +88,8 @@ const CostingListTable = () => {
             />
             <RxMagnifyingGlass />
           </div>
+
+          <DownloadCostingReport />
         </div>
 
         {/* table */}
@@ -136,36 +141,57 @@ const CostingListTable = () => {
                   <tr key={index} className="hover:bg-gray-50">
                     {/* index */}
                     <td className="px-6 py-4 text-sm text-gray-900">{index + 1}</td>
+                    <td className="px-6 py-4 text-sm text-gray-900">
+                      {!costing.partner || typeof costing.partner === "string" ? (
+                        "-"
+                      ) : (
+                        <span className="flex flex-col gap-[5px]">
+                          <span className="font-[600]">{costing.partner.partnerName}</span>
+                          <span className="text-[12px]">
+                            ({costing.partner.partnerDesignation})
+                          </span>
+                        </span>
+                      )}
+                    </td>
 
                     {/* costing amount */}
-                    <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
+                    <td className="px-6 py-4 text-sm text-gray-700">
                       <span className="text-sm">{costing.costingAmount}</span>
                     </td>
 
                     {/* costing date */}
-                    <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
+                    <td className="px-6 py-4 text-sm text-gray-700">
                       <span className="text-sm">{costing.costingDate}</span>
                     </td>
 
                     {/* type */}
-                    <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
+                    <td className="px-6 py-4 text-sm text-gray-700">
                       <span className="text-sm">{costing.costingType}</span>
                     </td>
 
                     {/* description */}
-                    <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
-                      <span className="text-sm">{truncateWords(costing.note || "-", 10)}</span>
+                    <td className="max-w-[250px] px-6 py-4 text-sm text-gray-700">
+                      {truncateWords(costing.note || "-", 10)}
+                    </td>
+                    <td className="max-w-[250px] px-6 py-4 text-sm text-gray-700">
+                      {costing.fileUrl ? (
+                        <Link href={costing.fileUrl} target="_blank">
+                          Attachment
+                        </Link>
+                      ) : (
+                        "-"
+                      )}
                     </td>
 
                     {/* updated time */}
-                    <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
+                    <td className="px-6 py-4 text-sm text-gray-700">
                       <span className="text-sm">
                         {dateUtils.formatDate(costing.createdAt || "")}
                       </span>
                     </td>
 
                     {/* actions */}
-                    <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
+                    <td className="px-6 py-4 text-sm text-gray-700">
                       <div className="flex items-center gap-2">
                         {/* update */}
                         <Link

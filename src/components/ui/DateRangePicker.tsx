@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import { useState } from "react";
 import DatePicker, { DateObject } from "react-multi-date-picker";
 
 const DateRangePicker = () => {
@@ -9,11 +9,7 @@ const DateRangePicker = () => {
     new DateObject().add(4, "days"),
   ]);
 
-  return (
-    <div>
-      <DatePicker value={values} onChange={setValues} range />
-    </div>
-  );
+  return <DatePicker value={values} onChange={setValues} range />;
 };
 
 export default DateRangePicker;
