@@ -39,6 +39,8 @@ export const api = createApi({
   tagTypes: [
     "user",
     "sales",
+
+    "statistics",
     "file",
     "categories",
     "purchase",

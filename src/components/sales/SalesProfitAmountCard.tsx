@@ -1,3 +1,4 @@
+import { formatNumberWithSuffix } from "@/utils";
 import { TbCurrencyTaka } from "react-icons/tb";
 
 const SalesProfitAmountCard = ({
@@ -9,6 +10,7 @@ const SalesProfitAmountCard = ({
   selectedFilter: string;
   increase: number;
 }) => {
+  const isIncreased = increase > 0;
   return (
     <div className="w-full bg-white p-4">
       <div className="flex flex-col gap-[5px]">
@@ -23,12 +25,14 @@ const SalesProfitAmountCard = ({
           </div>
         </div>
         <div className="h-full w-full">
-          <h1 className="text-[20px] font-bold 2xl:text-[25px]">{Math.floor(value)}</h1>
+          <h1 className="text-[20px] font-bold 2xl:text-[25px]">{formatNumberWithSuffix(value)}</h1>
         </div>
       </div>
 
-      <p className="text-[14px] font-bold 2xl:text-[16px]">
-        <span className="text-success">{increase}%</span> increase
+      <p
+        className={`text-[14px] font-bold 2xl:text-[16px] ${isIncreased ? "text-success" : "text-danger"}`}
+      >
+        <span>{increase.toFixed(2)}%</span> {isIncreased ? "increase" : "decrease"}
       </p>
     </div>
   );

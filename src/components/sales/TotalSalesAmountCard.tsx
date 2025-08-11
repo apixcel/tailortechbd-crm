@@ -1,3 +1,4 @@
+import { formatNumberWithSuffix } from "@/utils";
 import React from "react";
 import { MdOutlineTrendingUp } from "react-icons/md";
 
@@ -10,6 +11,7 @@ const TotalSalesAmountCard = ({
   selectedFilter: string;
   increase: number;
 }) => {
+  const isIncreased = increase > 0;
   return (
     <div className="w-full bg-white p-4">
       <div className="flex flex-col gap-[5px]">
@@ -24,11 +26,13 @@ const TotalSalesAmountCard = ({
           </div>
         </div>
         <div className="h-full w-full">
-          <h1 className="text-[20px] font-bold 2xl:text-[25px]">{value}</h1>
+          <h1 className="text-[20px] font-bold 2xl:text-[25px]">{formatNumberWithSuffix(value)}</h1>
         </div>
       </div>
-      <p className="text-[14px] font-bold 2xl:text-[16px]">
-        <span className="text-success">{increase}%</span> increase
+      <p
+        className={`text-[14px] font-bold 2xl:text-[16px] ${isIncreased ? "text-success" : "text-danger"}`}
+      >
+        <span>{increase.toFixed(2)}%</span> {isIncreased ? "increase" : "decrease"}
       </p>
     </div>
   );

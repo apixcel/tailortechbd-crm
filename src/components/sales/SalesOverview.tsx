@@ -1,16 +1,17 @@
 "use client";
 
 import {
-  SalesExpenseCard,
-  SalesProfitAmountCard,
-  SalesCapitalsCard,
-  TotalSalesAmountCard,
-  ProductSalesOverview,
-  SalesOverviewChart,
-  OverallSalesStatistics,
   OverallInvestmentStatistics,
   OverallProfitWithdrawalsStatistics,
+  OverallSalesStatistics,
+  ProductSalesOverview,
+  SalesCapitalsCard,
+  SalesExpenseCard,
+  SalesOverviewChart,
+  SalesProfitAmountCard,
+  TotalSalesAmountCard,
 } from "@/components";
+import { useGetFinancialOverViewQuery } from "@/redux/features/statistics/statistics.api";
 import { DateObject } from "react-multi-date-picker";
 import CapitalFlowChart from "../capitals/CapitalFlowChart";
 
@@ -38,7 +39,6 @@ interface SalesOverviewProps {
 }
 
 const SalesOverview = ({ selectedRange }: SalesOverviewProps) => {
-  const increase = 10;
 
   // Filter sales data by selected date range
   const filteredData = salesChartData.filter((item) => {
@@ -67,6 +67,12 @@ const SalesOverview = ({ selectedRange }: SalesOverviewProps) => {
       ? `${formatDate(selectedRange[0])} to ${formatDate(selectedRange[1])}`
       : "Custom";
 
+  const { data } = useGetFinancialOverViewQuery({
+    startDate: selectedRange?.[0]?.format("YYYY-MM-DD"),
+    endDate: selectedRange?.[1]?.format("YYYY-MM-DD"),
+  });
+
+  const financeOverview = data?.data;
   return (
     <section className="flex flex-col gap-4">
       <div className="flex h-full items-stretch justify-between gap-4">
@@ -82,24 +88,24 @@ const SalesOverview = ({ selectedRange }: SalesOverviewProps) => {
 
           <div className="grid min-h-[250px] flex-1 grid-cols-1 gap-4 sm:grid-cols-2 2xl:grid-cols-4">
             <SalesCapitalsCard
-              value={totals.capitals}
+              value={financeOverview?.capital?.amount || 0}
               selectedFilter={selectedFilterLabel}
-              increase={increase}
+              increase={financeOverview?.capital?.increasePct || 0}
             />
             <TotalSalesAmountCard
-              value={totals.sales}
+              value={financeOverview?.sales?.amount || 0}
               selectedFilter={selectedFilterLabel}
-              increase={increase}
+              increase={financeOverview?.sales?.increasePct || 0}
             />
             <SalesExpenseCard
-              value={totals.expense}
+              value={financeOverview?.expenses?.amount || 0}
               selectedFilter={selectedFilterLabel}
-              increase={increase}
+              increase={financeOverview?.expenses?.increasePct || 0}
             />
             <SalesProfitAmountCard
-              value={totals.profit}
+              value={financeOverview?.profit?.amount || 0}
               selectedFilter={selectedFilterLabel}
-              increase={increase}
+              increase={financeOverview?.profit?.increasePct || 0}
             />
           </div>
         </div>
