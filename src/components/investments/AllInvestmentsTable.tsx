@@ -34,7 +34,7 @@ const tableHead = [
 const investmentData = [
   {
     id: "1",
-    investmentDate: "01-01-2025",
+    investmentDate: "01/01/2025",
     partnerName: "Rafikul Islam",
     description: "Initial Capital",
     transactionMethod: "Bank Transfer",
@@ -45,7 +45,7 @@ const investmentData = [
   },
   {
     id: "2",
-    investmentDate: "01-02-2025",
+    investmentDate: "01/02/2025",
     partnerName: "Atikur Rahman",
     description: "Initial Capital",
     transactionMethod: "Cash",
@@ -56,7 +56,7 @@ const investmentData = [
   },
   {
     id: "3",
-    investmentDate: "15-02-2025",
+    investmentDate: "15/02/2025",
     partnerName: "Rafikul Islam",
     description: "Additional Investment",
     transactionMethod: "By bKash",
@@ -67,7 +67,7 @@ const investmentData = [
   },
   {
     id: "4",
-    investmentDate: "10-03-2025",
+    investmentDate: "10/03/2025",
     partnerName: "Munnaf Ali",
     description: "Initial Capital",
     startingBalance: 13000,
@@ -77,7 +77,7 @@ const investmentData = [
   },
   {
     id: "5",
-    investmentDate: "10-03-2025",
+    investmentDate: "10/03/2025",
     partnerName: "Atikur Rahman",
     description: "Initial Capital",
     startingBalance: 13000,
@@ -109,6 +109,9 @@ const AllInvestmentsTable = () => {
     searchTerm,
     ...(selectedPartner?.value ? { partner: selectedPartner.value } : {}),
   });
+
+  const logData = data?.data || [];
+  console.log(logData[0]);
 
   // const investmentData = data?.data || [];
   const metaData = data?.meta || { totalDoc: 0, page: 1 };
@@ -262,9 +265,11 @@ const AllInvestmentsTable = () => {
 
                     {/* transaction method */}
                     <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
-                      {
-                        investment.transactionMethod ? <span className="text-sm">{investment.transactionMethod}</span> : <span className="text-sm text-gray-400">—</span>
-                      }
+                      {investment.transactionMethod ? (
+                        <span className="text-sm">{investment.transactionMethod}</span>
+                      ) : (
+                        <span className="text-sm text-gray-400">—</span>
+                      )}
                     </td>
 
                     {/* investment note */}

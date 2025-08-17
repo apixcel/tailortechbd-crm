@@ -13,12 +13,7 @@ import { useState } from "react";
 import { FaChevronDown, FaChevronUp } from "react-icons/fa";
 import { RxMagnifyingGlass } from "react-icons/rx";
 
-import {
-  HorizontalLine,
-  Pagination,
-  TableDataNotFound,
-  TableSkeleton,
-} from "@/components";
+import { HorizontalLine, Pagination, TableDataNotFound, TableSkeleton } from "@/components";
 import DownloadCostingReport from "./DownloadCostingReport";
 
 const tableHead = [
@@ -30,7 +25,7 @@ const tableHead = [
   { label: "Date", field: "costingDate" },
   { label: "Cost Amount", field: "costingAmount" },
   { label: "Remarks", field: "" },
-  { label: "Documents (Attachment)", field: "" },
+  { label: "Documents", field: "" },
 ];
 
 const costingData = [
@@ -189,11 +184,7 @@ const CostingListTable = () => {
 
                     {/* name */}
                     <td className="px-6 py-4 text-sm text-gray-900">
-                      {!costing.name ? (
-                        "-"
-                      ) : (
-                          <span className="font-[500]">{costing.name}</span>
-                      )}
+                      {!costing.name ? "-" : <span className="font-[500]">{costing.name}</span>}
                     </td>
 
                     {/* designation */}
@@ -201,7 +192,7 @@ const CostingListTable = () => {
                       {!costing.designation ? (
                         "-"
                       ) : (
-                          <span className="font-[500]">{costing.designation}</span>
+                        <span className="font-[500]">{costing.designation}</span>
                       )}
                     </td>
 
@@ -230,13 +221,18 @@ const CostingListTable = () => {
                       {truncateWords(costing.costingRemark || "-", 10)}
                     </td>
 
-                    <td className="max-w-[250px] px-6 py-4 text-sm text-gray-700">
+                    <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
                       {costing.fileUrl ? (
-                        <Link className="hover:underline" href={costing.fileUrl} target="_blank">
-                          Attachment
-                        </Link>
+                        <a
+                          href={costing.fileUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-primary underline"
+                        >
+                          View
+                        </a>
                       ) : (
-                        "-"
+                        <span className="text-primary">—</span>
                       )}
                     </td>
                   </tr>
