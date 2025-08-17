@@ -11,11 +11,9 @@ import Link from "next/link";
 import { useState } from "react";
 
 import { FaChevronDown, FaChevronUp } from "react-icons/fa";
-import { GoPencil } from "react-icons/go";
 import { RxMagnifyingGlass } from "react-icons/rx";
 
 import {
-  DeleteConfirmationDialog,
   HorizontalLine,
   Pagination,
   TableDataNotFound,
@@ -25,14 +23,60 @@ import DownloadCostingReport from "./DownloadCostingReport";
 
 const tableHead = [
   { label: "SL", field: "" },
-  { label: "Partner", field: "" },
-  { label: "Costing Amount", field: "costingAmount" },
-  { label: "Date", field: "costingDate" },
-  { label: "Type", field: "" },
+  { label: "Name", field: "" },
+  { label: "Designation", field: "" },
+  { label: "Costing Category", field: "" },
   { label: "Description", field: "" },
-  { label: "Attachment", field: "" },
-  { label: "Create Date", field: "createdAt" },
-  { label: "Actions", field: "" },
+  { label: "Date", field: "costingDate" },
+  { label: "Cost Amount", field: "costingAmount" },
+  { label: "Remarks", field: "" },
+  { label: "Documents (Attachment)", field: "" },
+];
+
+const costingData = [
+  {
+    id: 1,
+    name: "Munnaf Ali",
+    designation: "Sr. Executive-IT",
+    costingCategory: "Convence Bill",
+    costingDescription: "Mirpur to Dhanmondi",
+    costingDate: "10/8/2025",
+    costingAmount: 300,
+    costingRemark: "By CNG",
+  },
+  {
+    id: 2,
+    name: "Rafikul Islam",
+    designation: "Manager-IT",
+    costingCategory: "Photography",
+    costingDescription: "007 Studio at Mirpur",
+    costingDate: "10/8/2025",
+    costingAmount: 1500,
+    costingRemark: "Bank Tr",
+    fileUrl: "https://example.com/file.pdf",
+  },
+  {
+    id: 3,
+    name: "Shawon",
+    designation: "CTO",
+    costingCategory: "D. Marketing",
+    costingDescription: "Facebook Ad Boosting",
+    costingDate: "10/8/2025",
+    costingAmount: 2500,
+    costingRemark: "Via VISA Card",
+    fileUrl: "https://example.com/file.pdf",
+  },
+  {
+    id: 3,
+    name: "Faruk Hosen",
+    designation: "Test",
+    costingCategory: "Office Rent",
+    costingDescription: "Month of August",
+    costingDate: "10/8/2025",
+    costingAmount: 5000,
+    costingRemark: "Cash",
+    fileUrl: "https://example.com/file.pdf",
+  },
 ];
 
 const CostingListTable = () => {
@@ -46,7 +90,7 @@ const CostingListTable = () => {
 
   const [deleteCosting, { isLoading: isDeleting }] = useDeleteCostingByIdMutation();
   const { data, isLoading } = useGetAllCostingsQuery({ ...query, searchTerm });
-  const costingData = data?.data || [];
+  // const costingData = data?.data || [];
   const metaData = data?.meta || { totalDoc: 0, page: 1 };
 
   const handleSort = (field: string) => {
@@ -101,7 +145,7 @@ const CostingListTable = () => {
                 {tableHead.map((heading) => (
                   <th
                     key={heading.field || heading.label}
-                    className="px-6 py-3 text-left text-sm font-semibold text-dashboard uppercase"
+                    className="px-6 py-3 text-left text-sm font-semibold text-dashboard"
                   >
                     {heading.field ? (
                       <button
@@ -133,6 +177,7 @@ const CostingListTable = () => {
                 ))}
               </tr>
             </thead>
+
             <tbody className="divide-y divide-gray-200 bg-white">
               {isLoading ? (
                 <TableSkeleton columns={tableHead.length} />
@@ -141,22 +186,33 @@ const CostingListTable = () => {
                   <tr key={index} className="hover:bg-gray-50">
                     {/* index */}
                     <td className="px-6 py-4 text-sm text-gray-900">{index + 1}</td>
+
+                    {/* name */}
                     <td className="px-6 py-4 text-sm text-gray-900">
-                      {!costing.partner || typeof costing.partner === "string" ? (
+                      {!costing.name ? (
                         "-"
                       ) : (
-                        <span className="flex flex-col gap-[5px]">
-                          <span className="font-[600]">{costing.partner.partnerName}</span>
-                          <span className="text-[12px]">
-                            ({costing.partner.partnerDesignation})
-                          </span>
-                        </span>
+                          <span className="font-[500]">{costing.name}</span>
                       )}
                     </td>
 
-                    {/* costing amount */}
+                    {/* designation */}
+                    <td className="px-6 py-4 text-sm text-gray-900">
+                      {!costing.designation ? (
+                        "-"
+                      ) : (
+                          <span className="font-[500]">{costing.designation}</span>
+                      )}
+                    </td>
+
+                    {/* costing category */}
                     <td className="px-6 py-4 text-sm text-gray-700">
-                      <span className="text-sm">{costing.costingAmount}</span>
+                      <span className="text-sm">{costing.costingCategory}</span>
+                    </td>
+
+                    {/* description */}
+                    <td className="max-w-[250px] px-6 py-4 text-sm text-gray-700">
+                      {truncateWords(costing.costingDescription || "-", 10)}
                     </td>
 
                     {/* costing date */}
@@ -164,53 +220,24 @@ const CostingListTable = () => {
                       <span className="text-sm">{costing.costingDate}</span>
                     </td>
 
-                    {/* type */}
+                    {/* costing amount */}
                     <td className="px-6 py-4 text-sm text-gray-700">
-                      <span className="text-sm">{costing.costingType}</span>
+                      <span className="text-sm">{costing.costingAmount}</span>
                     </td>
 
-                    {/* description */}
+                    {/* remarks */}
                     <td className="max-w-[250px] px-6 py-4 text-sm text-gray-700">
-                      {truncateWords(costing.note || "-", 10)}
+                      {truncateWords(costing.costingRemark || "-", 10)}
                     </td>
+
                     <td className="max-w-[250px] px-6 py-4 text-sm text-gray-700">
                       {costing.fileUrl ? (
-                        <Link href={costing.fileUrl} target="_blank">
+                        <Link className="hover:underline" href={costing.fileUrl} target="_blank">
                           Attachment
                         </Link>
                       ) : (
                         "-"
                       )}
-                    </td>
-
-                    {/* updated time */}
-                    <td className="px-6 py-4 text-sm text-gray-700">
-                      <span className="text-sm">
-                        {dateUtils.formatDate(costing.createdAt || "")}
-                      </span>
-                    </td>
-
-                    {/* actions */}
-                    <td className="px-6 py-4 text-sm text-gray-700">
-                      <div className="flex items-center gap-2">
-                        {/* update */}
-                        <Link
-                          href={`/costing-list/${costing._id}`}
-                          className="center aspect-square w-[30px] cursor-pointer rounded-full border-[1px] border-dashboard bg-dashboard/5 text-dashboard"
-                          title="Edit Costing"
-                        >
-                          <GoPencil />
-                        </Link>
-
-                        {/* delete */}
-                        <DeleteConfirmationDialog
-                          entityId={costing._id!}
-                          entityName={costing.costingType}
-                          entityLabel="Costing"
-                          onDelete={(id) => deleteCosting({ costingId: id })}
-                          isLoading={isDeleting}
-                        />
-                      </div>
                     </td>
                   </tr>
                 ))
