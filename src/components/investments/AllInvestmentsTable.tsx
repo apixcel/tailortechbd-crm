@@ -17,13 +17,74 @@ import {
   TableSkeleton,
 } from "@/components";
 import DownloadInvestmentReport from "./DownloadInvestmentReport";
+import { truncateWords } from "@/utils";
 
 const tableHead = [
   { label: "SL", field: "" },
   { label: "Date", field: "investmentDate" },
-  { label: "Amount", field: "investmentAmount" },
-  { label: "Note", field: "" },
-  { label: "Attachment", field: "" },
+  { label: "Partner Name", field: "" },
+  { label: "Description", field: "" },
+  { label: "Transaction Method", field: "" },
+  { label: "Starting Investment Balance", field: "" },
+  { label: "Last Investment", field: "" },
+  { label: "Total Investment Balance", field: "" },
+  { label: "Remarks", field: "" },
+];
+
+const investmentData = [
+  {
+    id: "1",
+    investmentDate: "01-01-2025",
+    partnerName: "Rafikul Islam",
+    description: "Initial Capital",
+    transactionMethod: "Bank Transfer",
+    startingBalance: 13000,
+    lastInvestment: 30000,
+    totalBalance: 43000,
+    remarks: "Opening investment",
+  },
+  {
+    id: "2",
+    investmentDate: "01-02-2025",
+    partnerName: "Atikur Rahman",
+    description: "Initial Capital",
+    transactionMethod: "Cash",
+    startingBalance: 13000,
+    lastInvestment: 50000,
+    totalBalance: 63000,
+    remarks: "Opening investment",
+  },
+  {
+    id: "3",
+    investmentDate: "15-02-2025",
+    partnerName: "Rafikul Islam",
+    description: "Additional Investment",
+    transactionMethod: "By bKash",
+    startingBalance: 13000,
+    lastInvestment: 25000,
+    totalBalance: 38000,
+    remarks: "Opening investment",
+  },
+  {
+    id: "4",
+    investmentDate: "10-03-2025",
+    partnerName: "Munnaf Ali",
+    description: "Initial Capital",
+    startingBalance: 13000,
+    lastInvestment: 10000,
+    totalBalance: 23000,
+    remarks: "Opening investment",
+  },
+  {
+    id: "5",
+    investmentDate: "10-03-2025",
+    partnerName: "Atikur Rahman",
+    description: "Initial Capital",
+    startingBalance: 13000,
+    lastInvestment: 70000,
+    totalBalance: 83000,
+    remarks: "Opening investment",
+  },
 ];
 
 const AllInvestmentsTable = () => {
@@ -49,7 +110,7 @@ const AllInvestmentsTable = () => {
     ...(selectedPartner?.value ? { partner: selectedPartner.value } : {}),
   });
 
-  const investmentData = data?.data || [];
+  // const investmentData = data?.data || [];
   const metaData = data?.meta || { totalDoc: 0, page: 1 };
 
   const handleSort = (field: string) => {
@@ -186,58 +247,44 @@ const AllInvestmentsTable = () => {
 
                     {/* investment date */}
                     <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
-                      <span className="text-sm">
-                        {dateUtils.formatDate(investment.investmentDate)}
-                      </span>
+                      <span className="text-sm">{investment.investmentDate}</span>
                     </td>
 
-                    {/* investment amount */}
+                    {/* partner name */}
                     <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
-                      <span className="text-sm">{investment.investmentAmount}</span>
+                      <span className="text-sm">{investment.partnerName}</span>
+                    </td>
+
+                    {/* description */}
+                    <td className="max-w-[250px] px-6 py-4 text-sm text-gray-700">
+                      {truncateWords(investment.description || "-", 10)}
+                    </td>
+
+                    {/* transaction method */}
+                    <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
+                      {
+                        investment.transactionMethod ? <span className="text-sm">{investment.transactionMethod}</span> : <span className="text-sm text-gray-400">—</span>
+                      }
                     </td>
 
                     {/* investment note */}
                     <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
-                      <span className="text-sm">{investment.note}</span>
+                      <span className="text-sm">{investment.startingBalance}</span>
                     </td>
-
-                    {/* attachment */}
+                    {/* investment note */}
                     <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
-                      {investment.attachment ? (
-                        <Link
-                          target="_blank"
-                          href={investment.attachment}
-                          className="text-primary underline"
-                        >
-                          View
-                        </Link>
-                      ) : (
-                        <span className="text-sm text-gray-300">—</span>
-                      )}
+                      <span className="text-sm">{investment.lastInvestment}</span>
                     </td>
 
-                    {/* actions */}
-                    {/* <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700"> */}
-                    {/* <div className="flex items-center gap-2"> */}
-                    {/* update */}
-                    {/* <Link
-                          href={`/investments/${investment._id}`}
-                          className="center aspect-square w-[30px] cursor-pointer rounded-full border-[1px] border-dashboard bg-dashboard/5 text-dashboard"
-                          title="Edit Investment"
-                        >
-                          <GoPencil />
-                        </Link> */}
+                    {/* total investment balance */}
+                    <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
+                      <span className="text-sm">{investment.totalBalance}</span>
+                    </td>
 
-                    {/* delete */}
-                    {/* <DeleteConfirmationDialog
-                          entityId={investment._id!}
-                          entityName={investment.investmentRemark}
-                          entityLabel="Investment"
-                          onDelete={(id) => deleteInvestment({ investmentId: id })}
-                          isLoading={isDeleting}
-                        /> */}
-                    {/* </div> */}
-                    {/* </td> */}
+                    {/* remarks */}
+                    <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
+                      <span className="text-sm">{investment.remarks}</span>
+                    </td>
                   </tr>
                 ))
               ) : (
