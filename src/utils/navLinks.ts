@@ -79,6 +79,11 @@ export const adminNavlinks: INavLinks[] = [
         path: "/supplier-list",
         action: ROLE_ACTIONS.VIEW_SUPPLIER_LIST.value,
       },
+      {
+        label: "Supplier Payments List",
+        path: "/supplier-payments-list",
+        action: ROLE_ACTIONS.VIEW_SUPPLIER_PAYMENTS_LIST.value,
+      },
     ],
   },
   {
