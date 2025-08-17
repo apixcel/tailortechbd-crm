@@ -21,14 +21,14 @@ import UpdateProfitWithdrawalStatus from "./UpdateProfitWithdrawalStatus";
 
 const tableHead = [
   { label: "SL", field: "" },
-  { label: "Profit Period", field: "" },
-  { label: "Profit Amount", field: "totalProfitAmount" },
-  { label: "Percentage", field: "percentage" },
-  { label: "Get Amount", field: "" },
-  { label: "Withdrawal Date", field: "withdrawalDate" },
-  { label: "Status", field: "status" },
-  { label: "Comment", field: "" },
-  { label: "Attachment", field: "" },
+  { label: "Date", field: "withdrawalDate" },
+  { label: "Name", field: "" },
+  { label: "Designation", field: "" },
+  { label: "Current Profit Balance", field: "" },
+  { label: "Withdrawal Amount", field: "totalProfitAmount" },
+  { label: "Payment Method", field: "percentage" },
+  { label: "Payment Status", field: "status" },
+  { label: "Documents", field: "" },
 ];
 
 const AllProfitWithdrawalTable = () => {
@@ -54,6 +54,7 @@ const AllProfitWithdrawalTable = () => {
   });
 
   const profitWithdrawalData = data?.data || [];
+  console.log(profitWithdrawalData[0]);
   const metaData = data?.meta || { totalDoc: 0, page: 1 };
 
   const handleSort = (field: string) => {
@@ -64,6 +65,7 @@ const AllProfitWithdrawalTable = () => {
       sort: `${newOrder === "desc" ? "-" : ""}${field}`,
     }));
   };
+
 
   return (
     <div className="flex flex-col gap-[10px]">
@@ -193,31 +195,35 @@ const AllProfitWithdrawalTable = () => {
                     {/* index */}
                     <td className="px-6 py-4 text-sm text-gray-900">{index + 1}</td>
 
-                    {/* profit period */}
+                    {/* withdrawal date */}
                     <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
-                      {dateUtils.formatDate?.(pw.profitPeriod?.startDate)}
-                      {" - "}
-                      {dateUtils.formatDate?.(pw.profitPeriod?.endDate)}
+                      {dateUtils.formatDateToDDMMYYYY?.(pw.withdrawalDate)}
                     </td>
 
-                    {/* profit amount */}
+                    {/* partner name */}
                     <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
-                      {pw.totalProfitAmount}
+                      {pw.partner?.partnerName}
                     </td>
 
-                    {/* percentage */}
+                    {/* partner designation */}
                     <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
-                      {pw.percentage}%
+                      {pw.partner?.partnerDesignation}
+                    </td>
+
+                    {/* current profit balance */}
+                    <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
+                      <span className="text-primary">—</span>
                     </td>
 
                     {/* get amount */}
                     <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
-                      {(pw.totalProfitAmount * (pw.percentage / 100)).toLocaleString()}
+                      {/* {(pw.totalProfitAmount * (pw.percentage / 100)).toLocaleString()} */}
+                      <span className="text-primary">—</span>
                     </td>
 
-                    {/* withdrawal date */}
+                    {/* payment method */}
                     <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
-                      {dateUtils.formatDate?.(pw.withdrawalDate)}
+                     <span className="text-primary">—</span>
                     </td>
 
                     {/* status */}
@@ -238,11 +244,6 @@ const AllProfitWithdrawalTable = () => {
                           ""
                         )}
                       </span>
-                    </td>
-
-                    {/* comment */}
-                    <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
-                      {pw.comment}
                     </td>
 
                     {/* attachment */}
