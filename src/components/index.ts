@@ -64,6 +64,7 @@ export { default as SupplierForm } from "./create-supplier/SupplierForm";
 
 // supplier list
 export { default as SupplierListTable } from "./supplier-list/SupplierListTable";
+export { default as SupplierPaymentsListTable } from "./supplier-list/SupplierPaymentsListTable";
 
 // capitals
 export { default as AllCapitalsListTable } from "./capitals/AllCapitalsListTable";

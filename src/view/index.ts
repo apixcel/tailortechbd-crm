@@ -18,6 +18,7 @@ export { default as EditCostingView } from "./costing/EditCostingView";
 export { default as CreateSupplierView } from "./supplier/CreateSupplierView";
 export { default as EditSupplierView } from "./supplier/EditSupplierView";
 export { default as SupplierListView } from "./supplier/SupplierListView";
+export { default as SupplierPaymentsListView } from "./supplier/SupplierPaymentsListView";
 export { default as ViewSupplier } from "./supplier/ViewSupplier";
 
 // capitals
