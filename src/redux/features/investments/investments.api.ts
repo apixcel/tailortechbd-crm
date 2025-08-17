@@ -33,4 +33,8 @@ const investmentsApi = api.injectEndpoints({
   }),
 });
 
-export const { useCreateInvestmentMutation, useGetAllInvestmentsQuery, useLazyGetAllInvestmentsQuery } = investmentsApi;
+export const {
+  useCreateInvestmentMutation,
+  useGetAllInvestmentsQuery,
+  useLazyGetAllInvestmentsQuery,
+} = investmentsApi;

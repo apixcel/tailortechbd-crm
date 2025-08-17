@@ -66,7 +66,6 @@ const AllProfitWithdrawalTable = () => {
     }));
   };
 
-
   return (
     <div className="flex flex-col gap-[10px]">
       <div className="flex flex-col gap-[15px] bg-white p-[16px]">
@@ -223,7 +222,7 @@ const AllProfitWithdrawalTable = () => {
 
                     {/* payment method */}
                     <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
-                     <span className="text-primary">—</span>
+                      <span className="text-primary">—</span>
                     </td>
 
                     {/* status */}

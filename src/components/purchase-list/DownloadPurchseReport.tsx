@@ -120,9 +120,7 @@ const PurchaseReportDialog = () => {
                   <PiPrinterFill />
                 </Button>
 
-                <Button onClick={() => setShowReport(false)}>
-                  Change Date Range
-                </Button>
+                <Button onClick={() => setShowReport(false)}>Change Date Range</Button>
               </div>
 
               <div ref={printRef} className="p-3">

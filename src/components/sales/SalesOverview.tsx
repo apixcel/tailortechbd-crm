@@ -39,7 +39,6 @@ interface SalesOverviewProps {
 }
 
 const SalesOverview = ({ selectedRange }: SalesOverviewProps) => {
-
   // Filter sales data by selected date range
   const filteredData = salesChartData.filter((item) => {
     if (!selectedRange || selectedRange.length !== 2) return true;
