@@ -21,13 +21,85 @@ import {
   DeleteConfirmationDialog,
 } from "@/components";
 import { ViewSupplier } from "@/view";
+import { truncateWords } from "@/utils";
+
+const supplierData = [
+  {
+    _id: "1",
+    supplierId: "SUP-001",
+    supplierName: "ABC Garments",
+    contactPerson: "Mr. Karim",
+    phoneNumber: "0123456789",
+    email: "abc@garments.com",
+    address: "123 Street, Dhaka",
+    suppliedProductsCategories: ["Clothing", "Accessories"],
+    preferredPaymentMethod: "Bank Transfer",
+    attachment: "https://example.com/attachment.pdf",
+    notes: "Long-term supplier with good payment history.",
+  },
+  {
+    _id: "2",
+    supplierId: "SUP-002",
+    supplierName: "XYZ Fabrics",
+    contactPerson: "Ms. Rina",
+    phoneNumber: "0198765432",
+    email: "xyz@fabrics.com",
+    address: "45 Textile Road, Chittagong",
+    suppliedProductsCategories: ["Fabrics", "Textiles"],
+    preferredPaymentMethod: "Cash",
+    notes: "Specializes in premium fabrics, quick delivery.",
+  },
+  {
+    _id: "3",
+    supplierId: "SUP-003",
+    supplierName: "Global Accessories Ltd.",
+    contactPerson: "Mr. Hasan",
+    phoneNumber: "01722334455",
+    email: "contact@globalacc.com",
+    address: "22 Market Street, Narayanganj",
+    suppliedProductsCategories: ["Zippers", "Buttons", "Labels"],
+    preferredPaymentMethod: "Cheque",
+    attachment: "https://example.com/globalacc-invoice.pdf",
+    notes: "Reliable supplier for garment accessories.",
+  },
+  {
+    _id: "4",
+    supplierId: "SUP-004",
+    supplierName: "Fresh Cotton Mills",
+    contactPerson: "Mrs. Sultana",
+    phoneNumber: "01655443322",
+    email: "freshcotton@mills.com",
+    address: "Industrial Area, Gazipur",
+    suppliedProductsCategories: ["Cotton", "Threads"],
+    preferredPaymentMethod: "Bank Transfer",
+    notes: "High-quality cotton supplier, requires advance payment.",
+  },
+  {
+    _id: "5",
+    supplierId: "SUP-005",
+    supplierName: "Modern Packaging Ltd.",
+    contactPerson: "Mr. Rakib",
+    phoneNumber: "01899001122",
+    email: "info@modernpack.com",
+    address: "Packaging Zone, Savar",
+    suppliedProductsCategories: ["Packaging Boxes", "Poly Bags"],
+    preferredPaymentMethod: "Online Payment",
+    attachment: "https://example.com/modernpack-terms.pdf",
+    notes: "Flexible supplier for packaging needs.",
+  },
+];
 
 const tableHead = [
-  { label: "Supplier Name", field: "companyInfo" },
+  { label: "Supplier ID", field: "" },
+  { label: "Supplier Name", field: "" },
+  { label: "Contact Person", field: "" },
+  { label: "Phone Number", field: "" },
+  { label: "Email", field: "" },
   { label: "Address", field: "" },
-  { label: "Contacts", field: "name" },
-  { label: "Total Qty", field: "quantityPurchased" },
-  { label: "Total Amount", field: "totalAmount" },
+  { label: "Supplied Products Categories", field: "" },
+  { label: "Preferred Payment Method", field: "" },
+  { label: "Supplier Document", field: "" },
+  { label: "Notes", field: "" },
   { label: "Actions", field: "" },
 ];
 
@@ -44,7 +116,7 @@ const SupplierListTable = () => {
   const [deleteSupplier, { isLoading: isDeleting }] = useDeleteSupplierByIdMutation();
   const { data, isLoading } = useGetAllSuppliersQuery({ ...query, searchTerm, page });
 
-  const supplierData = data?.data || [];
+  // const supplierData = data?.data || [];
   const metaData = data?.meta || { totalDoc: 0, page: 1 };
 
   const handleSupplierView = (supplier: ISupplier) => {
@@ -109,7 +181,7 @@ const SupplierListTable = () => {
                     {tableHead.map((heading) => (
                       <th
                         key={heading.field || heading.label}
-                        className="px-6 py-3 text-left text-xs font-semibold tracking-wider text-dashboard uppercase"
+                        className="px-6 py-3 text-left text-sm font-semibold text-dashboard"
                       >
                         {heading.label}
                       </th>
@@ -120,43 +192,96 @@ const SupplierListTable = () => {
                   {isLoading ? (
                     <TableSkeleton columns={tableHead.length} />
                   ) : supplierData?.length ? (
-                    supplierData.map((supplier: ISupplier) => (
+                    supplierData.map((supplier) => (
                       <tr key={supplier._id} className="hover:bg-gray-50">
+                        {/* supplier id */}
+                        <td className="px-6 py-4">
+                          <div className="text-sm font-medium text-gray-900">
+                            {supplier.supplierId}
+                          </div>
+                        </td>
+
                         {/* name */}
                         <td className="px-6 py-4">
-                          <div className="text-sm font-medium text-gray-900">{supplier.name}</div>
+                          <div className="text-sm font-medium text-gray-900">
+                            {supplier.supplierName}
+                          </div>
                         </td>
+
+                        {/* contact person */}
+                        <td className="px-6 py-4">
+                          <div className="text-sm font-medium text-gray-900">
+                            {supplier.contactPerson}
+                          </div>
+                        </td>
+
+                        {/* phone number */}
+                        <td className="px-6 py-4">
+                          <Link
+                            href={`tel:${supplier.phoneNumber}`}
+                            className="text-sm hover:underline"
+                          >
+                            {supplier.phoneNumber}
+                          </Link>
+                        </td>
+
+                        {/* email */}
+                        <td className="px-6 py-4">
+                          <Link
+                            href={`mailto:${supplier.email}`}
+                            className="text-sm hover:underline"
+                          >
+                            {supplier.email}
+                          </Link>
+                        </td>
+
                         {/* address */}
                         <td className="px-6 py-4">
                           <div className="flex items-center gap-3">
                             <span className="text-sm">{supplier.address}</span>
                           </div>
                         </td>
-                        {/* contacts */}
+
+                        {/* supplied products categories */}
                         <td className="px-6 py-4">
-                          <div className="flex flex-col gap-2">
-                            <Link
-                              href={`tel:${supplier.phoneNumber}`}
-                              className="text-sm hover:underline"
-                            >
-                              {supplier.phoneNumber}
-                            </Link>
-                            <Link
-                              href={`mailto:${supplier.email}`}
-                              className="text-sm hover:underline"
-                            >
-                              {supplier.email}
-                            </Link>
+                          <div className="text-sm">
+                            {supplier.suppliedProductsCategories.length > 0 ? (
+                              supplier.suppliedProductsCategories.join(", ")
+                            ) : (
+                              <span className="text-primary">—</span>
+                            )}
                           </div>
                         </td>
-                        {/* total quantity */}
+
+                        {/* preferred payment method */}
                         <td className="px-6 py-4">
-                          <div className="text-sm">100 pcs</div>
+                          <div className="text-sm">{supplier.preferredPaymentMethod || "—"}</div>
                         </td>
-                        {/* total amount */}
-                        <td className="px-6 py-4">
-                          <div className="text-sm">1000000 BDT</div>
+
+                        {/* document */}
+                        <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
+                          {supplier.attachment ? (
+                            <a
+                              href={supplier.attachment}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-primary underline"
+                            >
+                              View
+                            </a>
+                          ) : (
+                            <span className="text-primary">—</span>
+                          )}
                         </td>
+
+                        {/* notes */}
+                        <td
+                          className="px-6 py-4 text-sm whitespace-nowrap text-gray-700"
+                          title={supplier.notes || "-"}
+                        >
+                          {truncateWords(supplier.notes || "-", 4)}
+                        </td>
+
                         {/* actions */}
                         <td className="px-6 py-4">
                           <div className="flex items-center gap-[8px]">
@@ -171,7 +296,7 @@ const SupplierListTable = () => {
                             {/* delete */}
                             <DeleteConfirmationDialog
                               entityId={supplier._id!}
-                              entityName={supplier.name}
+                              entityName={supplier.supplierName}
                               entityLabel="Supplier"
                               onDelete={(id) => deleteSupplier({ supplierId: id })}
                               isLoading={isDeleting}
@@ -179,7 +304,7 @@ const SupplierListTable = () => {
 
                             {/* view */}
                             <button
-                              onClick={() => handleSupplierView(supplier as ISupplier)}
+                              // onClick={() => handleSupplierView(supplier)}
                               className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-full border border-dashboard/20 text-dashboard transition-all duration-200 hover:border-dashboard/40 hover:bg-dashboard/10 hover:text-dashboard/80"
                               title="View Details"
                             >
