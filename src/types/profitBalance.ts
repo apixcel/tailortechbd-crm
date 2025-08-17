@@ -2,8 +2,9 @@ export interface IProfitBalance {
   _id: string;
   partnerName: string;
   partnerDesignation: string;
-  profitAmount: number;
-  profitBalance: number;
+  totalProfitAmount: number;
+  lastProfitWithdrawalAmount: number;
+  currentProfitBalance: number;
   createdAt?: string;
   updatedAt?: string;
 }

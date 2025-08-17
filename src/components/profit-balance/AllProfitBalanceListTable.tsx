@@ -15,8 +15,9 @@ const tableHead = [
   { label: "SL", field: "" },
   { label: "Name", field: "" },
   { label: "Designation", field: "" },
-  { label: "Profit Amount", field: "profitAmount" },
-  { label: "Profit Balance", field: "profitBalance" },
+  { label: "Total Profit Amount", field: "totalProfitAmount" },
+  { label: "Last Profit Withdrawal Amount", field: "lastProfitWithdrawalAmount" },
+  { label: "Current Profit Balance", field: "currentProfitBalance" },
 ];
 
 const AllProfitBalanceListTable = () => {
@@ -130,24 +131,29 @@ const AllProfitBalanceListTable = () => {
                       {/* index */}
                       <td className="px-6 py-4 text-sm text-gray-900">{index + 1}</td>
 
-                      {/* capital date */}
+                      {/* partner name */}
                       <td className="px-6 py-4">
                         <span className="text-[14px]">{profitBalance.partnerName}</span>
                       </td>
 
-                      {/* capital time */}
+                      {/* partner designation */}
                       <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
                         <span className="text-sm">{profitBalance.partnerDesignation}</span>
                       </td>
 
-                      {/* capital type */}
+                      {/* total profit amount */}
                       <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
-                        <span className="text-sm">{profitBalance.profitAmount}</span>
+                        <span className="text-sm">{profitBalance.totalProfitAmount}</span>
                       </td>
 
-                      {/* type */}
+                      {/* last profit withdrawal amount */}
                       <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
-                        <span className="text-sm">{profitBalance.profitBalance}</span>
+                        <span className="text-sm">{profitBalance.lastProfitWithdrawalAmount}</span>
+                      </td>
+
+                      {/* current profit balance */}
+                      <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
+                        <span className="text-sm">{profitBalance.currentProfitBalance}</span>
                       </td>
                     </tr>
                   ))
