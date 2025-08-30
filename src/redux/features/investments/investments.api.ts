@@ -13,7 +13,7 @@ const investmentsApi = api.injectEndpoints({
       invalidatesTags: ["finance"],
     }),
     getAllInvestments: builder.query<
-      { data: IInvestment[]; meta?: IMeta },
+      { data: (IInvestment & { totalBalance: number; lastInvestment: number })[]; meta?: IMeta },
       Record<string, string | number>
     >({
       query: (query) => {

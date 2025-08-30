@@ -1,19 +1,18 @@
 "use client";
 
 import { useDebounce } from "@/hooks";
-import {
-  useDeleteCostingByIdMutation,
-  useGetAllCostingsQuery,
-} from "@/redux/features/costing/costing.api";
+import { useGetAllCostingsQuery } from "@/redux/features/costing/costing.api";
 import { truncateWords } from "@/utils";
-import dateUtils from "@/utils/date";
-import Link from "next/link";
 import { useState } from "react";
 
 import { FaChevronDown, FaChevronUp } from "react-icons/fa";
 import { RxMagnifyingGlass } from "react-icons/rx";
 
 import { HorizontalLine, Pagination, TableDataNotFound, TableSkeleton } from "@/components";
+import dateUtils from "@/utils/date";
+import Link from "next/link";
+import { IoPencil } from "react-icons/io5";
+import DeleteCostingById from "./DeleteCostingById";
 import DownloadCostingReport from "./DownloadCostingReport";
 
 const tableHead = [
@@ -26,52 +25,7 @@ const tableHead = [
   { label: "Cost Amount", field: "costingAmount" },
   { label: "Remarks", field: "" },
   { label: "Documents", field: "" },
-];
-
-const costingData = [
-  {
-    id: 1,
-    name: "Munnaf Ali",
-    designation: "Sr. Executive-IT",
-    costingCategory: "Convence Bill",
-    costingDescription: "Mirpur to Dhanmondi",
-    costingDate: "10/8/2025",
-    costingAmount: 300,
-    costingRemark: "By CNG",
-  },
-  {
-    id: 2,
-    name: "Rafikul Islam",
-    designation: "Manager-IT",
-    costingCategory: "Photography",
-    costingDescription: "007 Studio at Mirpur",
-    costingDate: "10/8/2025",
-    costingAmount: 1500,
-    costingRemark: "Bank Tr",
-    fileUrl: "https://example.com/file.pdf",
-  },
-  {
-    id: 3,
-    name: "Shawon",
-    designation: "CTO",
-    costingCategory: "D. Marketing",
-    costingDescription: "Facebook Ad Boosting",
-    costingDate: "10/8/2025",
-    costingAmount: 2500,
-    costingRemark: "Via VISA Card",
-    fileUrl: "https://example.com/file.pdf",
-  },
-  {
-    id: 3,
-    name: "Faruk Hosen",
-    designation: "Test",
-    costingCategory: "Office Rent",
-    costingDescription: "Month of August",
-    costingDate: "10/8/2025",
-    costingAmount: 5000,
-    costingRemark: "Cash",
-    fileUrl: "https://example.com/file.pdf",
-  },
+  { label: "Actions", field: "" },
 ];
 
 const CostingListTable = () => {
@@ -79,13 +33,11 @@ const CostingListTable = () => {
   const [sort, setSort] = useState({ field: "createdAt", order: "desc" });
   const [query, setQuery] = useState<Record<string, string | number>>({
     page: 1,
-    fields: "partnerName,costingAmount,costingDate,costingType,note,fileUrl,createdAt",
     sort: `${sort.order === "desc" ? "-" : ""}${sort.field}`,
   });
 
-  const [deleteCosting, { isLoading: isDeleting }] = useDeleteCostingByIdMutation();
   const { data, isLoading } = useGetAllCostingsQuery({ ...query, searchTerm });
-  // const costingData = data?.data || [];
+  const costingData = data?.data || [];
   const metaData = data?.meta || { totalDoc: 0, page: 1 };
 
   const handleSort = (field: string) => {
@@ -184,15 +136,19 @@ const CostingListTable = () => {
 
                     {/* name */}
                     <td className="px-6 py-4 text-sm text-gray-900">
-                      {!costing.name ? "-" : <span className="font-[500]">{costing.name}</span>}
+                      {!costing.preparedByName ? (
+                        "-"
+                      ) : (
+                        <span className="font-[500]">{costing.preparedByName}</span>
+                      )}
                     </td>
 
                     {/* designation */}
                     <td className="px-6 py-4 text-sm text-gray-900">
-                      {!costing.designation ? (
+                      {!costing.preparedByDesignation ? (
                         "-"
                       ) : (
-                        <span className="font-[500]">{costing.designation}</span>
+                        <span className="font-[500]">{costing.preparedByDesignation}</span>
                       )}
                     </td>
 
@@ -203,12 +159,12 @@ const CostingListTable = () => {
 
                     {/* description */}
                     <td className="max-w-[250px] px-6 py-4 text-sm text-gray-700">
-                      {truncateWords(costing.costingDescription || "-", 10)}
+                      {truncateWords(costing.note || "-", 10)}
                     </td>
 
                     {/* costing date */}
                     <td className="px-6 py-4 text-sm text-gray-700">
-                      <span className="text-sm">{costing.costingDate}</span>
+                      <span className="text-sm">{dateUtils.formatDate(costing.costingDate)}</span>
                     </td>
 
                     {/* costing amount */}
@@ -223,17 +179,29 @@ const CostingListTable = () => {
 
                     <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
                       {costing.fileUrl ? (
-                        <a
+                        <Link
                           href={costing.fileUrl}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="text-primary underline"
                         >
                           View
-                        </a>
+                        </Link>
                       ) : (
                         <span className="text-primary">—</span>
                       )}
+                    </td>
+
+                    <td>
+                      <span className="flex items-center gap-[5px]">
+                        <Link
+                          href={`/costing-list/${costing._id}`}
+                          className="flex h-[30px] w-[30px] items-center justify-center rounded-full bg-primary/10 text-primary hover:bg-primary hover:text-white"
+                        >
+                          <IoPencil />
+                        </Link>
+                        <DeleteCostingById costing={costing} />
+                      </span>
                     </td>
                   </tr>
                 ))

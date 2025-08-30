@@ -30,7 +30,7 @@ function getParamsFromSelectedRange(
       endDate: selectedRange[1].format("YYYY-MM-DD"),
     };
   }
-  return { timeFilter: "last7days" };
+  return {};
 }
 
 const PurchaseReportOverview = ({ selectedRange }: PurchaseReportOverviewProps) => {
@@ -59,22 +59,8 @@ const PurchaseReportOverview = ({ selectedRange }: PurchaseReportOverviewProps) 
   const totalPurchaseAmount = data?.data?.totalPurchaseAmount ?? 0;
 
   const getSelectedFilterLabel = () => {
-    if ("timeFilter" in params && params.timeFilter) {
-      switch (params.timeFilter) {
-        case "last7days":
-          return "Last 7 Days";
-        case "last14days":
-          return "Last 14 Days";
-        case "last30days":
-          return "Last 30 Days";
-        default:
-          return String(params.timeFilter)
-            .replace(/([A-Z])/g, " $1")
-            .replace(/^./, (str) => str.toUpperCase());
-      }
-    }
-    if ("from" in params && "to" in params && params.from && params.to) {
-      return `${params.from} to ${params.to}`;
+    if ("startDate" in params && "endDate" in params && params.startDate && params.endDate) {
+      return `${params.startDate} to ${params.endDate}`;
     }
     return "Custom";
   };

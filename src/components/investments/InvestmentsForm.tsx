@@ -1,6 +1,6 @@
 "use client";
 
-import { IInvestment, IPartner } from "@/types";
+import { IInvestment } from "@/types";
 import { ErrorMessage, Field, FieldProps, Form, Formik, FormikHelpers } from "formik";
 import * as Yup from "yup";
 
@@ -11,16 +11,26 @@ import {
   Input,
   PickDate,
   SectionTitle,
+  SelectionBox, // 👈 added
 } from "@/components";
 import dateUtils from "@/utils/date";
 
-const initialValues: Omit<IInvestment, "_id" | "createdAt" | "updatedAt" | "partner"> & {
-  partner: Omit<IPartner, "createdAt" | "updatedAt">;
-} = {
+const transactionMethodOptions = [
+  { label: "Bkash", value: "Bkash" },
+  { label: "Nagad", value: "Nagad" },
+  { label: "Bank", value: "Bank" },
+  { label: "Cash", value: "Cash" },
+  { label: "Cheque", value: "Cheque" },
+  { label: "Other", value: "Other" },
+];
+
+const initialValues = {
   investmentAmount: 0,
   investmentDate: new Date().toISOString(),
   note: "",
   attachment: "",
+  transactionMethod: "", // 👈 added
+
   partner: {
     _id: "",
     partnerName: "",
@@ -35,6 +45,9 @@ const validationSchema = Yup.object().shape({
     .min(1, "Amount must be greater than 1"),
   investmentDate: Yup.string().required("Date is required"),
   note: Yup.string().required("Note is required"),
+  transactionMethod: Yup.string()
+    .oneOf(transactionMethodOptions.map((o) => o.value))
+    .optional(), // 👈 optional to match your DB schema
 });
 
 const InvestmentsForm = ({
@@ -64,7 +77,7 @@ const InvestmentsForm = ({
               <div className="flex flex-col gap-4">
                 <SectionTitle>Investment Information</SectionTitle>
 
-                {/* amount */}
+                {/* amount, date, transaction method */}
                 <div className="flex w-full flex-col items-start justify-start gap-[16px] sm:flex-row">
                   {/* investment amount */}
                   <div className="flex w-full flex-col gap-[5px]">
@@ -85,6 +98,29 @@ const InvestmentsForm = ({
                     </Field>
                     <ErrorMessage
                       name="investmentDate"
+                      component="div"
+                      className="text-sm text-danger"
+                    />
+                  </div>
+
+                  {/* transaction method 👇 */}
+                  <div className="flex w-full flex-col gap-[5px]">
+                    <label className="form-label">Transaction Method</label>
+                    <SelectionBox
+                      data={transactionMethodOptions}
+                      onSelect={(opt) => setFieldValue("transactionMethod", opt.value)}
+                      defaultValue={transactionMethodOptions.find(
+                        (opt) => opt.value === values.transactionMethod
+                      )}
+                      displayValue={
+                        transactionMethodOptions.find(
+                          (opt) => opt.value === values.transactionMethod
+                        )?.label
+                      }
+                      showSearch={false}
+                    />
+                    <ErrorMessage
+                      name="transactionMethod"
                       component="div"
                       className="text-sm text-danger"
                     />
@@ -122,7 +158,7 @@ const InvestmentsForm = ({
                   </div>
                 )}
 
-                {/* Error if no partner added */}
+                {/* error if no partner added */}
                 {(touched.partner || submitCount > 0) && !values.partner?.partnerName && (
                   <div className="text-sm text-danger">No partner selected</div>
                 )}

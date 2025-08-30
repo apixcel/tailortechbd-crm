@@ -4,7 +4,6 @@ import { HorizontalLine, Pagination, TableDataNotFound, TableSkeleton } from "@/
 import { useDebounce } from "@/hooks";
 import { useGetAllCapitalJournalQuery } from "@/redux/features/capital/capital.api";
 import dateUtils from "@/utils/date";
-import Link from "next/link";
 import { useEffect, useState } from "react";
 import { FaChevronDown, FaChevronUp } from "react-icons/fa";
 import { RxMagnifyingGlass } from "react-icons/rx";
@@ -86,14 +85,6 @@ const AllCapitalsListTable = () => {
               />
               <RxMagnifyingGlass />
             </div>
-
-            {/* create capitals link */}
-            <Link
-              href="/capitals/create"
-              className="rounded-[5px] bg-primary px-[20px] py-[6px] text-white"
-            >
-              Create Capital
-            </Link>
           </div>
 
           {/* table */}

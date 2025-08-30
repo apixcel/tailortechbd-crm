@@ -16,8 +16,8 @@ import {
   TableDataNotFound,
   TableSkeleton,
 } from "@/components";
-import DownloadInvestmentReport from "./DownloadInvestmentReport";
 import { truncateWords } from "@/utils";
+import DownloadInvestmentReport from "./DownloadInvestmentReport";
 
 const tableHead = [
   { label: "SL", field: "" },
@@ -25,66 +25,10 @@ const tableHead = [
   { label: "Partner Name", field: "" },
   { label: "Description", field: "" },
   { label: "Transaction Method", field: "" },
-  { label: "Starting Investment Balance", field: "" },
+  { label: "Invested Amount", field: "" },
   { label: "Last Investment", field: "" },
   { label: "Total Investment Balance", field: "" },
   { label: "Remarks", field: "" },
-];
-
-const investmentData = [
-  {
-    id: "1",
-    investmentDate: "01/01/2025",
-    partnerName: "Rafikul Islam",
-    description: "Initial Capital",
-    transactionMethod: "Bank Transfer",
-    startingBalance: 13000,
-    lastInvestment: 30000,
-    totalBalance: 43000,
-    remarks: "Opening investment",
-  },
-  {
-    id: "2",
-    investmentDate: "01/02/2025",
-    partnerName: "Atikur Rahman",
-    description: "Initial Capital",
-    transactionMethod: "Cash",
-    startingBalance: 13000,
-    lastInvestment: 50000,
-    totalBalance: 63000,
-    remarks: "Opening investment",
-  },
-  {
-    id: "3",
-    investmentDate: "15/02/2025",
-    partnerName: "Rafikul Islam",
-    description: "Additional Investment",
-    transactionMethod: "By bKash",
-    startingBalance: 13000,
-    lastInvestment: 25000,
-    totalBalance: 38000,
-    remarks: "Opening investment",
-  },
-  {
-    id: "4",
-    investmentDate: "10/03/2025",
-    partnerName: "Munnaf Ali",
-    description: "Initial Capital",
-    startingBalance: 13000,
-    lastInvestment: 10000,
-    totalBalance: 23000,
-    remarks: "Opening investment",
-  },
-  {
-    id: "5",
-    investmentDate: "10/03/2025",
-    partnerName: "Atikur Rahman",
-    description: "Initial Capital",
-    startingBalance: 13000,
-    lastInvestment: 70000,
-    totalBalance: 83000,
-    remarks: "Opening investment",
-  },
 ];
 
 const AllInvestmentsTable = () => {
@@ -99,7 +43,6 @@ const AllInvestmentsTable = () => {
   const [sort, setSort] = useState({ field: "createdAt", order: "desc" });
   const [query, setQuery] = useState<Record<string, string | number>>({
     page: 1,
-    fields: "investmentAmount,investmentDate,type,note,attachment,createdAt,partner",
     sort: `${sort.order === "desc" ? "-" : ""}${sort.field}`,
     partner: "",
   });
@@ -110,8 +53,7 @@ const AllInvestmentsTable = () => {
     ...(selectedPartner?.value ? { partner: selectedPartner.value } : {}),
   });
 
-  const logData = data?.data || [];
-  console.log(logData[0]);
+  const investmentData = data?.data || [];
 
   // const investmentData = data?.data || [];
   const metaData = data?.meta || { totalDoc: 0, page: 1 };
@@ -149,21 +91,26 @@ const AllInvestmentsTable = () => {
             Create Investment
           </Link>
         </div>
-
-        <div className="mb-4 flex justify-center">
-          <div className="flex flex-col items-center gap-[5px]">
-            <h1 className="text-[16px] font-[600]">Investor: {selectedPartner?.label || "N/A"}</h1>
-            <p className="text-[12px] text-muted md:text-[14px]">
-              Designation: {selectedPartner?.partnerDesignation || "N/A"}
-            </p>
-            <span className="text-[12px] text-muted md:text-[14px]">
-              Joining Date:{" "}
-              {selectedPartner?.joiningDate
-                ? dateUtils.formatDate(selectedPartner.joiningDate)
-                : "N/A"}
-            </span>
+        {selectedPartner ? (
+          <div className="mb-4 flex justify-center">
+            <div className="flex flex-col items-center gap-[5px]">
+              <h1 className="text-[16px] font-[600]">
+                Investor: {selectedPartner?.label || "N/A"}
+              </h1>
+              <p className="text-[12px] text-muted md:text-[14px]">
+                Designation: {selectedPartner?.partnerDesignation || "N/A"}
+              </p>
+              <span className="text-[12px] text-muted md:text-[14px]">
+                Joining Date:{" "}
+                {selectedPartner?.joiningDate
+                  ? dateUtils.formatDate(selectedPartner.joiningDate)
+                  : "N/A"}
+              </span>
+            </div>
           </div>
-        </div>
+        ) : (
+          ""
+        )}
 
         <HorizontalLine className="my-[10px]" />
 
@@ -250,17 +197,19 @@ const AllInvestmentsTable = () => {
 
                     {/* investment date */}
                     <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
-                      <span className="text-sm">{investment.investmentDate}</span>
+                      <span className="text-sm">
+                        {dateUtils.formatDate(investment.investmentDate)}
+                      </span>
                     </td>
 
                     {/* partner name */}
                     <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
-                      <span className="text-sm">{investment.partnerName}</span>
+                      <span className="text-sm">{investment.partner?.partnerName}</span>
                     </td>
 
                     {/* description */}
                     <td className="max-w-[250px] px-6 py-4 text-sm text-gray-700">
-                      {truncateWords(investment.description || "-", 10)}
+                      {truncateWords(investment.note || "-", 10)}
                     </td>
 
                     {/* transaction method */}
@@ -268,13 +217,13 @@ const AllInvestmentsTable = () => {
                       {investment.transactionMethod ? (
                         <span className="text-sm">{investment.transactionMethod}</span>
                       ) : (
-                        <span className="text-sm text-gray-400">—</span>
+                        <span className="text-sm text-gray-400">N/A</span>
                       )}
                     </td>
 
                     {/* investment note */}
                     <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
-                      <span className="text-sm">{investment.startingBalance}</span>
+                      <span className="text-sm">{investment.investmentAmount}</span>
                     </td>
                     {/* investment note */}
                     <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">

@@ -5,7 +5,9 @@ export interface IInvestment {
   investmentAmount: number;
   investmentDate: string;
   note: string;
+  remarks: string;
   attachment?: string;
+  transactionMethod?: string;
   partner: IPartner;
   createdAt?: string;
   updatedAt?: string;

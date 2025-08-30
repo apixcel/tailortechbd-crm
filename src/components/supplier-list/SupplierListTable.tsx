@@ -1,93 +1,25 @@
 "use client";
 
+import { useDebounce } from "@/hooks";
 import {
   useDeleteSupplierByIdMutation,
   useGetAllSuppliersQuery,
 } from "@/redux/features/supplier/supplier.api";
-import { useDebounce } from "@/hooks";
-import { useEffect, useState } from "react";
 import { ISupplier } from "@/types";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 
-import { RxMagnifyingGlass } from "react-icons/rx";
 import { GoPencil } from "react-icons/go";
-import { FiEye } from "react-icons/fi";
+import { RxMagnifyingGlass } from "react-icons/rx";
 
 import {
+  DeleteConfirmationDialog,
   HorizontalLine,
+  Pagination,
   TableDataNotFound,
   TableSkeleton,
-  Pagination,
-  DeleteConfirmationDialog,
 } from "@/components";
 import { ViewSupplier } from "@/view";
-import { truncateWords } from "@/utils";
-
-const supplierData = [
-  {
-    _id: "1",
-    supplierId: "SUP-001",
-    supplierName: "ABC Garments",
-    contactPerson: "Mr. Karim",
-    phoneNumber: "0123456789",
-    email: "abc@garments.com",
-    address: "123 Street, Dhaka",
-    suppliedProductsCategories: ["Clothing", "Accessories"],
-    preferredPaymentMethod: "Bank Transfer",
-    attachment: "https://example.com/attachment.pdf",
-    notes: "Long-term supplier with good payment history.",
-  },
-  {
-    _id: "2",
-    supplierId: "SUP-002",
-    supplierName: "XYZ Fabrics",
-    contactPerson: "Ms. Rina",
-    phoneNumber: "0198765432",
-    email: "xyz@fabrics.com",
-    address: "45 Textile Road, Chittagong",
-    suppliedProductsCategories: ["Fabrics", "Textiles"],
-    preferredPaymentMethod: "Cash",
-    notes: "Specializes in premium fabrics, quick delivery.",
-  },
-  {
-    _id: "3",
-    supplierId: "SUP-003",
-    supplierName: "Global Accessories Ltd.",
-    contactPerson: "Mr. Hasan",
-    phoneNumber: "01722334455",
-    email: "contact@globalacc.com",
-    address: "22 Market Street, Narayanganj",
-    suppliedProductsCategories: ["Zippers", "Buttons", "Labels"],
-    preferredPaymentMethod: "Cheque",
-    attachment: "https://example.com/globalacc-invoice.pdf",
-    notes: "Reliable supplier for garment accessories.",
-  },
-  {
-    _id: "4",
-    supplierId: "SUP-004",
-    supplierName: "Fresh Cotton Mills",
-    contactPerson: "Mrs. Sultana",
-    phoneNumber: "01655443322",
-    email: "freshcotton@mills.com",
-    address: "Industrial Area, Gazipur",
-    suppliedProductsCategories: ["Cotton", "Threads"],
-    preferredPaymentMethod: "Bank Transfer",
-    notes: "High-quality cotton supplier, requires advance payment.",
-  },
-  {
-    _id: "5",
-    supplierId: "SUP-005",
-    supplierName: "Modern Packaging Ltd.",
-    contactPerson: "Mr. Rakib",
-    phoneNumber: "01899001122",
-    email: "info@modernpack.com",
-    address: "Packaging Zone, Savar",
-    suppliedProductsCategories: ["Packaging Boxes", "Poly Bags"],
-    preferredPaymentMethod: "Online Payment",
-    attachment: "https://example.com/modernpack-terms.pdf",
-    notes: "Flexible supplier for packaging needs.",
-  },
-];
 
 const tableHead = [
   { label: "Supplier ID", field: "" },
@@ -116,7 +48,7 @@ const SupplierListTable = () => {
   const [deleteSupplier, { isLoading: isDeleting }] = useDeleteSupplierByIdMutation();
   const { data, isLoading } = useGetAllSuppliersQuery({ ...query, searchTerm, page });
 
-  // const supplierData = data?.data || [];
+  const supplierData = data?.data || [];
   const metaData = data?.meta || { totalDoc: 0, page: 1 };
 
   const handleSupplierView = (supplier: ISupplier) => {
@@ -174,49 +106,47 @@ const SupplierListTable = () => {
 
             {/* table */}
             <div className="overflow-x-auto bg-white shadow">
-              <table className="min-w-full divide-y divide-dashboard/20">
-                {/* table head */}
+              <table className="min-w-[1400px] table-auto divide-y divide-dashboard/20">
                 <thead className="bg-dashboard/10">
                   <tr>
                     {tableHead.map((heading) => (
                       <th
                         key={heading.field || heading.label}
-                        className="px-6 py-3 text-left text-sm font-semibold text-dashboard"
+                        className="px-6 py-3 text-left text-sm font-semibold whitespace-nowrap text-dashboard"
                       >
                         {heading.label}
                       </th>
                     ))}
                   </tr>
                 </thead>
+
                 <tbody className="divide-y divide-gray-200 bg-white">
                   {isLoading ? (
                     <TableSkeleton columns={tableHead.length} />
                   ) : supplierData?.length ? (
                     supplierData.map((supplier) => (
                       <tr key={supplier._id} className="hover:bg-gray-50">
-                        {/* supplier id */}
-                        <td className="px-6 py-4">
+                        {/* Supplier ID */}
+                        <td className="min-w-[120px] px-6 py-4 align-top break-normal whitespace-nowrap">
                           <div className="text-sm font-medium text-gray-900">
                             {supplier.supplierId}
                           </div>
                         </td>
 
-                        {/* name */}
-                        <td className="px-6 py-4">
-                          <div className="text-sm font-medium text-gray-900">
-                            {supplier.supplierName}
-                          </div>
+                        {/* Supplier Name */}
+                        <td className="min-w-[180px] px-6 py-4 align-top break-normal whitespace-nowrap">
+                          <div className="text-sm font-medium text-gray-900">{supplier.name}</div>
                         </td>
 
-                        {/* contact person */}
-                        <td className="px-6 py-4">
+                        {/* Contact Person */}
+                        <td className="min-w-[180px] px-6 py-4 align-top break-normal whitespace-nowrap">
                           <div className="text-sm font-medium text-gray-900">
                             {supplier.contactPerson}
                           </div>
                         </td>
 
-                        {/* phone number */}
-                        <td className="px-6 py-4">
+                        {/* Phone Number */}
+                        <td className="min-w-[150px] px-6 py-4 align-top break-normal whitespace-nowrap">
                           <Link
                             href={`tel:${supplier.phoneNumber}`}
                             className="text-sm hover:underline"
@@ -225,8 +155,8 @@ const SupplierListTable = () => {
                           </Link>
                         </td>
 
-                        {/* email */}
-                        <td className="px-6 py-4">
+                        {/* Email */}
+                        <td className="min-w-[220px] px-6 py-4 align-top break-normal whitespace-nowrap">
                           <Link
                             href={`mailto:${supplier.email}`}
                             className="text-sm hover:underline"
@@ -235,17 +165,15 @@ const SupplierListTable = () => {
                           </Link>
                         </td>
 
-                        {/* address */}
-                        <td className="px-6 py-4">
-                          <div className="flex items-center gap-3">
-                            <span className="text-sm">{supplier.address}</span>
-                          </div>
+                        {/* Address */}
+                        <td className="min-w-[220px] px-6 py-4 align-top break-normal whitespace-nowrap">
+                          <span className="text-sm">{supplier.address}</span>
                         </td>
 
-                        {/* supplied products categories */}
-                        <td className="px-6 py-4">
+                        {/* Supplied Products Categories */}
+                        <td className="min-w-[260px] px-6 py-4 align-top break-normal whitespace-nowrap">
                           <div className="text-sm">
-                            {supplier.suppliedProductsCategories.length > 0 ? (
+                            {supplier.suppliedProductsCategories.length ? (
                               supplier.suppliedProductsCategories.join(", ")
                             ) : (
                               <span className="text-primary">—</span>
@@ -253,16 +181,16 @@ const SupplierListTable = () => {
                           </div>
                         </td>
 
-                        {/* preferred payment method */}
-                        <td className="px-6 py-4">
+                        {/* Preferred Payment Method */}
+                        <td className="min-w-[180px] px-6 py-4 align-top break-normal whitespace-nowrap">
                           <div className="text-sm">{supplier.preferredPaymentMethod || "—"}</div>
                         </td>
 
-                        {/* document */}
-                        <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
-                          {supplier.attachment ? (
+                        {/* Supplier Document */}
+                        <td className="min-w-[140px] px-6 py-4 align-top break-normal whitespace-nowrap">
+                          {supplier.docuemnt ? (
                             <a
-                              href={supplier.attachment}
+                              href={supplier.docuemnt}
                               target="_blank"
                               rel="noopener noreferrer"
                               className="text-primary underline"
@@ -274,18 +202,17 @@ const SupplierListTable = () => {
                           )}
                         </td>
 
-                        {/* notes */}
+                        {/* Notes (show full text; no truncation) */}
                         <td
-                          className="px-6 py-4 text-sm whitespace-nowrap text-gray-700"
-                          title={supplier.notes || "-"}
+                          className="min-w-[300px] px-6 py-4 align-top break-normal whitespace-nowrap"
+                          title={supplier.notes || "—"}
                         >
-                          {truncateWords(supplier.notes || "-", 4)}
+                          <span className="text-sm">{supplier.notes || "—"}</span>
                         </td>
 
-                        {/* actions */}
-                        <td className="px-6 py-4">
+                        {/* Actions */}
+                        <td className="min-w-[150px] px-6 py-4 align-top whitespace-nowrap">
                           <div className="flex items-center gap-[8px]">
-                            {/* update */}
                             <Link
                               href={`/supplier-list/${supplier._id}`}
                               className="center aspect-square w-[30px] cursor-pointer rounded-full border-[1px] border-dashboard bg-dashboard/5 text-dashboard"
@@ -293,23 +220,14 @@ const SupplierListTable = () => {
                             >
                               <GoPencil />
                             </Link>
-                            {/* delete */}
+
                             <DeleteConfirmationDialog
                               entityId={supplier._id!}
-                              entityName={supplier.supplierName}
+                              entityName={supplier.name}
                               entityLabel="Supplier"
                               onDelete={(id) => deleteSupplier({ supplierId: id })}
                               isLoading={isDeleting}
                             />
-
-                            {/* view */}
-                            <button
-                              // onClick={() => handleSupplierView(supplier)}
-                              className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-full border border-dashboard/20 text-dashboard transition-all duration-200 hover:border-dashboard/40 hover:bg-dashboard/10 hover:text-dashboard/80"
-                              title="View Details"
-                            >
-                              <FiEye className="h-4 w-4" />
-                            </button>
                           </div>
                         </td>
                       </tr>

@@ -22,6 +22,7 @@ export { default as Toggle } from "./ui/Toggle";
 export { default as AddPartnerOnForm } from "./shared/AddPartnerOnForm";
 export { default as AnalyticsOverviewFilter } from "./shared/AnalyticsOverviewFilter";
 export { default as DeleteConfirmationDialog } from "./shared/DeleteConfirmationDialog";
+export { default as FormikDateRangePicker } from "./shared/FormikDateRangePicker";
 export { default as Header } from "./shared/Header";
 export { default as ImageUploader } from "./shared/ImageUploader";
 export { default as UserDropdown } from "./shared/navbar/UserDropdown";
@@ -30,7 +31,6 @@ export { default as PathSearchBar } from "./shared/PathSearchBar";
 export { default as SectionTitle } from "./shared/SectionTitle";
 export { default as SideBar } from "./shared/SideBar";
 export { default as TimelineDropDown } from "./shared/TimelineDropDown";
-export { default as FormikDateRangePicker } from "./shared/FormikDateRangePicker";
 
 // home
 export { default as OverallSalesStatistics } from "./sales/OverallSalesStatistics";
@@ -68,7 +68,6 @@ export { default as SupplierPaymentsListTable } from "./supplier-list/SupplierPa
 
 // capitals
 export { default as AllCapitalsListTable } from "./capitals/AllCapitalsListTable";
-export { default as CapitalsForm } from "./capitals/CapitalsForm";
 
 // investments
 export { default as AllInvestmentsTable } from "./investments/AllInvestmentsTable";

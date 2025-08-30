@@ -1,5 +1,5 @@
 import { api } from "@/redux/api/api";
-import { ICosting, IMeta } from "@/types";
+import { ICosting, ICostingReport, IMeta } from "@/types";
 import { generateQueryParams } from "@/utils";
 
 const costingApi = api.injectEndpoints({
@@ -43,12 +43,22 @@ const costingApi = api.injectEndpoints({
       }),
       invalidatesTags: ["costing"],
     }),
-    deleteCostingById: builder.mutation<{ data: ICosting }, { costingId: string }>({
-      query: ({ costingId }) => ({
+    deleteCostingById: builder.mutation<{ data: ICosting }, string>({
+      query: (costingId) => ({
         url: `/costing/delete/${costingId}`,
         method: "DELETE",
       }),
       invalidatesTags: ["costing"],
+    }),
+    getCostingReport: builder.query<{ data: ICostingReport }, Record<string, string | number>>({
+      query: (query) => {
+        const queryString = generateQueryParams(query);
+        return {
+          url: `/costing/get/report?${queryString}`,
+          method: "GET",
+        };
+      },
+      providesTags: ["costing"],
     }),
   }),
 });
@@ -60,4 +70,5 @@ export const {
   useGetCostingByIdQuery,
   useUpdateCostingByIdMutation,
   useDeleteCostingByIdMutation,
+  useGetCostingReportQuery,
 } = costingApi;

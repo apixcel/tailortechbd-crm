@@ -1,7 +1,5 @@
 "use client";
 
-import { useState } from "react";
-
 import {
   CartesianGrid,
   Legend,
@@ -13,9 +11,10 @@ import {
   YAxis,
 } from "recharts";
 
-import CostingQuantityCard from "./CostingQuantityCard";
-import CostingAmountCard from "./CostingAmountCard";
+import { useGetCostingReportQuery } from "@/redux/features/costing/costing.api";
 import { DateObject } from "react-multi-date-picker";
+import CostingAmountCard from "./CostingAmountCard";
+import CostingQuantityCard from "./CostingQuantityCard";
 
 const options = [
   { value: "overall", label: "Overall" },
@@ -26,40 +25,20 @@ const options = [
 
 const increase = 10;
 
-// dummy data for purchase chart
-const costingChartData = [
-  { time: "2025-07-01", totalCosting: 100, totalCostingAmount: 2000 },
-  { time: "2025-07-02", totalCosting: 140, totalCostingAmount: 28000 },
-  { time: "2025-07-03", totalCosting: 170, totalCostingAmount: 34000 },
-  { time: "2025-07-04", totalCosting: 180, totalCostingAmount: 36000 },
-  { time: "2025-07-05", totalCosting: 200, totalCostingAmount: 40000 },
-  { time: "2025-07-06", totalCosting: 180, totalCostingAmount: 38000 },
-  { time: "2025-07-07", totalCosting: 240, totalCostingAmount: 48000 },
-  { time: "2025-07-08", totalCosting: 260, totalCostingAmount: 52000 },
-];
-
 interface CostingReportOverviewProps {
   selectedRange: DateObject[] | undefined;
 }
 
-const CostingReportOverview = ({ selectedRange }: CostingReportOverviewProps) => {
-  const [selectedFilter, setSelectedFilter] = useState(options[2]);
-
-  // Filter sales data by selected date range
-  const filteredData = costingChartData.filter((item) => {
-    if (!selectedRange || selectedRange.length !== 2) return true;
-
-    const from = selectedRange[0].toDate();
-    const to = selectedRange[1].toDate();
-    const itemDate = new Date(item.time);
-
-    return itemDate >= from && itemDate <= to;
+const CostingReportOverview = ({ selectedRange = [] }: CostingReportOverviewProps) => {
+  const { data, isLoading } = useGetCostingReportQuery({
+    startDate: selectedRange[0]?.format("YYYY-MM-DD"),
+    endDate: selectedRange[1]?.format("YYYY-MM-DD"),
   });
 
   // Calculate totals
   const totals = {
-    quantity: filteredData.reduce((acc, item) => acc + item.totalCosting, 0),
-    amount: filteredData.reduce((acc, item) => acc + item.totalCostingAmount, 0),
+    quantity: data?.data?.totalCostingQuantity || 0,
+    amount: data?.data?.totalCostingAmount || 0,
   };
 
   // Format the selected filter label
@@ -75,7 +54,7 @@ const CostingReportOverview = ({ selectedRange }: CostingReportOverviewProps) =>
       <div className="mb-4 grid gap-4 sm:grid-cols-2">
         <CostingQuantityCard
           value={totals.quantity}
-          selectedFilter={selectedFilter.value}
+          selectedFilter={selectedFilterLabel}
           increase={increase}
         />
         <CostingAmountCard
@@ -91,7 +70,7 @@ const CostingReportOverview = ({ selectedRange }: CostingReportOverviewProps) =>
         </h1>
         <ResponsiveContainer width="100%" height="100%">
           <LineChart
-            data={costingChartData}
+            data={data?.data?.chartData || []}
             margin={{ top: 10, right: 24, left: 8, bottom: 12 }}
             style={{
               fontFamily: "var(--font-primary), 'Source Sans Pro', sans-serif",
@@ -153,7 +132,7 @@ const CostingReportOverview = ({ selectedRange }: CostingReportOverviewProps) =>
             <Line
               type="monotone"
               yAxisId="left"
-              dataKey="totalPurchase"
+              dataKey="totalCosting"
               name="Total Purchase"
               stroke="var(--primary)"
               strokeWidth={3}
@@ -162,7 +141,7 @@ const CostingReportOverview = ({ selectedRange }: CostingReportOverviewProps) =>
             <Line
               type="monotone"
               yAxisId="right"
-              dataKey="totalPurchaseAmount"
+              dataKey="totalCostingAmount"
               name="Purchase Amount"
               stroke="var(--danger)"
               strokeWidth={3}
