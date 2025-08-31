@@ -1,8 +1,12 @@
 "use client";
 
 import { PageHeadingTitle, PartnerForm } from "@/components";
-import { useCreatePartnerMutation } from "@/redux/features/partners/partner.api";
-import { IPartner, IQueryMutationErrorResponse } from "@/types";
+import { PartnerFormValues } from "@/components/partner/PartnerForm";
+import {
+  useCratePartnerNomineeMutation,
+  useCreatePartnerMutation,
+} from "@/redux/features/partners/partner.api";
+import { IQueryMutationErrorResponse } from "@/types";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
@@ -10,8 +14,11 @@ const CreatePartnerView = () => {
   const [createPartner, { isLoading }] = useCreatePartnerMutation();
   const router = useRouter();
 
-  const handleSubmit = async (payload: IPartner) => {
-    const res = await createPartner(payload);
+  const [createNominee, { isLoading: isNomineeLoading }] = useCratePartnerNomineeMutation();
+
+  const handleSubmit = async (payload: PartnerFormValues) => {
+    const { nominees, ...rest } = payload;
+    const res = await createPartner(rest);
     const error = res.error as IQueryMutationErrorResponse;
 
     if (error) {
@@ -23,6 +30,19 @@ const CreatePartnerView = () => {
       return;
     }
 
+    for (const nominee of nominees) {
+      const nomineeRes = await createNominee({ ...nominee, partner: res.data?.data._id || "" });
+      const nomineeError = nomineeRes.error as IQueryMutationErrorResponse;
+
+      if (nomineeError) {
+        if (nomineeError?.data?.message) {
+          toast(nomineeError.data?.message);
+        } else {
+          toast("Something went wrong");
+        }
+      }
+    }
+
     toast.success("Partner created successfully");
     router.push("/partner-list");
   };
@@ -30,7 +50,7 @@ const CreatePartnerView = () => {
   return (
     <div className="flex flex-col gap-[10px]">
       <PageHeadingTitle title="Create Partner" />
-      <PartnerForm isLoading={isLoading} onSubmit={handleSubmit} />
+      <PartnerForm isLoading={isLoading || isNomineeLoading} onSubmit={handleSubmit} />
     </div>
   );
 };

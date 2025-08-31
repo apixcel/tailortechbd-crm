@@ -1,94 +1,23 @@
 "use client";
 
-import {
-  useDeleteSupplierByIdMutation,
-  useGetAllSuppliersQuery,
-} from "@/redux/features/supplier/supplier.api";
 import { useDebounce } from "@/hooks";
+import { useDeleteSupplierByIdMutation } from "@/redux/features/supplier/supplier.api";
 import Link from "next/link";
 
-import { RxMagnifyingGlass } from "react-icons/rx";
 import { GoPencil } from "react-icons/go";
+import { RxMagnifyingGlass } from "react-icons/rx";
 
 import {
+  DeleteConfirmationDialog,
   HorizontalLine,
+  Pagination,
   TableDataNotFound,
   TableSkeleton,
-  Pagination,
-  DeleteConfirmationDialog,
 } from "@/components";
-import { truncateWords } from "@/utils";
-import { FaChevronDown, FaChevronUp } from "react-icons/fa6";
+import { useGetAllSupplierPaymentsQuery } from "@/redux/features/supplierPayment/supplierPayment.api";
+import dateUtils from "@/utils/date";
 import { useState } from "react";
-
-const supplierPaymentsData = [
-  {
-    _id: "1",
-    date: "24/06/2025",
-    invoiceNo: "#INV-001",
-    invoiceBillAmount: 2000,
-    advancedAmount: 1500,
-    paymentMethod: "Bank Transfer",
-    paymentAttachment: "https://example.com/attachments/inv-001.pdf",
-    moneyReceipt: "https://example.com/receipts/rec-001.pdf",
-    duesAmount: 500,
-  },
-  {
-    _id: "2",
-    date: "02/07/2025",
-    invoiceNo: "#INV-002",
-    invoiceBillAmount: 3500,
-    advancedAmount: 1000,
-    paymentMethod: "Cash",
-    paymentAttachment: "https://example.com/attachments/inv-002.pdf",
-    moneyReceipt: "https://example.com/receipts/rec-002.pdf",
-    duesAmount: 2500,
-  },
-  {
-    _id: "3",
-    date: "15/07/2025",
-    invoiceNo: "#INV-003",
-    invoiceBillAmount: 5000,
-    advancedAmount: 5000,
-    paymentMethod: "Credit Card",
-    paymentAttachment: "https://example.com/attachments/inv-003.pdf",
-    moneyReceipt: "https://example.com/receipts/rec-003.pdf",
-    duesAmount: 0,
-  },
-  {
-    _id: "4",
-    date: "22/07/2025",
-    invoiceNo: "#INV-004",
-    invoiceBillAmount: 4200,
-    advancedAmount: 3000,
-    paymentMethod: "Mobile Banking",
-    paymentAttachment: "https://example.com/attachments/inv-004.pdf",
-    moneyReceipt: "https://example.com/receipts/rec-004.pdf",
-    duesAmount: 1200,
-  },
-  {
-    _id: "5",
-    date: "30/07/2025",
-    invoiceNo: "#INV-005",
-    invoiceBillAmount: 2750,
-    advancedAmount: 1000,
-    paymentMethod: "Cheque",
-    paymentAttachment: "https://example.com/attachments/inv-005.pdf",
-    moneyReceipt: "https://example.com/receipts/rec-005.pdf",
-    duesAmount: 1750,
-  },
-  {
-    _id: "6",
-    date: "05/08/2025",
-    invoiceNo: "#INV-006",
-    invoiceBillAmount: 6000,
-    advancedAmount: 2500,
-    paymentMethod: "Bank Transfer",
-    paymentAttachment: "https://example.com/attachments/inv-006.pdf",
-    moneyReceipt: "https://example.com/receipts/rec-006.pdf",
-    duesAmount: 3500,
-  },
-];
+import { FaChevronDown, FaChevronUp } from "react-icons/fa6";
 
 const tableHead = [
   { label: "SL", field: "" },
@@ -112,12 +41,10 @@ const SupplierPaymentsListTable = () => {
   });
 
   const [deleteSupplier, { isLoading: isDeleting }] = useDeleteSupplierByIdMutation();
-  //   const { data, isLoading } = useGetAllSuppliersQuery({ ...query, searchTerm, page });
+  const { data, isLoading } = useGetAllSupplierPaymentsQuery({ ...query, searchTerm, page });
 
-  // const supplierData = data?.data || [];
-  //   const metaData = data?.meta || { totalDoc: 0, page: 1 };
-  const metaData = { totalDoc: 0, page: 1 };
-  const isLoading = false;
+  const supplierPaymentsData = data?.data || [];
+  const metaData = data?.meta || { totalDoc: 0, page: 1 };
 
   const handleSort = (field: string) => {
     const newOrder = sort.field === field && sort.order === "asc" ? "desc" : "asc";
@@ -212,38 +139,42 @@ const SupplierPaymentsListTable = () => {
                   <tr key={supplier._id} className="hover:bg-gray-50">
                     {/* index */}
                     <td className="px-6 py-4">
-                      <div className="text-sm font-medium text-gray-900">{index + 1}</div>
+                      <span className="text-sm font-medium text-gray-900">{index + 1}</span>
                     </td>
 
                     {/* date */}
                     <td className="px-6 py-4">
-                      <div className="text-sm font-medium text-gray-900">{supplier.date}</div>
+                      <span className="text-sm font-medium text-gray-900">
+                        {dateUtils.formatDate(supplier.date)}
+                      </span>
                     </td>
 
                     {/* invoice no */}
                     <td className="px-6 py-4">
-                      <div className="text-sm font-medium text-gray-900">{supplier.invoiceNo}</div>
+                      <span className="text-sm font-medium text-gray-900">
+                        {supplier.invoiceNo}
+                      </span>
                     </td>
 
                     {/* bill amount */}
                     <td className="px-6 py-4">
-                      <div className="text-sm font-medium text-gray-900">
+                      <span className="text-sm font-medium text-gray-900">
                         {supplier.invoiceBillAmount}
-                      </div>
+                      </span>
                     </td>
 
                     {/* advanced amount */}
                     <td className="px-6 py-4">
-                      <div className="text-sm font-medium text-gray-900">
+                      <span className="text-sm font-medium text-gray-900">
                         {supplier.advancedAmount}
-                      </div>
+                      </span>
                     </td>
 
                     {/* payment method */}
                     <td className="px-6 py-4">
-                      <div className="flex items-center gap-3">
+                      <span className="flex items-center gap-3">
                         <span className="text-sm">{supplier.paymentMethod}</span>
-                      </div>
+                      </span>
                     </td>
 
                     {/* payment document */}
@@ -280,9 +211,9 @@ const SupplierPaymentsListTable = () => {
 
                     {/* dues amount */}
                     <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
-                      <div className="flex items-center gap-3">
+                      <span className="flex items-center gap-3">
                         <span className="text-sm">{supplier.duesAmount}</span>
-                      </div>
+                      </span>
                     </td>
 
                     {/* actions */}

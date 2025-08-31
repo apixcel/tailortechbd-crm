@@ -15,6 +15,7 @@ import {
   SelectionBox,
   TextArea,
 } from "@/components";
+import { paymentMethodOptions } from "@/constant/paymentMethods";
 import dateUtils from "@/utils/date";
 
 const withdrawalStatusOptions = [
@@ -35,6 +36,7 @@ const initialValues: Omit<IProfitWithdrawal, "_id" | "createdAt" | "updatedAt" |
   status: "not_paid",
   comment: "",
   attachment: "",
+  paymentMethod: "",
   profitPeriod: {
     endDate: today.toISOString(),
     startDate: tomorrow.toISOString(),
@@ -57,6 +59,7 @@ const validationSchema = Yup.object().shape({
     .max(100, "Percentage must be at most 100"),
   withdrawalDate: Yup.string().required("Date is required"),
   comment: Yup.string().required("Comment is required"),
+  paymentMethod: Yup.string().required("Payment Method is required"),
   status: Yup.string().required("Status is required"),
   profitPeriod: Yup.object().shape({
     startDate: Yup.string().required("Start date is required"),
@@ -161,6 +164,22 @@ const ProfitWithdrawalForm = ({
                     )}
                     displayValue={
                       withdrawalStatusOptions.find((opt) => opt.value === values.status)?.label
+                    }
+                    showSearch={false}
+                  />
+                  <ErrorMessage name="status" component="div" className="text-sm text-danger" />
+                </div>
+                {/* paymentMethod */}
+                <div className="flex w-full flex-col gap-[5px]">
+                  <label className="form-label">Payment Method</label>
+                  <SelectionBox
+                    data={paymentMethodOptions}
+                    onSelect={(option) => setFieldValue("paymentMethod", option.value)}
+                    defaultValue={paymentMethodOptions.find(
+                      (opt) => opt.value === values.paymentMethod
+                    )}
+                    displayValue={
+                      paymentMethodOptions.find((opt) => opt.value === values.paymentMethod)?.label
                     }
                     showSearch={false}
                   />

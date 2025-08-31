@@ -6,6 +6,7 @@ export interface IProfitWithdrawal {
   totalProfitAmount: number;
   percentage: number;
   withdrawalDate: string;
+  paymentMethod: string;
   status: TProfitWithdrawalStatus;
   comment: string;
   attachment?: string;

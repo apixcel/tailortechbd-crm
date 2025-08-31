@@ -18,5 +18,6 @@ export interface IInvestmentPayload {
   investmentDate: string;
   note: string;
   partner: string;
+  transactionMethod: string;
   attachment?: string;
 }

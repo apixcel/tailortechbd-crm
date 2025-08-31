@@ -17,6 +17,7 @@ const CreateInvestmentView = () => {
       investmentDate: payload.investmentDate,
       note: payload.note,
       partner: payload.partner._id,
+      transactionMethod: payload.transactionMethod || "",
     };
 
     const res = await createInvestment(formattedValues);

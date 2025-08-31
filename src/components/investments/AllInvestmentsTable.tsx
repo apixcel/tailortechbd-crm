@@ -198,24 +198,24 @@ const AllInvestmentsTable = () => {
                     {/* investment date */}
                     <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
                       <span className="text-sm">
-                        {dateUtils.formatDate(investment.investmentDate)}
+                        {dateUtils.formatDate(investment?.investmentDate)}
                       </span>
                     </td>
 
                     {/* partner name */}
                     <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
-                      <span className="text-sm">{investment.partner?.partnerName}</span>
+                      <span className="text-sm">{investment?.partner?.partnerName || "N/A"}</span>
                     </td>
 
                     {/* description */}
                     <td className="max-w-[250px] px-6 py-4 text-sm text-gray-700">
-                      {truncateWords(investment.note || "-", 10)}
+                      {truncateWords(investment?.note || "-", 10)}
                     </td>
 
                     {/* transaction method */}
                     <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
-                      {investment.transactionMethod ? (
-                        <span className="text-sm">{investment.transactionMethod}</span>
+                      {investment?.transactionMethod ? (
+                        <span className="text-sm">{investment?.transactionMethod}</span>
                       ) : (
                         <span className="text-sm text-gray-400">N/A</span>
                       )}
@@ -223,21 +223,21 @@ const AllInvestmentsTable = () => {
 
                     {/* investment note */}
                     <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
-                      <span className="text-sm">{investment.investmentAmount}</span>
+                      <span className="text-sm">{investment?.investmentAmount}</span>
                     </td>
                     {/* investment note */}
                     <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
-                      <span className="text-sm">{investment.lastInvestment}</span>
+                      <span className="text-sm">{investment?.lastInvestment}</span>
                     </td>
 
                     {/* total investment balance */}
                     <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
-                      <span className="text-sm">{investment.totalBalance}</span>
+                      <span className="text-sm">{investment?.totalBalance}</span>
                     </td>
 
                     {/* remarks */}
                     <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
-                      <span className="text-sm">{investment.remarks}</span>
+                      <span className="text-sm">{investment?.remarks}</span>
                     </td>
                   </tr>
                 ))

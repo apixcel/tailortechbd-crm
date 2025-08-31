@@ -127,10 +127,10 @@ const UpdateProfitWithdrawalStatus = ({
                     Partner Details
                   </span>
                   <span className="block text-[15px] font-[500] text-gray-900">
-                    {profitWithdrawal.partner.partnerName}
+                    {profitWithdrawal?.partner?.partnerName}
                   </span>
                   <span className="text-[13px] text-gray-500">
-                    {profitWithdrawal.partner.partnerDesignation}
+                    {profitWithdrawal?.partner?.partnerDesignation}
                   </span>
                 </div>
               </div>

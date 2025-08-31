@@ -6,6 +6,7 @@ import { useState } from "react";
 import * as Yup from "yup";
 
 import { Button, ImageUploader, Input, SectionTitle, TextArea } from "@/components";
+import paymentMethods from "@/constant/paymentMethods";
 
 const categoryOptions = [
   "Raw Materials",
@@ -19,8 +20,6 @@ const categoryOptions = [
   "Cleaning Supplies",
   "Other",
 ];
-
-const paymentMethods = ["Cash", "Bank Transfer", "Mobile Wallet", "Cheque", "Credit Terms"];
 
 const initialValues = {
   name: "",

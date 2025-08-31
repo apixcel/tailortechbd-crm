@@ -8,6 +8,7 @@ import { PiPrinterFill } from "react-icons/pi";
 import { Calendar, DateObject } from "react-multi-date-picker";
 import { useReactToPrint } from "react-to-print";
 import { toast } from "sonner";
+import PartnerDropDown from "../partner/PartnerDropDown";
 import Button from "../ui/Button";
 import DialogProvider from "../ui/DialogProvider";
 import HorizontalLine from "../ui/HorizontalLine";
@@ -16,18 +17,22 @@ const DownloadInvestmentReport = () => {
   const [openModal, setOpenModal] = useState(false);
   const [showReport, setShowReport] = useState(false);
 
-  const [values, setValues] = useState([
+  const [dateRange, setDateRange] = useState([
     new DateObject().subtract(1, "days"),
     new DateObject().add(6, "days"),
   ]);
 
+  const [partner, setPartner] = useState<string | null>(null);
+
   const [trigger, { data, isFetching, isError }] = useLazyGetAllInvestmentsQuery();
 
   const handleFetch = async () => {
-    const res = await trigger({
-      startDate: values[0].format(),
-      endDate: values[1].format(),
-    });
+    const query = {
+      startDate: dateRange[0].format(),
+      endDate: dateRange[1].format(),
+      partner: partner || "",
+    };
+    const res = await trigger(query);
 
     if (!res.data?.data?.length) {
       toast.error("No Data Found in this date range");
@@ -53,35 +58,17 @@ const DownloadInvestmentReport = () => {
         Investment Report
       </Button>
 
-      <DialogProvider state={openModal} setState={setOpenModal} className="w-full max-w-[900px]">
-        <div className="w-full rounded-[10px] bg-white">
+      <DialogProvider
+        state={openModal}
+        setState={setOpenModal}
+        className={`w-full ${showReport ? "max-w-[900px]" : "max-w-[550px]"}`}
+      >
+        <div className="w-full rounded-[6px] bg-white">
           <h4 className="p-3 text-[20px] font-[700] text-primary">Investment Report</h4>
           <HorizontalLine className="my-[10px]" />
 
-          {/* Date Range Picker */}
-          {!showReport && (
-            <div className="flex flex-col gap-[12px] p-3">
-              <span className="text-[15px] font-[600]">Date Range</span>
-              <Calendar
-                range
-                numberOfMonths={2}
-                className="mx-auto"
-                value={values}
-                onChange={setValues}
-              />
-              <div className="mt-[12px] flex items-center gap-2">
-                <Button onClick={handleFetch} className="bg-primary text-white">
-                  {isFetching ? "Loading..." : "Show Report"}
-                </Button>
-                {isError && (
-                  <span className="text-sm text-red-600">Failed to load. Please try again.</span>
-                )}
-              </div>
-            </div>
-          )}
-
           {/* Report View */}
-          {showReport && (
+          {showReport ? (
             <div className="mt-2">
               {/* Controls */}
               <div className="mb-3 flex flex-wrap items-center gap-2 p-3">
@@ -89,7 +76,14 @@ const DownloadInvestmentReport = () => {
                   Print
                   <PiPrinterFill />
                 </Button>
-                <Button onClick={() => setShowReport(false)}>Change Date Range</Button>
+                <Button
+                  onClick={() => {
+                    setShowReport(false);
+                    setPartner(null);
+                  }}
+                >
+                  Change Date Range
+                </Button>
               </div>
 
               <div ref={printRef} className="p-3">
@@ -98,15 +92,15 @@ const DownloadInvestmentReport = () => {
                 <div className="mb-4 text-center">
                   <h2 className="text-[22px] font-bold text-primary">Investment Report</h2>
                   <p className="text-sm text-gray-600">
-                    Investment report from <b>{values[0].format("MMM DD, YYYY")}</b> to{" "}
-                    <b>{values[1].format("MMM DD, YYYY")}</b>
+                    Investment report from <b>{dateRange[0].format("MMM DD, YYYY")}</b> to{" "}
+                    <b>{dateRange[1].format("MMM DD, YYYY")}</b>
                   </p>
                 </div>
 
                 <div className="mb-3 rounded-md border border-primary/20 bg-primary/10 p-3">
                   <p className="text-sm text-primary">
-                    Showing investments from <b>{values[0].format("MMM DD, YYYY")}</b> to{" "}
-                    <b>{values[1].format("MMM DD, YYYY")}</b>
+                    Showing investments from <b>{dateRange[0].format("MMM DD, YYYY")}</b> to{" "}
+                    <b>{dateRange[1].format("MMM DD, YYYY")}</b>
                   </p>
                 </div>
 
@@ -160,6 +154,32 @@ const DownloadInvestmentReport = () => {
                   </table>
                 </div>
               </div>
+            </div>
+          ) : (
+            <div className="flex flex-col gap-[12px] p-3">
+              <div className="mx-auto w-fit">
+                <PartnerDropDown
+                  className="w-full !max-w-[unset]"
+                  selectionBoxClassName="w-full"
+                  onSelect={(item) => setPartner(item.value)}
+                />
+                <div className="mt-2 flex flex-col items-start justify-start gap-[12px]">
+                  <span className="text-[15px] font-[600]">Date Range</span>
+                  <Calendar
+                    className="z-3"
+                    range
+                    numberOfMonths={2}
+                    value={dateRange}
+                    onChange={setDateRange}
+                  />
+                </div>
+              </div>
+              <Button onClick={handleFetch} className="mt-4 w-full bg-primary text-white">
+                {isFetching ? "Loading..." : "Show Report"}
+              </Button>
+              {isError && (
+                <span className="text-sm text-red-600">Failed to load. Please try again.</span>
+              )}
             </div>
           )}
         </div>

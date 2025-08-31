@@ -8,9 +8,15 @@ interface IProps {
   onSelect: (item: { label: string; value: string }) => void;
   defaultValue?: { label: string; value: string };
   className?: string;
+  selectionBoxClassName?: string;
 }
 
-const PartnerDropDown: React.FC<IProps> = ({ onSelect, defaultValue, className }) => {
+const PartnerDropDown: React.FC<IProps> = ({
+  onSelect,
+  defaultValue,
+  className,
+  selectionBoxClassName,
+}) => {
   const { data } = useGetAllPartnersQuery({ searchTerm: "" });
 
   const partnerOptions =
@@ -34,6 +40,7 @@ const PartnerDropDown: React.FC<IProps> = ({ onSelect, defaultValue, className }
         onSelect={onSelect}
         defaultValue={defaultValue}
         showSearch={true}
+        className={selectionBoxClassName}
       />
     </div>
   );

@@ -50,8 +50,8 @@ const AllCapitalsListTable = () => {
   return (
     <div className="flex flex-col gap-4">
       {/* current balance */}
-      <div className="bg-white p-4">
-        <h1 className="text-[20px] font-bold text-dashboard">
+      <div className="w-full bg-white p-4">
+        <h1 className="w-full text-center text-[20px] font-bold text-dashboard">
           Current Balance: {totalCapitalBalance} Tk
         </h1>
       </div>

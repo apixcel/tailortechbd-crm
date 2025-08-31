@@ -8,18 +8,26 @@ import dateUtils from "@/utils/date";
 import Link from "next/link";
 import { useState } from "react";
 import { RxMagnifyingGlass } from "react-icons/rx";
+import DeletePartner from "./DeletePartner";
+import PartnerNomineeManageMent from "./PartnerNomineeManageMent";
 
 const tableHead = [
   { label: "SL", field: "" },
   { label: "Name", field: "" },
   { label: "Designation", field: "" },
+  { label: "Total Nominee", field: "" },
   { label: "Joining Date", field: "" },
+  {
+    label: "Action",
+    field: "",
+  },
 ];
 
 const AllPartnerListTable = () => {
   const [searchTerm, setSearchTerm] = useDebounce("");
   const [query, setQuery] = useState<Record<string, string | number>>({
     page: 1,
+    nomineeCount: "true",
   });
 
   const { data, isLoading } = useGetAllPartnersQuery({ ...query, searchTerm });
@@ -102,10 +110,16 @@ const AllPartnerListTable = () => {
                     <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
                       <span className="text-sm">{partner.partnerDesignation}</span>
                     </td>
+                    <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
+                      <PartnerNomineeManageMent partner={partner} />
+                    </td>
 
                     {/* joining date */}
                     <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
                       <span className="text-sm">{dateUtils.formatDate(partner.joiningDate)}</span>
+                    </td>
+                    <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
+                      <DeletePartner partner={partner} />
                     </td>
                   </tr>
                 ))

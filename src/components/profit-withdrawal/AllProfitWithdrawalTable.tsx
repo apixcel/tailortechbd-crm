@@ -95,22 +95,26 @@ const AllProfitWithdrawalTable = () => {
           </Link>
         </div>
 
-        <div className="mb-4 flex justify-center">
-          <div className="flex flex-col items-center gap-[5px]">
-            <h1 className="text-[16px] font-[600]">
-              Withdrawer: {selectedPartner?.label || "N/A"}
-            </h1>
-            <p className="text-[12px] text-muted md:text-[14px]">
-              Designation: {selectedPartner?.partnerDesignation || "N/A"}
-            </p>
-            <span className="text-[12px] text-muted md:text-[14px]">
-              Joining Date:{" "}
-              {selectedPartner?.joiningDate
-                ? dateUtils.formatDate(selectedPartner.joiningDate)
-                : "N/A"}
-            </span>
+        {selectedPartner ? (
+          <div className="mb-4 flex justify-center">
+            <div className="flex flex-col items-center gap-[5px]">
+              <h1 className="text-[16px] font-[600]">
+                Withdrawer: {selectedPartner?.label || "N/A"}
+              </h1>
+              <p className="text-[12px] text-muted md:text-[14px]">
+                Designation: {selectedPartner?.partnerDesignation || "N/A"}
+              </p>
+              <span className="text-[12px] text-muted md:text-[14px]">
+                Joining Date:{" "}
+                {selectedPartner?.joiningDate
+                  ? dateUtils.formatDate(selectedPartner.joiningDate)
+                  : "N/A"}
+              </span>
+            </div>
           </div>
-        </div>
+        ) : (
+          ""
+        )}
 
         <HorizontalLine className="my-[10px]" />
 
@@ -201,28 +205,30 @@ const AllProfitWithdrawalTable = () => {
 
                     {/* partner name */}
                     <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
-                      {pw.partner?.partnerName}
+                      {pw.partner?.partnerName || "N/A"}
                     </td>
 
                     {/* partner designation */}
                     <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
-                      {pw.partner?.partnerDesignation}
+                      {pw.partner?.partnerDesignation || "N/A"}
                     </td>
 
                     {/* current profit balance */}
                     <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
-                      <span className="text-primary">—</span>
+                      <span className="text-primary">{pw.totalProfitAmount}</span>
                     </td>
 
                     {/* get amount */}
                     <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
-                      {/* {(pw.totalProfitAmount * (pw.percentage / 100)).toLocaleString()} */}
-                      <span className="text-primary">—</span>
+                      <span className="font-bold">
+                        {Math.round(pw.totalProfitAmount * (pw.percentage / 100))} TK
+                      </span>
+                      <span className="text-success"> ({pw.percentage}%)</span>
                     </td>
 
                     {/* payment method */}
                     <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
-                      <span className="text-primary">—</span>
+                      <span className="text-primary">{pw.paymentMethod || "N/A"}</span>
                     </td>
 
                     {/* status */}
