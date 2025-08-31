@@ -16,3 +16,10 @@ export interface IFinancialOverview {
     increasePct: number;
   };
 }
+
+export interface ICapitalTimelineEntry {
+  credit: number;
+  debit: number;
+  date: string;
+  balance: number;
+}

@@ -1,18 +1,18 @@
 "use client";
 
+import { mockCapitalsData } from "@/constants/capitalsData";
+import { useGetCapitalTimelineQuery } from "@/redux/features/statistics/statistics.api";
 import {
-  BarChart,
   Bar,
+  CartesianGrid,
+  ComposedChart,
+  Legend,
+  Line,
+  ResponsiveContainer,
+  Tooltip,
   XAxis,
   YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  Cell,
-  Line,
-  Legend,
 } from "recharts";
-import { mockCapitalsData } from "@/constants/capitalsData";
 
 const formattedData = mockCapitalsData.map((item) => ({
   date: item.capitalsDate.slice(5), // MM-DD
@@ -49,46 +49,28 @@ interface CustomTooltipProps {
   label?: string;
 }
 
-const CustomTooltip = ({ active, payload, label }: CustomTooltipProps) => {
-  if (!active || !payload || !payload.length) return null;
-  const change = payload.find((p) => p.dataKey === "amount");
-  const balance = payload.find((p) => p.dataKey === "balance");
-  const isDebit = change?.payload?.type?.toLowerCase().includes("debit");
-  const labelType = isDebit ? "Debit" : "Credit";
-
-  return (
-    <div className="min-w-[150px] rounded-xl bg-[var(--primary,#101949)]/95 p-4 text-sm text-white shadow-lg">
-      <p className="mb-1 font-semibold tracking-wide">Date: {label}</p>
-      {change && (
-        <p>
-          <span className="font-medium">{labelType}:</span>{" "}
-          <span className={isDebit ? "text-red-400" : "text-green-400"}>
-            ৳{Math.abs(change.value).toLocaleString()}
-          </span>
-        </p>
-      )}
-      {balance && (
-        <p className="pt-1">
-          <span className="font-medium">Main Balance:</span>{" "}
-          <span className="text-blue-300">৳{balance.value.toLocaleString()}</span>
-        </p>
-      )}
-    </div>
-  );
-};
-
-const CapitalFlowChart = () => {
+const CapitalFlowChart = ({ selectedFilter }: { selectedFilter: string }) => {
+  const { data } = useGetCapitalTimelineQuery({});
+  console.log(data);
+  const colors = {
+    grid: "#e5e7eb",
+    credit: "#22c55e", // green
+    debit: "#ef4444", // red
+    balance: "#00adef", // line
+  };
   return (
     <div className="bg-white p-6">
-      <h2 className="mb-6 text-[1.15rem] font-bold tracking-tight text-[var(--primary,#101949)]">
-        Capital Flow Overview
-      </h2>
+      <div className="mb-6 flex flex-col gap-1">
+        <h2 className="text-[1.15rem] font-bold tracking-tight text-[var(--primary,#101949)]">
+          Capital Flow Overview
+        </h2>
+        <p className="text-[14px] font-semibold text-info capitalize">{selectedFilter}</p>
+      </div>
       <div style={{ width: "100%", height: 400 }}>
         <ResponsiveContainer>
-          <BarChart
-            data={formattedData}
+          <ComposedChart
+            data={data?.data || []}
             margin={{ top: 20, right: 40, left: 0, bottom: 24 }}
-            barSize={38}
           >
             <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={colors.grid} />
             <XAxis
@@ -103,49 +85,53 @@ const CapitalFlowChart = () => {
               tickLine={false}
               tickFormatter={(v) => "৳" + v}
             />
-            <Tooltip content={<CustomTooltip />} cursor={{ fill: "#e9ecef", opacity: 0.5 }} />
+            <Tooltip
+              cursor={{ fill: "#e9ecef", opacity: 0.5 }}
+              formatter={(value) => "৳ " + value}
+            />
             <Legend
               iconType="circle"
               wrapperStyle={{ paddingTop: 18 }}
               formatter={(value) =>
-                value === "amount" ? "Capital Change" : value === "balance" ? "Main Balance" : value
+                value === "credit"
+                  ? "Credit"
+                  : value === "debit"
+                    ? "Debit"
+                    : value === "balance"
+                      ? "Main Balance"
+                      : value
               }
             />
+
+            {/* Up bar: credit */}
             <Bar
-              dataKey="amount"
-              name="Capital Change"
+              dataKey="credit"
+              name="Credit"
+              barSize={38}
               radius={[8, 8, 0, 0]}
-              // Add animation & subtle hover effect
-              isAnimationActive
-            >
-              {formattedData.map((entry, index) => (
-                <Cell
-                  key={`cell-${index}`}
-                  fill={getBarColor(entry.type)}
-                  className="cursor-pointer transition-all duration-200 hover:opacity-80"
-                />
-              ))}
-            </Bar>
+              fill={colors.credit}
+            />
+
+            {/* Down bar: debit (negative values render below 0) */}
+            <Bar
+              dataKey="debit"
+              name="Debit"
+              barSize={38}
+              radius={[8, 8, 0, 0]}
+              fill={colors.debit}
+            />
+
+            {/* Line: end-of-day balance */}
             <Line
               type="monotone"
               dataKey="balance"
               stroke={colors.balance}
               strokeWidth={3}
-              dot={{
-                r: 5,
-                fill: "#fff",
-                stroke: colors.balance,
-                strokeWidth: 2,
-              }}
-              activeDot={{
-                r: 7,
-                fill: "var(--primary,#101949)",
-                stroke: "#fff",
-                strokeWidth: 3,
-              }}
+              dot={{ r: 5, fill: "#fff", stroke: colors.balance, strokeWidth: 2 }}
+              activeDot={{ r: 7, fill: "var(--primary,#101949)", stroke: "#fff", strokeWidth: 3 }}
               name="Main Balance"
             />
-          </BarChart>
+          </ComposedChart>
         </ResponsiveContainer>
       </div>
     </div>

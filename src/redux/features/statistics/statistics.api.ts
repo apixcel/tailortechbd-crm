@@ -1,5 +1,5 @@
 import { api } from "@/redux/api/api";
-import { IFinancialOverview } from "@/types/statistics";
+import { ICapitalTimelineEntry, IFinancialOverview } from "@/types/statistics";
 import { generateQueryParams } from "@/utils";
 
 const statisticsAPi = api.injectEndpoints({
@@ -17,7 +17,20 @@ const statisticsAPi = api.injectEndpoints({
       },
       providesTags: ["statistics"],
     }),
+    getCapitalTimeline: builder.query<
+      { data: ICapitalTimelineEntry[] },
+      Record<string, string | number | undefined>
+    >({
+      query: (query) => {
+        const queryString = generateQueryParams(query);
+        return {
+          url: `/statistics/capital-timeline?${queryString}`,
+          method: "GET",
+        };
+      },
+      providesTags: ["statistics"],
+    }),
   }),
 });
 
-export const { useGetFinancialOverViewQuery } = statisticsAPi;
+export const { useGetFinancialOverViewQuery, useGetCapitalTimelineQuery } = statisticsAPi;

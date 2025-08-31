@@ -18,7 +18,6 @@ import { RxMagnifyingGlass } from "react-icons/rx";
 import RoleSelector from "../ManageRole/RoleSelector";
 import TableDataNotFound from "../ui/TableDataNotFound";
 import TableSkeleton from "../ui/TableSkeleton";
-import Toggle from "../ui/Toggle";
 import CreateAdmin from "./CreateAdmin";
 import DeleteAdmin from "./DeleteAdmin";
 
@@ -174,12 +173,7 @@ const AllAdminTable = () => {
                       </span>
                     </td>
                     <td className="flex items-center justify-start gap-[10px] px-6 py-4">
-                      <Toggle
-                        disabled={user._id === currentUser?._id}
-                        onToggle={() => toggleActivation(user._id)}
-                        defaultActive={user.isActive}
-                      />
-                      <DeleteAdmin admin={user} />
+                      {user._id === currentUser?._id ? "-" : <DeleteAdmin admin={user} />}
                     </td>
                   </tr>
                 ))

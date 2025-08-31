@@ -133,7 +133,7 @@ const CostingReportOverview = ({ selectedRange = [] }: CostingReportOverviewProp
               type="monotone"
               yAxisId="left"
               dataKey="totalCosting"
-              name="Total Purchase"
+              name="Total Costing"
               stroke="var(--primary)"
               strokeWidth={3}
               activeDot={{ r: 6 }}
@@ -142,7 +142,7 @@ const CostingReportOverview = ({ selectedRange = [] }: CostingReportOverviewProp
               type="monotone"
               yAxisId="right"
               dataKey="totalCostingAmount"
-              name="Purchase Amount"
+              name="Cost Amount"
               stroke="var(--danger)"
               strokeWidth={3}
               dot={{ r: 4 }}

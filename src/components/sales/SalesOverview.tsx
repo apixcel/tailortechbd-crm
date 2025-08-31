@@ -11,6 +11,7 @@ import {
   SalesProfitAmountCard,
   TotalSalesAmountCard,
 } from "@/components";
+import { useAppSelector } from "@/hooks";
 import { useGetFinancialOverViewQuery } from "@/redux/features/statistics/statistics.api";
 import { DateObject } from "react-multi-date-picker";
 import CapitalFlowChart from "../capitals/CapitalFlowChart";
@@ -72,6 +73,7 @@ const SalesOverview = ({ selectedRange }: SalesOverviewProps) => {
   });
 
   const financeOverview = data?.data;
+  const { user } = useAppSelector((state) => state.user);
   return (
     <section className="flex flex-col gap-4">
       <div className="flex h-full items-stretch justify-between gap-4">
@@ -80,7 +82,8 @@ const SalesOverview = ({ selectedRange }: SalesOverviewProps) => {
             <h1 className="flex items-center gap-2 text-lg font-semibold">
               <span className="animate-waving-hand text-2xl">👋</span>
               <span>
-                Hi, <span className="mr-1 font-bold">Admin!</span> Welcome to the Dashboard.
+                Hi, <span className="mr-1 font-bold">{user?.fullName}!</span> Welcome to the
+                Dashboard.
               </span>
             </h1>
           </div>
@@ -117,7 +120,7 @@ const SalesOverview = ({ selectedRange }: SalesOverviewProps) => {
       </div>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 2xl:grid-cols-2">
-        <CapitalFlowChart />
+        <CapitalFlowChart selectedFilter={selectedFilterLabel} />
         <OverallSalesStatistics />
       </div>
 
