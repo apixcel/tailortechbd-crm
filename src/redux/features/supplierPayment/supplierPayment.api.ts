@@ -5,13 +5,13 @@ import { generateQueryParams } from "@/utils";
 
 const supplierPaymentApi = api.injectEndpoints({
   endpoints: (builder) => ({
-    createSupplier: builder.mutation<{ data: ISupplier }, Partial<ISupplier>>({
+    createSupplierPayment: builder.mutation<{ data: ISupplierPayment }, Partial<ISupplierPayment>>({
       query: (payload) => ({
-        url: "/supplier/create",
+        url: "/supplier-payment/create",
         method: "POST",
         body: payload,
       }),
-      invalidatesTags: ["supplier"],
+      invalidatesTags: ["supplierPayment"],
     }),
     getAllSupplierPayments: builder.query<
       { data: ISupplierPayment[]; meta?: IMeta },
@@ -24,17 +24,21 @@ const supplierPaymentApi = api.injectEndpoints({
           method: "GET",
         };
       },
-      providesTags: ["supplier"],
+      providesTags: ["supplierPayment"],
     }),
 
-    deleteSupplierById: builder.mutation<{ data: ISupplier }, { supplierId: string }>({
-      query: ({ supplierId }) => ({
-        url: `/supplier/delete/${supplierId}`,
+    deleteSupplierPaymentById: builder.mutation<{ data: ISupplier }, string>({
+      query: (supplierPaymentId) => ({
+        url: `/supplier-payment/delete/${supplierPaymentId}`,
         method: "DELETE",
       }),
-      invalidatesTags: ["supplier"],
+      invalidatesTags: ["supplierPayment"],
     }),
   }),
 });
 
-export const { useGetAllSupplierPaymentsQuery } = supplierPaymentApi;
+export const {
+  useGetAllSupplierPaymentsQuery,
+  useCreateSupplierPaymentMutation,
+  useDeleteSupplierPaymentByIdMutation,
+} = supplierPaymentApi;

@@ -113,7 +113,7 @@ const UserDropdown = ({ displayName = false }: { displayName?: boolean }) => {
               <div>
                 <p className="text-[14px] font-medium capitalize">{user?.fullName}</p>
                 <p className="text-[12px] text-info capitalize">
-                  {user?.role ? String(user.role) : ""}
+                  {user?.role ? user.role?.name : ""}
                 </p>
               </div>
             </div>

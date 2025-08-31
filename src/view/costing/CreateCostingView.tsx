@@ -11,10 +11,10 @@ const CreateCostingView = () => {
   const [createCosting, { isLoading }] = useCreateCostingMutation();
   const router = useRouter();
 
-  const handleSubmit = async (payload: ICosting) => {
+  const handleSubmit = async (payload: Partial<ICosting>) => {
     const formattedValues = {
       ...payload,
-      costingDate: payload.costingDate.split("T")[0],
+      costingDate: payload.costingDate?.split("T")[0],
       fileUrl: payload.fileUrl || undefined,
     };
 

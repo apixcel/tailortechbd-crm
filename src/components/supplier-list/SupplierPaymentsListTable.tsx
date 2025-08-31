@@ -1,7 +1,6 @@
 "use client";
 
 import { useDebounce } from "@/hooks";
-import { useDeleteSupplierByIdMutation } from "@/redux/features/supplier/supplier.api";
 import Link from "next/link";
 
 import { GoPencil } from "react-icons/go";
@@ -14,7 +13,10 @@ import {
   TableDataNotFound,
   TableSkeleton,
 } from "@/components";
-import { useGetAllSupplierPaymentsQuery } from "@/redux/features/supplierPayment/supplierPayment.api";
+import {
+  useDeleteSupplierPaymentByIdMutation,
+  useGetAllSupplierPaymentsQuery,
+} from "@/redux/features/supplierPayment/supplierPayment.api";
 import dateUtils from "@/utils/date";
 import { useState } from "react";
 import { FaChevronDown, FaChevronUp } from "react-icons/fa6";
@@ -40,7 +42,7 @@ const SupplierPaymentsListTable = () => {
     day_count: "",
   });
 
-  const [deleteSupplier, { isLoading: isDeleting }] = useDeleteSupplierByIdMutation();
+  const [deleteSupllierPayment, { isLoading: isDeleting }] = useDeleteSupplierPaymentByIdMutation();
   const { data, isLoading } = useGetAllSupplierPaymentsQuery({ ...query, searchTerm, page });
 
   const supplierPaymentsData = data?.data || [];
@@ -88,6 +90,13 @@ const SupplierPaymentsListTable = () => {
             />
             <RxMagnifyingGlass />
           </div>
+
+          <Link
+            href="/supplier-payments-list/create"
+            className="rounded-[4px] bg-primary px-[14px] py-[8px] text-white"
+          >
+            Create Supplier Payment
+          </Link>
         </div>
 
         {/* table */}
@@ -135,8 +144,8 @@ const SupplierPaymentsListTable = () => {
               {isLoading ? (
                 <TableSkeleton columns={tableHead.length} />
               ) : supplierPaymentsData?.length ? (
-                supplierPaymentsData.map((supplier, index) => (
-                  <tr key={supplier._id} className="hover:bg-gray-50">
+                supplierPaymentsData.map((supllierPayment, index) => (
+                  <tr key={supllierPayment._id} className="hover:bg-gray-50">
                     {/* index */}
                     <td className="px-6 py-4">
                       <span className="text-sm font-medium text-gray-900">{index + 1}</span>
@@ -145,49 +154,49 @@ const SupplierPaymentsListTable = () => {
                     {/* date */}
                     <td className="px-6 py-4">
                       <span className="text-sm font-medium text-gray-900">
-                        {dateUtils.formatDate(supplier.date)}
+                        {dateUtils.formatDate(supllierPayment.date)}
                       </span>
                     </td>
 
                     {/* invoice no */}
                     <td className="px-6 py-4">
                       <span className="text-sm font-medium text-gray-900">
-                        {supplier.invoiceNo}
+                        {supllierPayment.invoiceNo}
                       </span>
                     </td>
 
                     {/* bill amount */}
                     <td className="px-6 py-4">
                       <span className="text-sm font-medium text-gray-900">
-                        {supplier.invoiceBillAmount}
+                        {supllierPayment.invoiceBillAmount}
                       </span>
                     </td>
 
                     {/* advanced amount */}
                     <td className="px-6 py-4">
                       <span className="text-sm font-medium text-gray-900">
-                        {supplier.advancedAmount}
+                        {supllierPayment.advancedAmount}
                       </span>
                     </td>
 
                     {/* payment method */}
                     <td className="px-6 py-4">
                       <span className="flex items-center gap-3">
-                        <span className="text-sm">{supplier.paymentMethod}</span>
+                        <span className="text-sm">{supllierPayment.paymentMethod}</span>
                       </span>
                     </td>
 
                     {/* payment document */}
                     <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
-                      {supplier.paymentAttachment ? (
-                        <a
-                          href={supplier.paymentAttachment}
+                      {supllierPayment.paymentAttachment ? (
+                        <Link
+                          href={supllierPayment.paymentAttachment}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="text-primary underline"
                         >
                           View
-                        </a>
+                        </Link>
                       ) : (
                         <span className="text-primary">—</span>
                       )}
@@ -195,15 +204,15 @@ const SupplierPaymentsListTable = () => {
 
                     {/* money receipt */}
                     <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
-                      {supplier.moneyReceipt ? (
-                        <a
-                          href={supplier.moneyReceipt}
+                      {supllierPayment.moneyReceipt ? (
+                        <Link
+                          href={supllierPayment.moneyReceipt}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="text-primary underline"
                         >
                           View
-                        </a>
+                        </Link>
                       ) : (
                         <span className="text-primary">—</span>
                       )}
@@ -212,7 +221,7 @@ const SupplierPaymentsListTable = () => {
                     {/* dues amount */}
                     <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
                       <span className="flex items-center gap-3">
-                        <span className="text-sm">{supplier.duesAmount}</span>
+                        <span className="text-sm">{supllierPayment.duesAmount}</span>
                       </span>
                     </td>
 
@@ -221,7 +230,7 @@ const SupplierPaymentsListTable = () => {
                       <div className="flex items-center gap-[8px]">
                         {/* update */}
                         <Link
-                          href={`/supplier-list/${supplier._id}`}
+                          href={`/supplier-list/${supllierPayment._id}`}
                           className="center aspect-square w-[30px] cursor-pointer rounded-full border-[1px] border-dashboard bg-dashboard/5 text-dashboard"
                           title="Edit Supplier"
                         >
@@ -229,10 +238,10 @@ const SupplierPaymentsListTable = () => {
                         </Link>
                         {/* delete */}
                         <DeleteConfirmationDialog
-                          entityId={supplier._id!}
-                          entityName={supplier.invoiceNo}
-                          entityLabel="Supplier"
-                          onDelete={(id) => deleteSupplier({ supplierId: id })}
+                          entityId={supllierPayment._id}
+                          entityName={supllierPayment.invoiceNo}
+                          entityLabel="Payment"
+                          onDelete={(id) => deleteSupllierPayment(id)}
                           isLoading={isDeleting}
                         />
                       </div>
