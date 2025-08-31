@@ -65,16 +65,6 @@ const AddSupplierOnPurchase = ({ setFieldValue }: IProps) => {
                 }}
                 className="flex cursor-pointer items-center justify-between gap-[8px] rounded-[4px] border border-gray-200 p-[8px] hover:border-success"
               >
-                <img
-                  src={supplier.logoUrl}
-                  alt={supplier.name}
-                  width={50}
-                  height={50}
-                  className="h-[50px] w-[50px] rounded-[4px] object-cover"
-                  onError={(e) => {
-                    e.currentTarget.src = "/images/category_blank.png";
-                  }}
-                />
                 <div className="flex w-full flex-col gap-[4px] text-sm">
                   <p className="line-clamp-2 leading-[120%] font-semibold">
                     <span className="font-normal">Name:</span> {supplier.name}

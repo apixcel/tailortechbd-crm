@@ -138,7 +138,7 @@ const DownloadCostingReport = () => {
                       {costings.map((c) => (
                         <tr key={c._id} className="odd:bg-white even:bg-gray-50">
                           <td className="px-3 py-2">{dateUtils.formatDate(c.costingDate)}</td>
-                          <td className="px-3 py-2">{c.costingType || "-"}</td>
+                          <td className="px-3 py-2">{c.costingCategory || "-"}</td>
                           <td className="px-3 py-2">{c.note || "-"}</td>
                           <td className="px-3 py-2 text-right">
                             {formatCurrency(c.costingAmount)}

@@ -8,7 +8,7 @@ import { ICosting, IQueryMutationErrorResponse } from "@/types";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
-import { CostingForm, PageHeadingTitle, Loader, DataNotFound } from "@/components";
+import { CostingForm, DataNotFound, Loader, PageHeadingTitle } from "@/components";
 
 const EditCostingView = ({ slug }: { slug: string }) => {
   const { data, isLoading, isError } = useGetCostingByIdQuery({ costingId: slug });
@@ -23,10 +23,10 @@ const EditCostingView = ({ slug }: { slug: string }) => {
     return <DataNotFound title="Costing Not Found" />;
   }
 
-  const handleSubmit = async (payload: ICosting) => {
-    const formattedValues: ICosting = {
+  const handleSubmit = async (payload: Partial<ICosting>) => {
+    const formattedValues = {
       ...payload,
-      costingDate: payload.costingDate.split("T")[0],
+      costingDate: payload.costingDate?.split("T")[0],
     };
 
     if (isUpdating) {

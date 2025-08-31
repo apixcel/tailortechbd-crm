@@ -18,7 +18,7 @@ const initialValues: Omit<
   IPurchase,
   "_id" | "createdAt" | "updatedAt" | "supplier" | "invoiceNumber"
 > & {
-  supplier: Omit<ISupplier, "_id" | "createdAt" | "updatedAt">;
+  supplier: Pick<ISupplier, "name" | "address" | "phoneNumber" | "email">;
 } = {
   purchaseTitle: "",
   supplier: {
@@ -26,7 +26,6 @@ const initialValues: Omit<
     address: "",
     phoneNumber: "",
     email: "",
-    logoUrl: "",
   },
   products: [
     {
