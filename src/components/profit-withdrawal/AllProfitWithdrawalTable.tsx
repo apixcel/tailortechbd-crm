@@ -54,7 +54,6 @@ const AllProfitWithdrawalTable = () => {
   });
 
   const profitWithdrawalData = data?.data || [];
-  console.log(profitWithdrawalData[0]);
   const metaData = data?.meta || { totalDoc: 0, page: 1 };
 
   const handleSort = (field: string) => {

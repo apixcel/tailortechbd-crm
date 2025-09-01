@@ -65,7 +65,7 @@
 /* === BASE STYLES === */
 @layer base {
   body {
-    @apply bg-background text-black;
+    @apply overflow-hidden bg-background text-black;
     font-family: var(--font-primary);
   }
 }

@@ -165,9 +165,9 @@ const SideBar = () => {
   return (
     <>
       <div
-        className={`h-[calc(100dvh-60px)] shrink-0 overflow-x-hidden bg-white px-[10px] transition-[width] duration-[0.3s] ease-in-out ${
+        className={`h-[calc(100dvh-60px)] shrink-0 overflow-x-hidden bg-white transition-[width] duration-[0.3s] ease-in-out ${
           window.innerWidth <= 750 ? "absolute top-0 left-0 z-[10] min-h-screen" : ""
-        } ${isNavOpen ? "w-[300px]" : "w-0"}`}
+        } ${isNavOpen ? "w-[300px] px-[10px]" : "w-0"}`}
       >
         <div className={`relative h-full w-full`}>
           <div className="smoothBar h-full w-full flex-col justify-between overflow-x-hidden overflow-y-auto pt-[20px] pb-[20px] lg:flex">

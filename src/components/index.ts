@@ -33,14 +33,14 @@ export { default as SideBar } from "./shared/SideBar";
 export { default as TimelineDropDown } from "./shared/TimelineDropDown";
 
 // home
-export { default as OverallSalesStatistics } from "./sales/OverallSalesStatistics";
+export { default as OverallSalesStatistics } from "./sales/SalesStatistics";
 
 // sales
 export { default as ProductSalesOverview } from "./sales/ProductSalesOverview";
 export { default as SalesCapitalsCard } from "./sales/SalesCapitalsCard";
 export { default as SalesExpenseCard } from "./sales/SalesExpenseCard";
 export { default as SalesOverview } from "./sales/SalesOverview";
-export { default as SalesOverviewChart } from "./sales/SalesOverviewChart";
+export { default as SalesOverviewChart } from "./sales/CostingCategoryPie";
 export { default as SalesProfitAmountCard } from "./sales/SalesProfitAmountCard";
 export { default as TotalSalesAmountCard } from "./sales/TotalSalesAmountCard";
 
@@ -72,11 +72,11 @@ export { default as AllCapitalsListTable } from "./capitals/AllCapitalsListTable
 // investments
 export { default as AllInvestmentsTable } from "./investments/AllInvestmentsTable";
 export { default as InvestmentsForm } from "./investments/InvestmentsForm";
-export { default as OverallInvestmentStatistics } from "./investments/OverallInvestmentStatistics";
+export { default as OverallInvestmentStatistics } from "./investments/InvestmentStatistics";
 
 // profit withdrawal
 export { default as AllProfitWithdrawalTable } from "./profit-withdrawal/AllProfitWithdrawalTable";
-export { default as OverallProfitWithdrawalsStatistics } from "./profit-withdrawal/OverallProfitWithdrawalsStatistics";
+export { default as OverallProfitWithdrawalsStatistics } from "./profit-withdrawal/ProfitWithdrawalsStatistics";
 export { default as ProfitWithdrawalDropdown } from "./profit-withdrawal/ProfitWithdrawalDropdown";
 export { default as ProfitWithdrawalForm } from "./profit-withdrawal/ProfitWithdrawalForm";
 

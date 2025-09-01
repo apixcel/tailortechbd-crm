@@ -1,6 +1,6 @@
 "use client";
-import { DateObject } from "react-multi-date-picker";
 import { useState } from "react";
+import { DateObject } from "react-multi-date-picker";
 
 import { AnalyticsOverviewFilter, PageHeadingTitle, SalesOverview } from "@/components";
 
@@ -14,7 +14,7 @@ const SalesView = () => {
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex justify-between">
+      <div className="flex flex-wrap justify-between gap-2">
         <PageHeadingTitle title="Sales Report" />
 
         <div className="flex items-center gap-2">

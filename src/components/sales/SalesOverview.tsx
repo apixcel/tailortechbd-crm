@@ -1,13 +1,8 @@
 "use client";
 
 import {
-  OverallInvestmentStatistics,
-  OverallProfitWithdrawalsStatistics,
-  OverallSalesStatistics,
-  ProductSalesOverview,
   SalesCapitalsCard,
   SalesExpenseCard,
-  SalesOverviewChart,
   SalesProfitAmountCard,
   TotalSalesAmountCard,
 } from "@/components";
@@ -15,6 +10,10 @@ import { useAppSelector } from "@/hooks";
 import { useGetFinancialOverViewQuery } from "@/redux/features/statistics/statistics.api";
 import { DateObject } from "react-multi-date-picker";
 import CapitalFlowChart from "../capitals/CapitalFlowChart";
+import InvestmentStatistics from "../investments/InvestmentStatistics";
+import ProfitWithdrawalsStatistics from "../profit-withdrawal/ProfitWithdrawalsStatistics";
+import CostingCategoryPie from "./CostingCategoryPie";
+import SalesStatistics from "./SalesStatistics";
 
 // Dummy sales chart data
 const salesChartData = [
@@ -40,26 +39,6 @@ interface SalesOverviewProps {
 }
 
 const SalesOverview = ({ selectedRange }: SalesOverviewProps) => {
-  // Filter sales data by selected date range
-  const filteredData = salesChartData.filter((item) => {
-    if (!selectedRange || selectedRange.length !== 2) return true;
-
-    const from = selectedRange[0].toDate();
-    const to = selectedRange[1].toDate();
-    const itemDate = new Date(item.time);
-
-    return itemDate >= from && itemDate <= to;
-  });
-
-  // Calculate totals
-  const totals = {
-    capitals: 50000, // Static dummy data
-    sales: filteredData.reduce((acc, item) => acc + item.totalSalesAmount, 0),
-    expense: 15000, // You can calculate based on other data if needed
-    profit: filteredData.reduce((acc, item) => acc + item.totalSalesProfit, 0),
-  };
-
-  // Format the selected filter label
   const formatDate = (dateObj: DateObject) => dateObj?.format("DD-MM-YYYY");
 
   const selectedFilterLabel =
@@ -76,9 +55,10 @@ const SalesOverview = ({ selectedRange }: SalesOverviewProps) => {
   const { user } = useAppSelector((state) => state.user);
   return (
     <section className="flex flex-col gap-4">
-      <div className="flex h-full items-stretch justify-between gap-4">
+      <div className="flex flex-col items-stretch justify-between gap-4 xl:flex-row">
+        <CostingCategoryPie />
         <div className="flex flex-1 flex-col gap-4">
-          <div className="flex h-full items-center justify-between bg-white p-4">
+          <div className="flex items-center justify-between bg-white p-4">
             <h1 className="flex items-center gap-2 text-lg font-semibold">
               <span className="animate-waving-hand text-2xl">👋</span>
               <span>
@@ -111,25 +91,22 @@ const SalesOverview = ({ selectedRange }: SalesOverviewProps) => {
             />
           </div>
         </div>
+      </div>
 
-        <SalesOverviewChart
-          sales={totals.sales}
-          expense={totals.expense}
-          selectedFilterLabel={selectedFilterLabel}
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+        <CapitalFlowChart selectedRange={selectedRange} selectedFilter={selectedFilterLabel} />
+        <SalesStatistics selectedRange={selectedRange} selectedFilter={selectedFilterLabel} />
+      </div>
+
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+        <InvestmentStatistics selectedRange={selectedRange} selectedFilter={selectedFilterLabel} />
+        <ProfitWithdrawalsStatistics
+          selectedRange={selectedRange}
+          selectedFilter={selectedFilterLabel}
         />
       </div>
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 2xl:grid-cols-2">
-        <CapitalFlowChart selectedFilter={selectedFilterLabel} />
-        <OverallSalesStatistics />
-      </div>
-
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 2xl:grid-cols-2">
-        <OverallInvestmentStatistics />
-        <OverallProfitWithdrawalsStatistics />
-      </div>
-
-      <ProductSalesOverview />
+      {/* <ProductSalesOverview /> */}
     </section>
   );
 };

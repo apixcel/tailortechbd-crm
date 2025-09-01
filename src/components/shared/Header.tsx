@@ -10,7 +10,6 @@ import { PathSearchBar, UserDropdown } from "@/components";
 
 const Header = () => {
   const { user } = useAppSelector((state) => state.user);
-  console.log(user);
 
   return (
     <header className="sticky top-0 z-[10] flex h-[60px] w-full items-center justify-between border-b border-border-muted bg-white px-4">

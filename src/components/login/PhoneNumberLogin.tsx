@@ -2,16 +2,13 @@
 
 import { useAppDispatch } from "@/hooks/redux";
 import { ICountry } from "@/hooks/useCountries";
-import { setToken, setUser } from "@/redux/features/user/user.slice";
 import { Field, Form, Formik, FormikHelpers } from "formik";
-import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { isPossiblePhoneNumber, isValidPhoneNumber } from "react-phone-number-input";
 import * as yup from "yup";
 import Button from "../ui/Button";
-import Input from "../ui/Input";
 import FormMessage, { IFormMessage } from "../ui/FormMessage";
+import Input from "../ui/Input";
 
 const initialValues = { phoneNumber: "", password: "", role: "" };
 
@@ -76,8 +73,6 @@ const PhoneNumberLogin = () => {
 
     // setFormMessage(null);
     // router.replace(redirect);
-
-    console.log(values);
   };
   return (
     <Formik onSubmit={onSubmit} validationSchema={validationSchema} initialValues={initialValues}>

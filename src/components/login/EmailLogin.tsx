@@ -1,17 +1,17 @@
 "use client";
 
+import { useAppDispatch } from "@/hooks";
 import { useLoginUserMutation } from "@/redux/features/user/user.api";
 import { setToken, setUser } from "@/redux/features/user/user.slice";
 import { IQueryMutationErrorResponse } from "@/types";
+import { Field, Form, Formik } from "formik";
+import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import * as yup from "yup";
-import { Field, Form, Formik } from "formik";
-import Cookies from "js-cookie";
-import { useAppDispatch } from "@/hooks";
 
+import { Button, FormMessage, Input } from "@/components";
 import { IFormMessage } from "../ui/FormMessage";
-import { Button, Input, FormMessage } from "@/components";
 
 const initialValues = { email: "", password: "" };
 
@@ -33,7 +33,6 @@ const EmailLogin = () => {
       ...values,
       mode: "email",
     });
-    console.log(res);
     const error = res.error as IQueryMutationErrorResponse;
 
     if (error) {
@@ -46,9 +45,7 @@ const EmailLogin = () => {
     }
 
     const user = res.data?.data.result;
-    console.log(user, "from user after login");
     const token = res.data?.data.accessToken;
-    console.log(token, "from token after login");
 
     if (user) {
       dispatch(setUser(user));

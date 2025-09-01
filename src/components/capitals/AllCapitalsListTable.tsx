@@ -44,7 +44,6 @@ const AllCapitalsListTable = () => {
   useEffect(() => {
     const totalPage = Math.ceil(metaData.totalDoc / 10);
     setQuery((prev) => ({ ...prev, page: totalPage ? totalPage : 1 }));
-    console.log(totalPage, "set");
   }, [metaData.totalDoc]);
 
   return (
