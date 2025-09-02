@@ -67,7 +67,7 @@ const AllAdminTable = () => {
         </div>
         <HorizontalLine className="my-[10px]" />
         <div className="flex w-full flex-wrap items-center justify-between gap-x-[10px] gap-y-5">
-          <div className="flex items-center justify-start gap-[10px]">
+          <div className="flex flex-col items-center justify-start gap-[10px] sm:flex-row">
             <div className="flex w-full max-w-[300px] items-center justify-between rounded-[5px] border-[1px] border-dashboard/20 p-[5px] outline-none">
               <input
                 type="text"

@@ -57,7 +57,7 @@ const PathSearchBar = ({ navLinks }: { navLinks: INavLinks[] }) => {
     };
   }, []);
   return (
-    <div className="relative flex w-full max-w-[400px] items-center">
+    <div className="relative hidden w-full max-w-[400px] items-center md:flex">
       <div className="flex w-full items-center rounded border border-muted/50 pr-2">
         <Input
           className="border-none bg-transparent py-2"

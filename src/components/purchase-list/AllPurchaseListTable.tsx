@@ -88,9 +88,9 @@ const AllPurchaseListTable = () => {
 
             <HorizontalLine className="my-[10px]" />
 
-            <div className="flex flex-col justify-between gap-[16px] md:flex-row md:items-center md:gap-[8px]">
+            <div className="flex flex-col-reverse justify-between gap-[16px] xl:flex-row xl:items-center xl:gap-[8px]">
               {/* search input */}
-              <div className="flex w-full max-w-[300px] items-center rounded-[5px] border border-dashboard/20 p-[5px]">
+              <div className="flex w-full items-center rounded-[5px] border border-dashboard/20 p-[5px] xl:max-w-[300px]">
                 <input
                   type="text"
                   className="w-full bg-transparent outline-none"
@@ -103,7 +103,7 @@ const AllPurchaseListTable = () => {
                 <RxMagnifyingGlass />
               </div>
 
-              <div className="flex items-end gap-[10px]">
+              <div className="flex flex-col gap-[10px] sm:flex-row sm:items-end">
                 <TimelineDropDown
                   onSelect={({ value }) => {
                     setQuery({ ...query, day_count: value });

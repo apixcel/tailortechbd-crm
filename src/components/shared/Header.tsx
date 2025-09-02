@@ -12,7 +12,7 @@ const Header = () => {
   const { user } = useAppSelector((state) => state.user);
 
   return (
-    <header className="sticky top-0 z-[10] flex h-[60px] w-full items-center justify-between border-b border-border-muted bg-white px-4">
+    <header className="sticky top-0 z-[10] flex h-[60px] w-full items-center justify-between gap-4 border-b border-border-muted bg-white px-4">
       <Link href={"/"} className="w-[190px] shrink-0 lg:w-[284px]">
         <Image
           src="/images/logos/logo.svg"
@@ -29,7 +29,7 @@ const Header = () => {
           className="block sm:hidden"
         />
       </Link>
-      <div className="flex w-[200px] items-center justify-between lg:w-full">
+      <div className="flex items-center justify-end gap-4 md:w-full md:justify-between">
         <PathSearchBar navLinks={adminNavlinks} />
         {user && <UserDropdown /* displayName={true} */ />}
       </div>

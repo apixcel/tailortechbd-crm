@@ -1,7 +1,11 @@
+"use client";
+
 import { Header, SideBar } from "@/components";
 import ProtectedRoute from "@/provider/ProtectedRoute";
+import { useState } from "react";
 
 const PageLayout = ({ children }: { children: React.ReactNode }) => {
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   return (
     <ProtectedRoute>
       <div className="w-ful flex h-[100dvh] flex-col items-start justify-start gap-0">
