@@ -97,7 +97,7 @@ const PurchaseReportOverview = ({ selectedRange }: PurchaseReportOverviewProps) 
       </div>
 
       {/* Chart */}
-      <div className="2x:h-[400px] h-[360px] bg-white pt-[50px] pr-4 pb-[70px] 2xl:h-[500px]">
+      <div className="min-h-[360px] bg-white pt-[50px] pr-4 pb-[70px]">
         <h1 className="mb-[20px] pl-[45px] text-[14px] font-semibold text-primary md:text-[16px]">
           Overall Purchase Statistics
         </h1>
