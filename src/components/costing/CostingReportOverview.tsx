@@ -28,6 +28,8 @@ const CostingReportOverview = ({ selectedRange = [] }: CostingReportOverviewProp
     endDate: selectedRange[1]?.format("YYYY-MM-DD"),
   });
 
+  console.log(data);
+
   // Calculate totals
   const totals = {
     quantity: data?.data?.totalCostingQuantity || 0,
@@ -57,7 +59,7 @@ const CostingReportOverview = ({ selectedRange = [] }: CostingReportOverviewProp
         />
       </div>
 
-      <div className="min-h-[360px] bg-white pt-[50px] pr-4 pb-[70px]">
+      <div className="h-[360px] bg-white pt-[50px] pr-4 pb-[70px]">
         <h1 className="mb-[20px] pl-[45px] text-[14px] font-semibold text-primary md:text-[16px]">
           Overall Costing Statistics
         </h1>

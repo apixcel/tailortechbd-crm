@@ -129,7 +129,7 @@ const InvestmentsForm = ({
 
                 {/* note */}
                 <div className="flex w-full flex-col gap-[5px]">
-                  <label className="form-label">Note</label>
+                  <label className="form-label">Description</label>
                   <Field as={Input} name="note" placeholder="Note" />
                   <ErrorMessage name="note" component="div" className="text-sm text-danger" />
                 </div>
@@ -173,7 +173,7 @@ const InvestmentsForm = ({
 
             {/* attachment */}
             <div className="flex h-full flex-col gap-4 bg-white p-4">
-              <SectionTitle>Attachment</SectionTitle>
+              <SectionTitle>Remark</SectionTitle>
 
               <ImageUploader
                 onChange={(fileUrls) => setFieldValue("attachment", fileUrls || [])}

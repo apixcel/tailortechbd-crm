@@ -237,7 +237,7 @@ const AllInvestmentsTable = () => {
 
                     {/* remarks */}
                     <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
-                      <span className="text-sm">{investment?.remarks}</span>
+                      <span className="text-sm">{investment?.remarks || "N/A"}</span>
                     </td>
                   </tr>
                 ))

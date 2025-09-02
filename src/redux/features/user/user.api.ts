@@ -34,7 +34,25 @@ const userApi = api.injectEndpoints({
       invalidatesTags: ["user"],
     }),
 
-    // getMyRole
+    changePassword: builder.mutation({
+      query: (payload: { oldPassword: string; password: string }) => ({
+        url: "/auth/change-password",
+        method: "PUT",
+        body: payload,
+      }),
+      invalidatesTags: ["user"],
+    }),
+
+    updateProfile: builder.mutation<{ data: IUser }, Partial<IUser>>({
+      query: (payload) => {
+        return {
+          url: `/auth/update-profile`,
+          method: "PATCH",
+          body: payload,
+        };
+      },
+      invalidatesTags: ["user"],
+    }),
 
     getAuthor: builder.query<{ data: IUser }, undefined>({
       query: () => {
@@ -65,4 +83,6 @@ export const {
   useGetAuthorQuery,
   useGetAllAdminsQuery,
   useCreateAdminMutation,
+  useChangePasswordMutation,
+  useUpdateProfileMutation,
 } = userApi;
