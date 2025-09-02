@@ -13,6 +13,8 @@ import Button from "@/components/ui/Button";
 import HorizontalLine from "@/components/ui/HorizontalLine";
 import Input from "@/components/ui/Input";
 import AddSupplierOnPurchase from "../create-supplier/AddSupplierOnPurchase";
+import SelectionBox from "../ui/SelectionBox";
+import { purchaseTypes } from "@/constants/purchase";
 
 const initialValues: Omit<
   IPurchase,
@@ -21,6 +23,7 @@ const initialValues: Omit<
   supplier: Pick<ISupplier, "name" | "address" | "phoneNumber" | "email">;
 } = {
   purchaseTitle: "",
+  purchaseType: "",
   supplier: {
     name: "",
     address: "",
@@ -150,6 +153,19 @@ const PurchaseForm = ({
                   component="div"
                   className="text-sm text-danger"
                 />
+              </div>
+              <div className="flex flex-col gap-[5px]">
+                <label className="form-label">Purchase Type</label>
+                <SelectionBox
+                  data={purchaseTypes}
+                  onSelect={(item) => setFieldValue("purchaseType", item.value)}
+                  defaultValue={
+                    values.purchaseType
+                      ? { label: values.purchaseType, value: values.purchaseType }
+                      : undefined
+                  }
+                />
+                <ErrorMessage name="purchaseType" component="div" className="text-sm text-danger" />
               </div>
             </div>
 

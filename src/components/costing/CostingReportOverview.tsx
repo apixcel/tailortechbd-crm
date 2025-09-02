@@ -16,13 +16,6 @@ import { DateObject } from "react-multi-date-picker";
 import CostingAmountCard from "./CostingAmountCard";
 import CostingQuantityCard from "./CostingQuantityCard";
 
-const options = [
-  { value: "overall", label: "Overall" },
-  { value: "today", label: "Today" },
-  { value: "this-month", label: "This Month" },
-  { value: "this-year", label: "This Year" },
-];
-
 const increase = 10;
 
 interface CostingReportOverviewProps {
@@ -30,7 +23,7 @@ interface CostingReportOverviewProps {
 }
 
 const CostingReportOverview = ({ selectedRange = [] }: CostingReportOverviewProps) => {
-  const { data, isLoading } = useGetCostingReportQuery({
+  const { data } = useGetCostingReportQuery({
     startDate: selectedRange[0]?.format("YYYY-MM-DD"),
     endDate: selectedRange[1]?.format("YYYY-MM-DD"),
   });

@@ -43,6 +43,7 @@ const initialValues: Omit<IProfitWithdrawal, "_id" | "createdAt" | "updatedAt" |
   },
   partner: {
     _id: "",
+    sharePercentage: 0,
     partnerName: "",
     partnerDesignation: "",
     joiningDate: "",
@@ -215,7 +216,13 @@ const ProfitWithdrawalForm = ({
                     <div>
                       <strong>Joining Date:</strong>{" "}
                       {dateUtils.formatDate(values.partner.joiningDate)}
-                    </div>
+                    </div>{" "}
+                    <button
+                      onClick={() => setFieldValue("partner", initialValues.partner)}
+                      className="w-fit cursor-pointer bg-primary px-2 py-1 text-white"
+                    >
+                      Remove Partner
+                    </button>
                   </div>
                 )}
 
@@ -230,7 +237,7 @@ const ProfitWithdrawalForm = ({
                 <SectionTitle>Attachment</SectionTitle>
 
                 <ImageUploader
-                  onChange={(fileUrls) => setFieldValue("attachment", fileUrls || [])}
+                  onChange={(fileUrls) => setFieldValue("attachment", fileUrls?.[0] || "")}
                   defaultImages={values.attachment ? [values.attachment] : []}
                   acceptPDF={true}
                   title="Upload Image or PDF (Optional)"

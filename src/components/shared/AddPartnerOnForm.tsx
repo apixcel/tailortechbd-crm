@@ -32,6 +32,7 @@ const AddPartnerOnForm = ({ setFieldValue, onSelect }: IProps) => {
       partnerName: partner.partnerName,
       partnerDesignation: partner.partnerDesignation,
       joiningDate: partner.joiningDate,
+      sharePercentage: partner.sharePercentage,
     });
     onSelect?.(partner);
     setIsOpen(false);

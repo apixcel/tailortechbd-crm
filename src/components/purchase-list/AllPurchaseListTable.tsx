@@ -18,10 +18,12 @@ import {
   DeleteConfirmationDialog,
   HorizontalLine,
   Pagination,
+  SelectionBox,
   TableDataNotFound,
   TableSkeleton,
   TimelineDropDown,
 } from "@/components";
+import { purchaseTypes } from "@/constants/purchase";
 import { ViewPurchase } from "@/view";
 import DownloadPurchseReport from "./DownloadPurchseReport";
 
@@ -43,6 +45,7 @@ const AllPurchaseListTable = () => {
   const [page, setPage] = useState<number>(1);
   const [query, setQuery] = useState<Record<string, string | number>>({
     day_count: "",
+    purchaseType: "",
   });
 
   const [deletePurchase, { isLoading: isDeleting }] = useDeletePurchaseByIdMutation();
@@ -104,6 +107,23 @@ const AllPurchaseListTable = () => {
               </div>
 
               <div className="flex flex-col gap-[10px] sm:flex-row sm:items-end">
+                <div className="flex w-[200px] flex-col gap-[5px]">
+                  <span className="text-[12px] font-[700] text-primary">Purchase Type</span>
+                  <SelectionBox
+                    data={[
+                      {
+                        label: "All",
+                        value: "",
+                      },
+                      ...purchaseTypes,
+                    ]}
+                    defaultValue={{
+                      label: "All",
+                      value: "",
+                    }}
+                    onSelect={({ value }) => setQuery({ ...query, purchaseType: value })}
+                  />
+                </div>
                 <TimelineDropDown
                   onSelect={({ value }) => {
                     setQuery({ ...query, day_count: value });

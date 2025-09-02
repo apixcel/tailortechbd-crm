@@ -24,6 +24,7 @@ export interface IProduct {
 export interface IPurchase {
   _id: string;
   purchaseTitle: string;
+  purchaseType: string;
   supplier: ISupplier;
   invoiceNumber: string;
   products: IProduct[];

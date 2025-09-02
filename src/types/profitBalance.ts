@@ -1,10 +1,9 @@
-export interface IProfitBalance {
-  _id: string;
-  partnerName: string;
-  partnerDesignation: string;
-  totalProfitAmount: number;
-  lastProfitWithdrawalAmount: number;
+import { IPartner } from "./partner";
+
+export type TProfitBalance = IPartner & {
+  profit: number;
+  sharedProfit: number;
+  totalWithdrawal: number;
   currentProfitBalance: number;
-  createdAt?: string;
-  updatedAt?: string;
-}
+  lastWithdrawal: number;
+};
