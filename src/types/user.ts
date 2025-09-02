@@ -21,4 +21,8 @@ export interface IUser {
   token?: string;
   createdAt: string;
   updatedAt: string;
+  geo_profile: {
+    country: string;
+    phone_code: string;
+  };
 }

@@ -19,14 +19,7 @@ const Header = () => {
           alt="logo"
           width={150}
           height={150}
-          className="hidden w-[150px] sm:block sm:w-full lg:w-[220px]"
-        />
-        <Image
-          src="/images/logos/logo-text.png"
-          alt="logo"
-          width={110}
-          height={110}
-          className="block sm:hidden"
+          className="w-[150px] sm:w-full lg:w-[220px]"
         />
       </Link>
       <div className="flex items-center justify-end gap-4 md:w-full md:justify-between">

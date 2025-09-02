@@ -94,3 +94,7 @@ export { default as AllAdminTable } from "./manage-admin/AllAdminTable";
 // login
 export { default as EmailLogin } from "./login/EmailLogin";
 export { default as PhoneNumberLogin } from "./login/PhoneNumberLogin";
+
+// account
+export { default as ChangePassword } from "./account/ChangePassword";
+export { default as EditProfile } from "./account/EditProfile";

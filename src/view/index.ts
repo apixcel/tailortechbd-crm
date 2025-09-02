@@ -45,3 +45,6 @@ export { default as ManageAdminView } from "./admin/ManageAdminView";
 
 // login
 export { default as LoginView } from "./LoginView";
+
+// account
+export { default as ProfileView } from "./account/ProfileView";
