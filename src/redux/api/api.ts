@@ -42,6 +42,7 @@ export const api = createApi({
     "supplierPayment",
     "statistics",
     "file",
+    "profitBalance",
     "categories",
     "purchase",
     "admin",

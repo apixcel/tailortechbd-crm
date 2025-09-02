@@ -64,7 +64,6 @@ export default function ChartDataNotFound({
             <ul className="mt-2 list-disc space-y-1 pl-5 text-left text-sm text-gray-500 dark:text-gray-400">
               <li>Confirm the selected date range has activity.</li>
               <li>Remove filters that may exclude results.</li>
-              <li>Verify data ingestion or order status (e.g., “delivered”).</li>
               <li>Try refreshing data.</li>
             </ul>
           </details>

@@ -1,37 +1,46 @@
 "use client";
 
-import { useDebounce } from "@/hooks";
-import { IProfitBalance } from "@/types";
+import { useGetAllProfitBalanceListQuery } from "@/redux/features/ProfitBalance/profitBalance.api";
 import { useState } from "react";
-import HorizontalLine from "../ui/HorizontalLine";
-import { RxMagnifyingGlass } from "react-icons/rx";
 import { FaChevronDown, FaChevronUp } from "react-icons/fa6";
-import TableSkeleton from "../ui/TableSkeleton";
-import TableDataNotFound from "../ui/TableDataNotFound";
+import { DateObject } from "react-multi-date-picker";
+import AnalyticsOverviewFilter from "../shared/AnalyticsOverviewFilter";
+import HorizontalLine from "../ui/HorizontalLine";
 import Pagination from "../ui/Pagination";
-import { mockProfitBalanceData } from "@/constants/profitBalanceData";
+import TableDataNotFound from "../ui/TableDataNotFound";
+import TableSkeleton from "../ui/TableSkeleton";
 
 const tableHead = [
   { label: "SL", field: "" },
   { label: "Name", field: "" },
   { label: "Designation", field: "" },
-  { label: "Total Profit Amount", field: "totalProfitAmount" },
-  { label: "Last Profit Withdrawal Amount", field: "lastProfitWithdrawalAmount" },
-  { label: "Current Profit Balance", field: "currentProfitBalance" },
+  { label: "Total Profit Amount", field: "" },
+  { label: "Last Profit Withdrawal Amount", field: "" },
+  { label: "Current Profit Balance", field: "" },
 ];
+const today = new DateObject();
 
 const AllProfitBalanceListTable = () => {
-  const [searchTerm, setSearchTerm] = useDebounce("");
+  const copyDate = (date: DateObject) => new DateObject(date.toDate());
+
+  const lasat30Days = [copyDate(today).subtract(30, "days"), copyDate(today)];
+  const [selectedRange, setSelectedRange] = useState<DateObject[] | null>(lasat30Days);
+
   const [sort, setSort] = useState({ field: "createdAt", order: "desc" });
   const [query, setQuery] = useState<Record<string, string | number>>({
     page: 1,
-    fields: "partnerName,partnerDesignation,profitAmount,profitBalance,createdAt",
     sort: `${sort.order === "desc" ? "-" : ""}${sort.field}`,
   });
 
-  const profitBalanceData: IProfitBalance[] = mockProfitBalanceData;
+  const { data } = useGetAllProfitBalanceListQuery({
+    ...query,
+    startDate: selectedRange?.[0] ? selectedRange[0].format("YYYY-MM-DD") : "",
+    endDate: selectedRange?.[1] ? selectedRange[1].format("YYYY-MM-DD") : "",
+  });
 
-  const metaData = { totalDoc: 0, page: 1 };
+  const profitBalanceData = data?.data?.result || [];
+
+  const metaData = data?.meta || { totalDoc: 0, page: 1 };
   const isLoading = false;
 
   const handleSort = (field: string) => {
@@ -47,7 +56,9 @@ const AllProfitBalanceListTable = () => {
     <div className="flex flex-col gap-4">
       {/* current balance */}
       <div className="bg-white p-4">
-        <h1 className="text-[20px] font-bold text-dashboard">Total Profit Amount: 50000 Tk</h1>
+        <h1 className="text-[20px] font-bold text-dashboard">
+          Total Profit Amount: {Math.round(data?.data?.total_profit || 0)} Tk
+        </h1>
       </div>
 
       <div className="flex flex-col gap-[10px]">
@@ -66,21 +77,15 @@ const AllProfitBalanceListTable = () => {
             </p>
           </div>
 
-          <HorizontalLine className="my-[10px]" />
+          <HorizontalLine />
 
-          <div className="flex flex-wrap items-center justify-between gap-y-5">
-            {/* search input */}
-            <div className="flex w-full max-w-[300px] items-center justify-between rounded-[5px] border-[1px] border-dashboard/20 p-[5px] outline-none">
-              <input
-                type="text"
-                className="w-full bg-transparent outline-none"
-                placeholder="Search Capital"
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-              <RxMagnifyingGlass />
-            </div>
+          <div className="flex w-fit flex-col items-start gap-2">
+            <label className="form-label">Date Range</label>
+            <AnalyticsOverviewFilter
+              onChange={(date) => setSelectedRange(date)}
+              value={selectedRange}
+            />
           </div>
-
           {/* table */}
           <div className="overflow-x-auto">
             <table className="w-full divide-y divide-dashboard/20">
@@ -143,17 +148,24 @@ const AllProfitBalanceListTable = () => {
 
                       {/* total profit amount */}
                       <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
-                        <span className="text-sm">{profitBalance.totalProfitAmount}</span>
+                        <span className="text-sm">
+                          {Math.round(profitBalance.sharedProfit)}{" "}
+                          <span className="font-bold text-success">
+                            ({profitBalance.sharePercentage}%)
+                          </span>
+                        </span>
                       </td>
 
                       {/* last profit withdrawal amount */}
                       <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
-                        <span className="text-sm">{profitBalance.lastProfitWithdrawalAmount}</span>
+                        <span className="text-sm">{Math.round(profitBalance.lastWithdrawal)}</span>
                       </td>
 
                       {/* current profit balance */}
                       <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
-                        <span className="text-sm">{profitBalance.currentProfitBalance}</span>
+                        <span className="text-sm">
+                          {Math.round(profitBalance.currentProfitBalance)}
+                        </span>
                       </td>
                     </tr>
                   ))

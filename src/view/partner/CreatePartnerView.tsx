@@ -23,9 +23,9 @@ const CreatePartnerView = () => {
 
     if (error) {
       if (error?.data?.message) {
-        toast(error.data?.message);
+        toast.error(error.data?.message);
       } else {
-        toast("Something went wrong");
+        toast.error("Something went wrong");
       }
       return;
     }
@@ -36,9 +36,9 @@ const CreatePartnerView = () => {
 
       if (nomineeError) {
         if (nomineeError?.data?.message) {
-          toast(nomineeError.data?.message);
+          toast.error(nomineeError.data?.message);
         } else {
-          toast("Something went wrong");
+          toast.error("Something went wrong");
         }
       }
     }

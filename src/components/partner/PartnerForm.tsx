@@ -19,6 +19,7 @@ const initialValues = {
   partnerName: "",
   partnerDesignation: "",
   joiningDate: new Date().toISOString(),
+  sharePercentage: 0,
   nominees: [] as IPartnerNominee[],
 };
 
@@ -28,6 +29,9 @@ const validationSchema = Yup.object().shape({
   partnerName: Yup.string().required("Partner name is required"),
   partnerDesignation: Yup.string().required("Designation is required"),
   joiningDate: Yup.string().required("Date is required"),
+  sharePercentage: Yup.number()
+    .required("Share percentage is required")
+    .max(100, "Share percentage must be between 0 and 100"),
   nominees: Yup.array()
     .of(
       Yup.object().shape({
@@ -71,7 +75,7 @@ const PartnerForm = ({
             <SectionTitle>Partner Information</SectionTitle>
 
             {/* partner name and designation */}
-            <div className="flex w-full flex-col items-start justify-start gap-[16px] sm:flex-row">
+            <div className="grid grid-cols-1 gap-[16px] lg:grid-cols-2">
               {/* partner name */}
               <div className="flex w-full flex-col gap-[5px]">
                 <label className="form-label">Partner Name</label>
@@ -97,6 +101,20 @@ const PartnerForm = ({
                   {(fieldProps: FieldProps) => <PickDate {...fieldProps} />}
                 </Field>
                 <ErrorMessage name="joiningDate" component="div" className="text-sm text-danger" />
+              </div>
+              <div className="flex w-full flex-col gap-[5px]">
+                <label className="form-label">Profit Share (%)</label>
+                <Field
+                  as={Input}
+                  type="number"
+                  name="sharePercentage"
+                  placeholder="Share Percentage"
+                />
+                <ErrorMessage
+                  name="sharePercentage"
+                  component="div"
+                  className="text-sm text-danger"
+                />
               </div>
             </div>
 

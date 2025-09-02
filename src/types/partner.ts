@@ -4,6 +4,7 @@ export interface IPartner {
   nomineeCount?: number;
   partnerDesignation: string;
   joiningDate: string;
+  sharePercentage: number;
   createdAt?: string;
   updatedAt?: string;
 }
