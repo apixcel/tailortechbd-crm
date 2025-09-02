@@ -13,7 +13,7 @@ const CostingReportView = () => {
   const [selectedRange, setSelectedRange] = useState<DateObject[] | null>(last7Days);
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex justify-between">
+      <div className="flex flex-wrap justify-between gap-4">
         <PageHeadingTitle title="Costing Report" />
 
         <div className="flex items-center gap-2">

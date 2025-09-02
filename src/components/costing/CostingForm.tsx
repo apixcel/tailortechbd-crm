@@ -41,8 +41,6 @@ const initialValues = {
   fileUrl: "",
 };
 
-
-
 const validationSchema = Yup.object().shape({
   costingAmount: Yup.number()
     .typeError("Amount must be a number")
@@ -83,7 +81,7 @@ const CostingForm = ({
             <SectionTitle>Costing Information</SectionTitle>
 
             {/* amount, date, category */}
-            <div className="flex items-start gap-[20px]">
+            <div className="flex flex-col items-start gap-[20px] xl:flex-row">
               <div className="flex w-full flex-col items-start justify-start gap-[16px]">
                 {/* Amount */}
                 <div className="flex w-full flex-col gap-[5px]">

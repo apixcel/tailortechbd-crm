@@ -76,7 +76,7 @@ const SupplierPaymentsListTable = () => {
 
         <HorizontalLine className="my-[10px]" />
 
-        <div className="flex flex-col justify-between gap-[16px] md:flex-row md:items-center md:gap-[8px]">
+        <div className="flex flex-col gap-[16px] sm:flex-row sm:items-center sm:justify-between sm:gap-[8px]">
           {/* search input */}
           <div className="flex w-full max-w-[300px] items-center rounded-[5px] border border-dashboard/20 p-[5px]">
             <input
@@ -93,7 +93,7 @@ const SupplierPaymentsListTable = () => {
 
           <Link
             href="/supplier-payments-list/create"
-            className="rounded-[4px] bg-primary px-[14px] py-[8px] text-white"
+            className="max-w-[300px] rounded-[4px] bg-primary px-[14px] py-[8px] text-white sm:max-w-full"
           >
             Create Supplier Payment
           </Link>

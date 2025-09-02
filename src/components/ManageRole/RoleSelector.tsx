@@ -43,7 +43,7 @@ const RoleSelector: React.FC<IProps> = ({ defaultSelectedRole, onSelected, class
     <div ref={wrapperRef} className={twMerge("relative w-72", className)}>
       <div
         onClick={() => setDropdownOpen(!dropdownOpen)}
-        className="flex cursor-pointer items-center justify-between rounded-md border border-gray-300 px-3 py-2 shadow-sm hover:border-blue-500 focus:outline-none"
+        className="flex cursor-pointer items-center justify-between rounded-md border border-gray-300 px-3 py-2 hover:border-blue-500 focus:outline-none"
       >
         <span className="text-sm text-gray-700">{selectedRole?.name || "Select a role"}</span>
         <BiChevronDown className="text-xl text-gray-500" />

@@ -98,7 +98,7 @@ const SupplierForm = ({
 
         return (
           <Form className="flex flex-col gap-4">
-            <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+            <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
               {/* Left: Core info */}
               <div className="flex flex-col gap-4 bg-white p-4">
                 <SectionTitle>Supplier Information</SectionTitle>
