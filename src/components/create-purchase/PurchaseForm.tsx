@@ -137,7 +137,7 @@ const PurchaseForm = ({
       {({ values, setFieldValue, touched, submitCount }) => (
         <Form className="flex flex-col gap-4">
           {/* Purchase & Supplier Information */}
-          <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+          <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
             <div className="flex flex-col gap-4 bg-white p-4">
               <SectionTitle>Purchase Information</SectionTitle>
 
@@ -195,7 +195,7 @@ const PurchaseForm = ({
                   );
 
                   return (
-                    <div key={index} className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+                    <div key={index} className="grid grid-cols-1 gap-4 xl:grid-cols-2">
                       <div className="flex flex-col gap-4 bg-white p-4">
                         <SectionTitle>Product #{index + 1}</SectionTitle>
 

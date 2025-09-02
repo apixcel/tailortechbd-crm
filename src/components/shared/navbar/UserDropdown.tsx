@@ -41,7 +41,7 @@ const UserDropdown = ({ displayName = false }: { displayName?: boolean }) => {
   };
 
   return (
-    <div className="relative hidden lg:block" ref={dropdownRef}>
+    <div className="relative block" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
         className="flex cursor-pointer items-center gap-[10px] text-primary"
