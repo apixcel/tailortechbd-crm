@@ -18,6 +18,8 @@ const CreateInvestmentView = () => {
       note: payload.note,
       partner: payload.partner._id,
       transactionMethod: payload.transactionMethod || "",
+      remarks: payload.remarks || "",
+      attachment: payload.attachment || undefined,
     };
 
     const res = await createInvestment(formattedValues);

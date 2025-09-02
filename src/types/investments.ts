@@ -19,5 +19,6 @@ export interface IInvestmentPayload {
   note: string;
   partner: string;
   transactionMethod: string;
+  remarks: string;
   attachment?: string;
 }

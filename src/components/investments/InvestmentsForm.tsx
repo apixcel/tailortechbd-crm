@@ -11,7 +11,8 @@ import {
   Input,
   PickDate,
   SectionTitle,
-  SelectionBox, // 👈 added
+  SelectionBox,
+  TextArea, // 👈 added
 } from "@/components";
 import dateUtils from "@/utils/date";
 
@@ -30,7 +31,7 @@ const initialValues = {
   note: "",
   attachment: "",
   transactionMethod: "", // 👈 added
-
+  remarks: "",
   partner: {
     _id: "",
     partnerName: "",
@@ -45,6 +46,8 @@ const validationSchema = Yup.object().shape({
     .min(1, "Amount must be greater than 1"),
   investmentDate: Yup.string().required("Date is required"),
   note: Yup.string().required("Note is required"),
+  remarks: Yup.string().required("Remarks is required"),
+  attachment: Yup.string().optional(),
   transactionMethod: Yup.string()
     .oneOf(transactionMethodOptions.map((o) => o.value))
     .optional(), // 👈 optional to match your DB schema
@@ -130,8 +133,13 @@ const InvestmentsForm = ({
                 {/* note */}
                 <div className="flex w-full flex-col gap-[5px]">
                   <label className="form-label">Description</label>
-                  <Field as={Input} name="note" placeholder="Note" />
+                  <Field as={TextArea} name="note" placeholder="Note" />
                   <ErrorMessage name="note" component="div" className="text-sm text-danger" />
+                </div>
+                <div className="flex w-full flex-col gap-[5px]">
+                  <label className="form-label">Remark</label>
+                  <Field as={TextArea} name="remarks" placeholder="Remark" />
+                  <ErrorMessage name="remarks" component="div" className="text-sm text-danger" />
                 </div>
               </div>
 
@@ -176,7 +184,7 @@ const InvestmentsForm = ({
               <SectionTitle>Remark</SectionTitle>
 
               <ImageUploader
-                onChange={(fileUrls) => setFieldValue("attachment", fileUrls || [])}
+                onChange={(fileUrls) => setFieldValue("attachment", fileUrls?.[0] || "")}
                 defaultImages={values.attachment ? [values.attachment] : []}
                 acceptPDF={true}
                 title="Upload Image or PDF (Optional)"
