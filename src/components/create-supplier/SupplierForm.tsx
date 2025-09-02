@@ -150,12 +150,11 @@ const SupplierForm = ({
 
                 {/* document upload (url) */}
                 <div className="flex w-full flex-col gap-[5px]">
-                  <label className="form-label">Supporting Document (Optional)</label>
                   <ImageUploader
                     inputId="supplier-document"
                     mode="single"
                     onChange={(urls) => setFieldValue("docuemnt", urls?.[0] || "")}
-                    title="Upload Document"
+                    title="Upload Document (optional)"
                   />
                   <ErrorMessage name="docuemnt" component="div" className="text-sm text-danger" />
                 </div>

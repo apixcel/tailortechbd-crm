@@ -191,13 +191,13 @@ const CostingForm = ({
               </div>
             </div>
 
-            {/* Image */}
+            {/* Document */}
             <ImageUploader
               inputId="costing-attachment"
               mode="single"
               defaultImages={defaultValue?.fileUrl ? [defaultValue.fileUrl] : []}
               onChange={(urls) => setFieldValue("fileUrl", urls?.[0] || "")}
-              title="Upload Image (optional)"
+              title="Upload Document (optional)"
             />
           </div>
 

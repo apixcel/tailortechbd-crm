@@ -119,17 +119,6 @@ const SupplierPaymentForm = ({
                       className="text-sm text-danger"
                     />
                   </div>
-
-                  {/* Money Receipt (optional) */}
-                  <div className="flex w-full flex-col gap-[5px]">
-                    <label className="form-label">Money Receipt (Optional)</label>
-                    <Field as={Input} type="text" name="moneyReceipt" placeholder="Receipt No." />
-                    <ErrorMessage
-                      name="moneyReceipt"
-                      component="div"
-                      className="text-sm text-danger"
-                    />
-                  </div>
                 </div>
 
                 {/* right column */}
@@ -183,21 +172,41 @@ const SupplierPaymentForm = ({
                 </div>
               </div>
 
-              {/* Attachment (optional) */}
-              <ImageUploader
-                inputId="payment-attachment"
-                mode="single"
-                defaultImages={
-                  defaultValue?.paymentAttachment ? [defaultValue.paymentAttachment] : []
-                }
-                onChange={(urls) => setFieldValue("paymentAttachment", urls?.[0] || "")}
-                title="Upload Attachment (optional)"
-              />
-              <ErrorMessage
-                name="paymentAttachment"
-                component="div"
-                className="text-sm text-danger"
-              />
+              <div className="grid gap-[16px] xl:grid-cols-2">
+                {/* Money Receipt (optional) */}
+                <div>
+                  <ImageUploader
+                    inputId="money-receipt"
+                    mode="single"
+                    defaultImages={defaultValue?.moneyReceipt ? [defaultValue.moneyReceipt] : []}
+                    onChange={(urls) => setFieldValue("moneyReceipt", urls?.[0] || "")}
+                    title="Money Receipt (optional)"
+                  />
+                  <ErrorMessage
+                    name="moneyReceipt"
+                    component="div"
+                    className="text-sm text-danger"
+                  />
+                </div>
+
+                <div>
+                  {/* Payment Document (optional) */}
+                  <ImageUploader
+                    inputId="payment-attachment"
+                    mode="single"
+                    defaultImages={
+                      defaultValue?.paymentAttachment ? [defaultValue.paymentAttachment] : []
+                    }
+                    onChange={(urls) => setFieldValue("paymentAttachment", urls?.[0] || "")}
+                    title="Payment Document (optional)"
+                  />
+                  <ErrorMessage
+                    name="paymentAttachment"
+                    component="div"
+                    className="text-sm text-danger"
+                  />
+                </div>
+              </div>
             </div>
 
             <Button type="submit" isLoading={isLoading} className="mt-2">
