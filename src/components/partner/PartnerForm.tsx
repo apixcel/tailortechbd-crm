@@ -233,6 +233,7 @@ const PartnerForm = ({
                                 ? [values.nominees[index].attachment]
                                 : []
                             }
+                            inputId={`nominees[${index}].attachment`}
                             mode="single"
                             title=""
                             acceptPDF

@@ -146,7 +146,7 @@ const InvestmentsForm = ({
                 {values.partner.partnerName && (
                   <div className="flex flex-col gap-2 p-3 text-sm">
                     <div>
-                      <strong>Name:</strong> {values.partner.partnerName}
+                      <strong>Names:</strong> {values.partner.partnerName}
                     </div>
                     <div>
                       <strong>Designation:</strong> {values.partner.partnerDesignation}
@@ -155,6 +155,12 @@ const InvestmentsForm = ({
                       <strong>Joining Date:</strong>{" "}
                       {dateUtils.formatDate(values.partner.joiningDate)}
                     </div>
+                    <button
+                      onClick={() => setFieldValue("partner", initialValues.partner)}
+                      className="w-fit cursor-pointer bg-primary px-2 py-1 text-white"
+                    >
+                      Remove Partner
+                    </button>
                   </div>
                 )}
 
