@@ -10,8 +10,9 @@ const CreatePurchaseView = () => {
   const [createPurchase, { isLoading }] = useCreatePurchaseMutation();
   const router = useRouter();
 
-  const handleSubmit = async (payload: Omit<IPurchase, "_id" | "createdAt" | "updatedAt">) => {
-    console.log("log from create function", payload);
+  const handleSubmit = async (
+    payload: Omit<IPurchase, "_id" | "createdAt" | "updatedAt" | "invoiceNumber">
+  ) => {
     const res = await createPurchase(payload);
     const error = res.error as IQueryMutationErrorResponse;
     if (error) {
@@ -33,7 +34,7 @@ const CreatePurchaseView = () => {
   return (
     <div className="flex flex-col gap-4">
       <PageHeadingTitle title="Create Purchase" />
-      <PurchaseForm isLoading={isLoading} onSubmit={(value) => handleSubmit(value)} />
+      <PurchaseForm isLoading={isLoading} onSubmit={handleSubmit} />
     </div>
   );
 };

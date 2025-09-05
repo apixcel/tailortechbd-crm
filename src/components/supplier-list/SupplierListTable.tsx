@@ -1,34 +1,37 @@
 "use client";
 
+import { useDebounce } from "@/hooks";
 import {
   useDeleteSupplierByIdMutation,
   useGetAllSuppliersQuery,
 } from "@/redux/features/supplier/supplier.api";
-import { useDebounce } from "@/hooks";
-import { useEffect, useState } from "react";
 import { ISupplier } from "@/types";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 
-import { RxMagnifyingGlass } from "react-icons/rx";
 import { GoPencil } from "react-icons/go";
-import { FiEye } from "react-icons/fi";
+import { RxMagnifyingGlass } from "react-icons/rx";
 
 import {
+  DeleteConfirmationDialog,
   HorizontalLine,
+  Pagination,
   TableDataNotFound,
   TableSkeleton,
-  Pagination,
-  DeleteConfirmationDialog,
-  TimelineDropDown,
 } from "@/components";
 import { ViewSupplier } from "@/view";
 
 const tableHead = [
-  { label: "Supplier Name", field: "companyInfo" },
+  { label: "Supplier ID", field: "" },
+  { label: "Supplier Name", field: "" },
+  { label: "Contact Person", field: "" },
+  { label: "Phone Number", field: "" },
+  { label: "Email", field: "" },
   { label: "Address", field: "" },
-  { label: "Contacts", field: "name" },
-  { label: "Total Qty", field: "quantityPurchased" },
-  { label: "Total Amount", field: "totalAmount" },
+  { label: "Supplied Products Categories", field: "" },
+  { label: "Preferred Payment Method", field: "" },
+  { label: "Supplier Document", field: "" },
+  { label: "Notes", field: "" },
   { label: "Actions", field: "" },
 ];
 
@@ -91,7 +94,7 @@ const SupplierListTable = () => {
                 <input
                   type="text"
                   className="w-full bg-transparent outline-none"
-                  placeholder="Search Purchase"
+                  placeholder="Search Supplier"
                   onChange={(e) => {
                     setSearchTerm(e.target.value);
                     setPage(1);
@@ -99,78 +102,117 @@ const SupplierListTable = () => {
                 />
                 <RxMagnifyingGlass />
               </div>
-              {/* timeline dropdown */}
-              <div>
-                <TimelineDropDown
-                  onSelect={({ value }) => {
-                    setQuery({ ...query, day_count: value });
-                    setPage(1);
-                  }}
-                />
-              </div>
             </div>
 
             {/* table */}
             <div className="overflow-x-auto bg-white shadow">
-              <table className="min-w-full divide-y divide-dashboard/20">
-                {/* table head */}
+              <table className="min-w-[1400px] table-auto divide-y divide-dashboard/20">
                 <thead className="bg-dashboard/10">
                   <tr>
                     {tableHead.map((heading) => (
                       <th
                         key={heading.field || heading.label}
-                        className="px-6 py-3 text-left text-xs font-semibold tracking-wider text-dashboard uppercase"
+                        className="px-6 py-3 text-left text-sm font-semibold whitespace-nowrap text-dashboard"
                       >
                         {heading.label}
                       </th>
                     ))}
                   </tr>
                 </thead>
+
                 <tbody className="divide-y divide-gray-200 bg-white">
                   {isLoading ? (
                     <TableSkeleton columns={tableHead.length} />
                   ) : supplierData?.length ? (
-                    supplierData.map((supplier: ISupplier) => (
+                    supplierData.map((supplier) => (
                       <tr key={supplier._id} className="hover:bg-gray-50">
-                        {/* name */}
-                        <td className="px-6 py-4">
+                        {/* Supplier ID */}
+                        <td className="min-w-[120px] px-6 py-4 align-top break-normal whitespace-nowrap">
+                          <div className="text-sm font-medium text-gray-900">
+                            {supplier.supplierId}
+                          </div>
+                        </td>
+
+                        {/* Supplier Name */}
+                        <td className="min-w-[180px] px-6 py-4 align-top break-normal whitespace-nowrap">
                           <div className="text-sm font-medium text-gray-900">{supplier.name}</div>
                         </td>
-                        {/* address */}
-                        <td className="px-6 py-4">
-                          <div className="flex items-center gap-3">
-                            <span className="text-sm">{supplier.address}</span>
+
+                        {/* Contact Person */}
+                        <td className="min-w-[180px] px-6 py-4 align-top break-normal whitespace-nowrap">
+                          <div className="text-sm font-medium text-gray-900">
+                            {supplier.contactPerson}
                           </div>
                         </td>
-                        {/* contacts */}
-                        <td className="px-6 py-4">
-                          <div className="flex flex-col gap-2">
-                            <Link
-                              href={`tel:${supplier.phoneNumber}`}
-                              className="text-sm hover:underline"
-                            >
-                              {supplier.phoneNumber}
-                            </Link>
-                            <Link
-                              href={`mailto:${supplier.email}`}
-                              className="text-sm hover:underline"
-                            >
-                              {supplier.email}
-                            </Link>
+
+                        {/* Phone Number */}
+                        <td className="min-w-[150px] px-6 py-4 align-top break-normal whitespace-nowrap">
+                          <Link
+                            href={`tel:${supplier.phoneNumber}`}
+                            className="text-sm hover:underline"
+                          >
+                            {supplier.phoneNumber}
+                          </Link>
+                        </td>
+
+                        {/* Email */}
+                        <td className="min-w-[220px] px-6 py-4 align-top break-normal whitespace-nowrap">
+                          <Link
+                            href={`mailto:${supplier.email}`}
+                            className="text-sm hover:underline"
+                          >
+                            {supplier.email}
+                          </Link>
+                        </td>
+
+                        {/* Address */}
+                        <td className="min-w-[220px] px-6 py-4 align-top break-normal whitespace-nowrap">
+                          <span className="text-sm">{supplier.address}</span>
+                        </td>
+
+                        {/* Supplied Products Categories */}
+                        <td className="min-w-[260px] px-6 py-4 align-top break-normal whitespace-nowrap">
+                          <div className="text-sm">
+                            {supplier.suppliedProductsCategories.length ? (
+                              supplier.suppliedProductsCategories.join(", ")
+                            ) : (
+                              <span className="text-primary">—</span>
+                            )}
                           </div>
                         </td>
-                        {/* total quantity */}
-                        <td className="px-6 py-4">
-                          <div className="text-sm">100 pcs</div>
+
+                        {/* Preferred Payment Method */}
+                        <td className="min-w-[180px] px-6 py-4 align-top break-normal whitespace-nowrap">
+                          <div className="text-sm">{supplier.preferredPaymentMethod || "—"}</div>
                         </td>
-                        {/* total amount */}
-                        <td className="px-6 py-4">
-                          <div className="text-sm">1000000 BDT</div>
+
+                        {/* Supplier Document */}
+                        <td className="min-w-[140px] px-6 py-4 align-top break-normal whitespace-nowrap">
+                          {supplier.docuemnt ? (
+                            <a
+                              href={supplier.docuemnt}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-primary underline"
+                            >
+                              View
+                            </a>
+                          ) : (
+                            <span className="text-primary">—</span>
+                          )}
                         </td>
-                        {/* actions */}
-                        <td className="px-6 py-4">
+
+                        {/* Notes (show full text; no truncation) */}
+                        <td
+                          className="min-w-[300px] px-6 py-4 align-top break-normal whitespace-nowrap"
+                          title={supplier.notes || "—"}
+                        >
+                          <span className="text-sm">{supplier.notes || "—"}</span>
+                        </td>
+
+                        {/* Actions */}
+                        <td className="min-w-[150px] px-6 py-4 align-top whitespace-nowrap">
                           <div className="flex items-center gap-[8px]">
-                            {/* update */}
                             <Link
                               href={`/supplier-list/${supplier._id}`}
                               className="center aspect-square w-[30px] cursor-pointer rounded-full border-[1px] border-dashboard bg-dashboard/5 text-dashboard"
@@ -178,7 +220,7 @@ const SupplierListTable = () => {
                             >
                               <GoPencil />
                             </Link>
-                            {/* delete */}
+
                             <DeleteConfirmationDialog
                               entityId={supplier._id!}
                               entityName={supplier.name}
@@ -186,15 +228,6 @@ const SupplierListTable = () => {
                               onDelete={(id) => deleteSupplier({ supplierId: id })}
                               isLoading={isDeleting}
                             />
-
-                            {/* view */}
-                            <button
-                              onClick={() => handleSupplierView(supplier as ISupplier)}
-                              className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-full border border-dashboard/20 text-dashboard transition-all duration-200 hover:border-dashboard/40 hover:bg-dashboard/10 hover:text-dashboard/80"
-                              title="View Details"
-                            >
-                              <FiEye className="h-4 w-4" />
-                            </button>
                           </div>
                         </td>
                       </tr>

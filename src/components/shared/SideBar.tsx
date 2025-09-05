@@ -1,13 +1,14 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
 
 import { GoChevronDown } from "react-icons/go";
 import { IoIosArrowBack } from "react-icons/io";
 
-import { INavLinks } from "@/utils";
+import { useAppSelector } from "@/hooks";
+import { adminNavlinks, INavLinks } from "@/utils";
 
 const NavBox = ({
   navlink,
@@ -75,7 +76,7 @@ const NavBox = ({
               : "text-primary"
           }`}
           onClick={() => {
-            if (typeof window !== "undefined" && window.innerWidth <= 750) {
+            if (typeof window !== "undefined" && window.innerWidth <= 768) {
               setIsNavOpen(false);
             }
           }}
@@ -112,8 +113,9 @@ const NavBox = ({
   );
 };
 
-const SideBar = ({ navlinks }: { navlinks: INavLinks[] }) => {
+const SideBar = () => {
   const [isNavOpen, setIsNavOpen] = useState(true);
+  const { role } = useAppSelector((state) => state.user);
 
   const toggleNav = () => {
     setIsNavOpen(!isNavOpen);
@@ -121,7 +123,7 @@ const SideBar = ({ navlinks }: { navlinks: INavLinks[] }) => {
 
   useEffect(() => {
     const handleResize = () => {
-      if (window.innerWidth <= 750) {
+      if (window.innerWidth <= 768) {
         setIsNavOpen(false);
       } else {
         setIsNavOpen(true);
@@ -134,17 +136,43 @@ const SideBar = ({ navlinks }: { navlinks: INavLinks[] }) => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
+  // 🟢 Get allowed action values from role
+  const allowedActions = role?.actions?.map((a) => a.value) || [];
+
+  // 🟢 Filter nav links based on action values or allow if no action (public)
+  const filteredNavLinks = adminNavlinks
+    .map((link) => {
+      if (link.children && Array.isArray(link.children)) {
+        const filteredChildren = link.children.filter(
+          (child) => !child.action || allowedActions.includes(child.action)
+        );
+
+        if (filteredChildren.length > 0) {
+          return { ...link, children: filteredChildren };
+        }
+
+        return null;
+      }
+
+      if (!link.action || allowedActions.includes(link.action)) {
+        return link;
+      }
+
+      return null;
+    })
+    .filter((link) => link !== null);
+
   return (
     <>
       <div
-        className={`h-[calc(100dvh-60px)] shrink-0 overflow-x-hidden overflow-y-auto bg-white transition-[width] duration-[0.3s] ease-in-out ${
-          window.innerWidth <= 750 ? "absolute top-0 left-0 z-[10] min-h-screen" : ""
-        } ${isNavOpen ? "w-[300px]" : "w-0"}`}
+        className={`h-[calc(100dvh-60px)] shrink-0 overflow-x-hidden bg-white transition-[width] duration-[0.3s] ease-in-out ${
+          window.innerWidth <= 768 ? "absolute top-0 left-0 z-[10] min-h-screen" : ""
+        } ${isNavOpen ? "w-[300px] px-[10px]" : "w-0"}`}
       >
         <div className={`relative h-full w-full`}>
-          <div className="h-full w-full flex-col justify-between border-r-[1px] border-border-muted p-[20px] lg:flex">
+          <div className="smoothBar h-full w-full flex-col justify-between overflow-x-hidden overflow-y-auto pt-[20px] pb-[20px] lg:flex">
             <div className="flex flex-col gap-[0]">
-              {navlinks?.map((link, index) => (
+              {filteredNavLinks.map((link, index) => (
                 <NavBox
                   navlink={link}
                   key={index + (link.path || "parent")}
@@ -155,6 +183,7 @@ const SideBar = ({ navlinks }: { navlinks: INavLinks[] }) => {
           </div>
         </div>
       </div>
+
       <div
         className={`absolute ${isNavOpen ? "left-[284px]" : "left-0"} top-[60px] z-[11] flex h-[calc(100dvh-60px)] items-center`}
       >

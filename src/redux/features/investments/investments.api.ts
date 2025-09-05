@@ -1,51 +1,34 @@
 import { api } from "@/redux/api/api";
-import { IInvestment, IMeta } from "@/types";
+import { IInvestment, IInvestmentPayload, IMeta } from "@/types";
 import { generateQueryParams } from "@/utils";
 
 const investmentsApi = api.injectEndpoints({
   endpoints: (builder) => ({
-    createInvestment: builder.mutation<{ data: IInvestment }, IInvestment>({
-      query: (body) => ({
-        url: "/investments/create",
+    createInvestment: builder.mutation<{ data: IInvestment }, IInvestmentPayload>({
+      query: (payload) => ({
+        url: "/finance/create/investment",
         method: "POST",
-        body,
+        body: payload,
       }),
-      invalidatesTags: ["investments"],
+      invalidatesTags: ["finance"],
     }),
     getAllInvestments: builder.query<
-      { data: IInvestment[]; meta: IMeta },
+      { data: (IInvestment & { totalBalance: number; lastInvestment: number })[]; meta?: IMeta },
       Record<string, string | number>
     >({
       query: (query) => {
-        const queryString = generateQueryParams(query);
+        const params = { ...query };
+        if (params.partnerId) {
+          params.partner = params.partnerId;
+          delete params.partnerId;
+        }
+        const queryString = generateQueryParams(params);
         return {
-          url: `/investments?${queryString}`,
+          url: `/finance/get/investment?${queryString}`,
           method: "GET",
         };
       },
-      providesTags: ["investments"],
-    }),
-    getInvestmentById: builder.query<{ data: IInvestment }, string>({
-      query: (id) => ({
-        url: `/investments/${id}`,
-        method: "GET",
-      }),
-      providesTags: ["investments"],
-    }),
-    updateInvestment: builder.mutation<{ data: IInvestment }, { id: string; body: IInvestment }>({
-      query: ({ id, body }) => ({
-        url: `/investments/${id}`,
-        method: "PUT",
-        body,
-      }),
-      invalidatesTags: ["investments"],
-    }),
-    deleteInvestmentById: builder.mutation<{ data: IInvestment[] }, string>({
-      query: (id) => ({
-        url: `/investments/${id}`,
-        method: "DELETE",
-      }),
-      invalidatesTags: ["investments"],
+      providesTags: ["finance"],
     }),
   }),
 });
@@ -53,7 +36,5 @@ const investmentsApi = api.injectEndpoints({
 export const {
   useCreateInvestmentMutation,
   useGetAllInvestmentsQuery,
-  useDeleteInvestmentByIdMutation,
-  useGetInvestmentByIdQuery,
-  useUpdateInvestmentMutation,
+  useLazyGetAllInvestmentsQuery,
 } = investmentsApi;

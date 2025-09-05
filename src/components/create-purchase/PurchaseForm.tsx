@@ -1,30 +1,34 @@
 "use client";
 
-import * as Yup from "yup";
+import { IPurchase, ISupplier } from "@/types";
 import { ErrorMessage, Field, FieldArray, Form, Formik, FormikHelpers } from "formik";
-import { IPurchase, ISupplier, TPurchasePayload } from "@/types";
-import { FaRegTrashAlt } from "react-icons/fa";
 import Link from "next/link";
+import { FaRegTrashAlt } from "react-icons/fa";
+import * as Yup from "yup";
 
-import Input from "@/components/ui/Input";
-import HorizontalLine from "@/components/ui/HorizontalLine";
-import ImageUploader from "@/components/shared/ImageUploader";
 import CategorySelector from "@/components/shared/CategorySelector";
-import Button from "@/components/ui/Button";
-import AddSupplierOnPurchase from "@/components/create-supplier/AddSupplierOnPurchase";
+import ImageUploader from "@/components/shared/ImageUploader";
 import SectionTitle from "@/components/shared/SectionTitle";
+import Button from "@/components/ui/Button";
+import HorizontalLine from "@/components/ui/HorizontalLine";
+import Input from "@/components/ui/Input";
+import AddSupplierOnPurchase from "../create-supplier/AddSupplierOnPurchase";
+import SelectionBox from "../ui/SelectionBox";
+import { purchaseTypes } from "@/constants/purchase";
 
-const initialValues: Omit<IPurchase, "_id" | "createdAt" | "updatedAt"> & {
-  supplier: Omit<ISupplier, "_id">;
+const initialValues: Omit<
+  IPurchase,
+  "_id" | "createdAt" | "updatedAt" | "supplier" | "invoiceNumber"
+> & {
+  supplier: Pick<ISupplier, "name" | "address" | "phoneNumber" | "email">;
 } = {
   purchaseTitle: "",
-  invoiceNumber: "",
+  purchaseType: "",
   supplier: {
     name: "",
     address: "",
     phoneNumber: "",
     email: "",
-    logoUrl: "",
   },
   products: [
     {
@@ -47,7 +51,7 @@ const validationSchema = Yup.object().shape({
   products: Yup.array().of(
     Yup.object().shape({
       productName: Yup.string().required("Name is required"),
-      price: Yup.number().required("Price is required").min(1, "Price must be >= 1"),
+      price: Yup.number().required("Price is required").min(1, "Price must be greater than 1"),
       category: Yup.string().required("Category is required"),
       images: Yup.array()
         .min(1, "At least one image is required")
@@ -64,7 +68,7 @@ const validationSchema = Yup.object().shape({
                   size: Yup.string().required("Size is required"),
                   quantity: Yup.number()
                     .required("Quantity is required")
-                    .min(1, "Quantity must be >= 1"),
+                    .min(1, "Quantity must be at least 1"),
                 })
               ),
           })
@@ -81,7 +85,10 @@ const PurchaseForm = ({
 }: {
   isLoading?: boolean;
   defaultValue?: typeof initialValues;
-  onSubmit: (values: TPurchasePayload, helpers: FormikHelpers<typeof initialValues>) => void;
+  onSubmit: (
+    values: Omit<IPurchase, "_id" | "createdAt" | "updatedAt" | "invoiceNumber">,
+    helpers: FormikHelpers<typeof initialValues>
+  ) => void;
   buttonLabel?: string;
 }) => {
   const initValue = defaultValue
@@ -113,20 +120,27 @@ const PurchaseForm = ({
           category: typeof product.category === "string" ? product.category : product.category._id,
         }));
 
-        const payload = {
+        const payload: Omit<
+          IPurchase,
+          "_id" | "createdAt" | "updatedAt" | "supplier" | "invoiceNumber"
+        > & {
+          supplier: string;
+        } = {
           ...rest,
           supplier: supplierId,
-          invoiceNumber: values.supplier.invoiceNumber,
           products,
         };
 
-        onSubmit(payload, helpers);
+        onSubmit(
+          payload as Omit<IPurchase, "_id" | "createdAt" | "updatedAt" | "invoiceNumber">,
+          helpers
+        );
       }}
     >
       {({ values, setFieldValue, touched, submitCount }) => (
         <Form className="flex flex-col gap-4">
           {/* Purchase & Supplier Information */}
-          <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+          <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
             <div className="flex flex-col gap-4 bg-white p-4">
               <SectionTitle>Purchase Information</SectionTitle>
 
@@ -140,21 +154,30 @@ const PurchaseForm = ({
                   className="text-sm text-danger"
                 />
               </div>
+              <div className="flex flex-col gap-[5px]">
+                <label className="form-label">Purchase Type</label>
+                <SelectionBox
+                  data={purchaseTypes}
+                  onSelect={(item) => setFieldValue("purchaseType", item.value)}
+                  defaultValue={
+                    values.purchaseType
+                      ? { label: values.purchaseType, value: values.purchaseType }
+                      : undefined
+                  }
+                />
+                <ErrorMessage name="purchaseType" component="div" className="text-sm text-danger" />
+              </div>
             </div>
 
             {/* Supplier Information */}
             <div className="flex flex-col gap-4 bg-white p-4">
               <SectionTitle>Supplier Information</SectionTitle>
 
-              {!values.supplier?.name && (
-                <AddSupplierOnPurchase setFieldValue={setFieldValue} values={values} />
-              )}
-
               {values.supplier?.name && (
                 <div className="flex flex-col gap-2 p-3 text-sm">
-                  <div>
+                  <span>
                     <strong>Name:</strong> {values.supplier.name}
-                  </div>
+                  </span>
                   <div>
                     <strong>Address:</strong> {values.supplier.address}
                   </div>
@@ -164,11 +187,9 @@ const PurchaseForm = ({
                   <Link href={`mailto:${values.supplier.email}`}>
                     <strong>Email:</strong> {values.supplier.email}
                   </Link>
-                  <div>
-                    <strong>Invoice Number:</strong> {values.supplier.invoiceNumber}
-                  </div>
                 </div>
               )}
+              <AddSupplierOnPurchase setFieldValue={setFieldValue} values={values} />
 
               {/* Error if no supplier added */}
               {(touched.supplier || submitCount > 0) && !values.supplier?.name && (
@@ -190,7 +211,7 @@ const PurchaseForm = ({
                   );
 
                   return (
-                    <div key={index} className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+                    <div key={index} className="grid grid-cols-1 gap-4 xl:grid-cols-2">
                       <div className="flex flex-col gap-4 bg-white p-4">
                         <SectionTitle>Product #{index + 1}</SectionTitle>
 

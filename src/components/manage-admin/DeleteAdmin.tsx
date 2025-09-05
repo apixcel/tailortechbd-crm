@@ -1,14 +1,14 @@
 import Button from "@/components/ui/Button";
 import DialogProvider from "@/components/ui/DialogProvider";
-import { useDeleteAdminByIdMutation } from "@/redux/features/admin/admin.api";
-import { IQueruMutationErrorResponse } from "@/types";
+// import { useDeleteAdminByIdMutation } from "@/redux/features/admin/admin.api";
+// import { IQueruMutationErrorResponse } from "@/types";
 import { IUser } from "@/types/user";
 import { useRef, useState } from "react";
 import { FaRegTrashAlt } from "react-icons/fa";
 import { toast } from "sonner";
 
 const DeleteAdmin = ({ admin }: { admin: IUser }) => {
-  const [deleteAdmin, { isLoading }] = useDeleteAdminByIdMutation();
+  // const [deleteAdmin, { isLoading }] = useDeleteAdminByIdMutation();
 
   const [isOpen, setIsOpen] = useState(false);
   const [confirmText, setConfirmText] = useState("");
@@ -17,19 +17,18 @@ const DeleteAdmin = ({ admin }: { admin: IUser }) => {
   const isConfirmValid = confirmText === admin.fullName;
 
   const handleDelete = async () => {
-    const res = await deleteAdmin(admin._id);
-    const error = res.error as IQueruMutationErrorResponse;
-
-    if (error) {
-      if (error.data?.message) {
-        toast.error(error.data?.message);
-      } else {
-        toast.error("Something went wrong");
-      }
-      return;
-    }
-    toast.success("Admin deleted successfully");
-    setIsOpen(false);
+    // const res = await deleteAdmin(admin._id);
+    // const error = res.error as IQueruMutationErrorResponse;
+    // if (error) {
+    //   if (error.data?.message) {
+    //     toast.error(error.data?.message);
+    //   } else {
+    //     toast.error("Something went wrong");
+    //   }
+    //   return;
+    // }
+    // toast.success("Admin deleted successfully");
+    // setIsOpen(false);
   };
 
   return (
@@ -92,7 +91,7 @@ const DeleteAdmin = ({ admin }: { admin: IUser }) => {
             </Button>
             <Button
               onClick={handleDelete}
-              isLoading={isLoading}
+              isLoading={false}
               disabled={!isConfirmValid}
               className={`rounded-md px-4 py-2 ${
                 isConfirmValid

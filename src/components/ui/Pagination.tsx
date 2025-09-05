@@ -1,5 +1,5 @@
 "use client";
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import { FiMoreHorizontal } from "react-icons/fi";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 import { twMerge } from "tailwind-merge";
@@ -48,7 +48,7 @@ const Pagination = ({
   setPage,
 }: PaginationProps) => {
   const totalPages = Math.ceil(totalDocs / limit);
-  const [curPage, setCurPage] = React.useState(1);
+  const [curPage, setCurPage] = useState(1);
 
   const currentPage = page || curPage;
   const setCurrentPage = setPage || setCurPage;

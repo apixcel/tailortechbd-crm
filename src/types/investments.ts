@@ -1,13 +1,24 @@
+import { IPartner } from "./partner";
+
 export interface IInvestment {
   _id: string;
-  partnerName: string;
-  amount: number;
+  investmentAmount: number;
   investmentDate: string;
-  type: string;
   note: string;
-  attachment: string;
+  remarks: string;
+  attachment?: string;
+  transactionMethod?: string;
+  partner: IPartner;
   createdAt?: string;
   updatedAt?: string;
 }
 
-export type CreateInvestmentPayload = Omit<IInvestment, "_id" | "createdAt" | "updatedAt">;
+export interface IInvestmentPayload {
+  investmentAmount: number;
+  investmentDate: string;
+  note: string;
+  partner: string;
+  transactionMethod: string;
+  remarks: string;
+  attachment?: string;
+}

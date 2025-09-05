@@ -11,7 +11,7 @@ const CreateSupplierView = () => {
   const [createSupplier, { isLoading }] = useCreateSupplierMutation();
   const router = useRouter();
 
-  const handleSubmit = async (payload: ISupplier) => {
+  const handleSubmit = async (payload: Partial<ISupplier>) => {
     const res = await createSupplier(payload);
     const error = res.error as IQueryMutationErrorResponse;
     if (error) {

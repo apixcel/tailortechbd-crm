@@ -11,8 +11,8 @@ const baseQuery = fetchBaseQuery({
 const baseQueryWithRefreshToken = async (args: any, api: any, extraOptions: any) => {
   let result = await baseQuery(args, api, extraOptions);
 
-  if (result?.error?.status === 401) {
-    const res = await fetch(`${baseUrl}/user/refresh-token`, {
+  if (result?.error?.status === 498) {
+    const res = await fetch(`${baseUrl}/auth/refresh-token`, {
       method: "POST",
       credentials: "include",
     });
@@ -39,17 +39,18 @@ export const api = createApi({
   tagTypes: [
     "user",
     "sales",
+    "supplierPayment",
+    "statistics",
     "file",
+    "profitBalance",
     "categories",
     "purchase",
     "admin",
-    "super-admin",
-    "investments",
-    "deposits",
-    "profit-distribution",
-    "partner-dedication",
+    "role",
+    "finance",
     "supplier",
     "costing",
+    "partners",
   ],
   endpoints: () => ({}),
 });

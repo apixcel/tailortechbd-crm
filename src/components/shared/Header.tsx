@@ -3,32 +3,28 @@
 import Image from "next/image";
 import Link from "next/link";
 
-import PathSearchBar from "./PathSearchBar";
-import UserDropdown from "./navbar/UserDropdown";
-import { admin } from "@/utils";
+import { useAppSelector } from "@/hooks";
+import { adminNavlinks } from "@/utils";
+
+import { PathSearchBar, UserDropdown } from "@/components";
 
 const Header = () => {
+  const { user } = useAppSelector((state) => state.user);
+
   return (
-    <header className="sticky top-0 z-[10] flex h-[60px] w-full items-center justify-between border-b border-border-muted bg-white px-4">
+    <header className="sticky top-0 z-[10] flex h-[60px] w-full items-center justify-between gap-4 border-b border-border-muted bg-white px-4">
       <Link href={"/"} className="w-[190px] shrink-0 lg:w-[284px]">
         <Image
           src="/images/logos/logo.svg"
           alt="logo"
           width={150}
           height={150}
-          className="hidden w-[150px] sm:block sm:w-full lg:w-[220px]"
-        />
-        <Image
-          src="/images/logos/logo-text.png"
-          alt="logo"
-          width={110}
-          height={110}
-          className="block sm:hidden"
+          className="w-[150px] sm:w-full lg:w-[220px]"
         />
       </Link>
-      <div className="flex w-[200px] items-center justify-between lg:w-full">
-        <PathSearchBar navLinks={admin} />
-        <UserDropdown /* displayName={true} */ />
+      <div className="flex items-center justify-end gap-4 md:w-full md:justify-between">
+        <PathSearchBar navLinks={adminNavlinks} />
+        {user && <UserDropdown /* displayName={true} */ />}
       </div>
     </header>
   );

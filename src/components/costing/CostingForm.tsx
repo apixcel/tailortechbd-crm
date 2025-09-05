@@ -1,27 +1,58 @@
 "use client";
 
-import * as Yup from "yup";
 import { ErrorMessage, Field, FieldProps, Form, Formik, FormikHelpers } from "formik";
-import { ICosting } from "@/types";
+import * as Yup from "yup";
 
-import {Input, ImageUploader, Button, SectionTitle, TextArea, PickDate} from "@/components";
+import {
+  Button,
+  ImageUploader,
+  Input,
+  PickDate,
+  SectionTitle,
+  SelectionBox,
+  TextArea,
+} from "@/components";
 
-const initialValues: Omit<ICosting, "_id" | "createdAt" | "updatedAt"> = {
-  partnerName: "",
+const costingCategoryOptions = [
+  { label: "Transport / Travel", value: "Transport / Travel" },
+  { label: "Utility Bills", value: "Utility Bills" },
+  { label: "Office Rent", value: "Office Rent" },
+  { label: "Salaries & Wages", value: "Salaries & Wages" },
+  { label: "Raw Materials / Supplies", value: "Raw Materials / Supplies" },
+  { label: "Maintenance & Repairs", value: "Maintenance & Repairs" },
+  { label: "Marketing & Advertising", value: "Marketing & Advertising" },
+  { label: "Training & Development", value: "Training & Development" },
+  { label: "Insurance", value: "Insurance" },
+  { label: "Taxes & Government Fees", value: "Taxes & Government Fees" },
+  { label: "Professional Services", value: "Professional Services" },
+  { label: "IT & Software Subscriptions", value: "IT & Software Subscriptions" },
+  { label: "Entertainment / Client Hospitality", value: "Entertainment / Client Hospitality" },
+  { label: "Miscellaneous / Others", value: "Miscellaneous / Others" },
+];
+
+const initialValues = {
   costingAmount: 0,
   costingDate: new Date().toISOString(),
-  costingType: "",
+  preparedByName: "",
+  preparedByDesignation: "",
+  costingCategory: "",
   note: "",
+  costingRemark: "",
   fileUrl: "",
 };
 
 const validationSchema = Yup.object().shape({
-  partnerName: Yup.string().required("Partner name is required"),
-  costingAmount: Yup.number().required("Amount is required").min(1, "Amount must be >= 1"),
+  costingAmount: Yup.number()
+    .typeError("Amount must be a number")
+    .required("Amount is required")
+    .min(1, "Amount must be greater than 1"),
   costingDate: Yup.string().required("Date is required"),
-  costingType: Yup.string().required("Type is required"),
-  note: Yup.string().required("Note is required"),
-  fileUrl: Yup.string().required("Attachment is required"),
+  preparedByName: Yup.string().required("Prepared by (name) is required"),
+  preparedByDesignation: Yup.string().required("Prepared by (designation) is required"),
+  costingCategory: Yup.string().required("Category is required"),
+  note: Yup.string().required("Note description is required"),
+  costingRemark: Yup.string().optional(),
+  fileUrl: Yup.string().url("Must be a valid URL").nullable().notRequired(),
 });
 
 const CostingForm = ({
@@ -31,37 +62,28 @@ const CostingForm = ({
   buttonLabel = "Create Costing",
 }: {
   isLoading: boolean;
-  defaultValue?: typeof initialValues;
-  onSubmit: (values: ICosting, { resetForm }: FormikHelpers<typeof initialValues>) => void;
+  defaultValue?: Partial<typeof initialValues>;
+  onSubmit: (values: typeof initialValues, helpers: FormikHelpers<typeof initialValues>) => void;
   buttonLabel?: string;
 }) => {
   return (
     <Formik
-      initialValues={defaultValue || initialValues}
+      initialValues={{ ...initialValues, ...defaultValue }}
       validationSchema={validationSchema}
-      onSubmit={(values) => {
-        onSubmit(values as ICosting, {} as FormikHelpers<typeof initialValues>);
+      enableReinitialize
+      onSubmit={(values, helpers) => {
+        onSubmit(values, helpers);
       }}
     >
-      {({ setFieldValue }) => (
+      {({ setFieldValue, values }) => (
         <Form className="flex flex-col gap-4">
-          <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-            <div className="flex flex-col gap-4 bg-white p-4">
-              <SectionTitle>Costing Information</SectionTitle>
+          <div className="flex flex-col gap-4 bg-white p-4">
+            <SectionTitle>Costing Information</SectionTitle>
 
-              {/* partner name and amount */}
-              <div className="flex w-full flex-col items-start justify-start gap-[16px] sm:flex-row">
-                {/* partner name */}
-                <div className="flex w-full flex-col gap-[5px]">
-                  <label className="form-label">Partner Name</label>
-                  <Field as={Input} name="partnerName" placeholder="Partner name" />
-                  <ErrorMessage
-                    name="partnerName"
-                    component="div"
-                    className="text-sm text-danger"
-                  />
-                </div>
-
+            {/* amount, date, category */}
+            <div className="flex flex-col items-start gap-[20px] xl:flex-row">
+              <div className="flex w-full flex-col items-start justify-start gap-[16px]">
+                {/* Amount */}
                 <div className="flex w-full flex-col gap-[5px]">
                   <label className="form-label">Costing Amount</label>
                   <Field as={Input} type="number" name="costingAmount" placeholder="Amount" />
@@ -71,21 +93,8 @@ const CostingForm = ({
                     className="text-sm text-danger"
                   />
                 </div>
-              </div>
 
-              {/* type and date picker */}
-              <div className="flex w-full flex-col items-start justify-start gap-[16px] sm:flex-row">
-                <div className="flex w-full flex-col gap-[5px]">
-                  <label className="form-label">Costing Type</label>
-                  <Field as={Input} name="costingType" placeholder="Costing Type" />
-                  <ErrorMessage
-                    name="costingType"
-                    component="div"
-                    className="text-sm text-danger"
-                  />
-                </div>
-
-                {/* date picker */}
+                {/* Date */}
                 <div className="flex w-full flex-col gap-[5px]">
                   <label className="form-label">Costing Date</label>
                   <Field name="costingDate">
@@ -97,29 +106,99 @@ const CostingForm = ({
                     className="text-sm text-danger"
                   />
                 </div>
+
+                {/* Category */}
+                <div className="flex w-full flex-col gap-[5px]">
+                  <label className="form-label">Costing Category</label>
+                  <SelectionBox
+                    data={costingCategoryOptions}
+                    onSelect={(option) => setFieldValue("costingCategory", option.value)}
+                    defaultValue={costingCategoryOptions.find(
+                      (opt) => opt.value === values.costingCategory
+                    )}
+                    displayValue={
+                      costingCategoryOptions.find((opt) => opt.value === values.costingCategory)
+                        ?.label
+                    }
+                    showSearch={false}
+                  />
+                  <ErrorMessage
+                    name="costingCategory"
+                    component="div"
+                    className="text-sm text-danger"
+                  />
+                </div>
+
+                {/* Remark */}
+                <div className="flex w-full flex-col gap-[5px]">
+                  <label className="form-label">Costing Remark (Optional)</label>
+                  <Field
+                    as={TextArea}
+                    name="costingRemark"
+                    placeholder="Any additional remarks..."
+                    rows={2}
+                    className={"min-h-[80px]"}
+                  />
+                  <ErrorMessage
+                    name="costingRemark"
+                    component="div"
+                    className="text-sm text-danger"
+                  />
+                </div>
               </div>
 
-              {/* note */}
-              <div className="flex w-full flex-col gap-[5px]">
-                <label className="form-label">Note</label>
-                <Field as={TextArea} name="note" placeholder="Note" rows={4} />
-                <ErrorMessage name="note" component="div" className="text-sm text-danger" />
+              {/* description & prepared by */}
+              <div className="flex w-full flex-col gap-[16px]">
+                {/* Prepared By - Name */}
+                <div className="flex w-full flex-col gap-[5px]">
+                  <label className="form-label">Prepared By (Name)</label>
+                  <Field as={Input} type="text" name="preparedByName" placeholder="e.g. Jane Doe" />
+                  <ErrorMessage
+                    name="preparedByName"
+                    component="div"
+                    className="text-sm text-danger"
+                  />
+                </div>
+
+                {/* Prepared By - Designation */}
+                <div className="flex w-full flex-col gap-[5px]">
+                  <label className="form-label">Prepared By (Designation)</label>
+                  <Field
+                    as={Input}
+                    type="text"
+                    name="preparedByDesignation"
+                    placeholder="e.g. Accounts Manager"
+                  />
+                  <ErrorMessage
+                    name="preparedByDesignation"
+                    component="div"
+                    className="text-sm text-danger"
+                  />
+                </div>
+
+                {/* Description */}
+                <div className="flex w-full flex-col gap-[5px]">
+                  <label className="form-label">Description</label>
+                  <Field
+                    as={TextArea}
+                    name="note"
+                    placeholder="Eg. Need to pay some money"
+                    rows={4}
+                    className={"min-h-[120px]"}
+                  />
+                  <ErrorMessage name="note" component="div" className="text-sm text-danger" />
+                </div>
               </div>
             </div>
 
-            <div className="flex flex-col gap-4 bg-white p-4">
-              <SectionTitle>Attachment</SectionTitle>
-              <div>
-                <ImageUploader
-                  inputId="investment-attachment"
-                  mode="single"
-                  onChange={(urls) => setFieldValue("fileUrl", urls?.[0] || "")}
-                  title="Upload Attachment"
-                  acceptPDF
-                />
-                <ErrorMessage name="fileUrl" component="div" className="text-sm text-danger" />
-              </div>
-            </div>
+            {/* Document */}
+            <ImageUploader
+              inputId="costing-attachment"
+              mode="single"
+              defaultImages={defaultValue?.fileUrl ? [defaultValue.fileUrl] : []}
+              onChange={(urls) => setFieldValue("fileUrl", urls?.[0] || "")}
+              title="Upload Document (optional)"
+            />
           </div>
 
           <Button type="submit" isLoading={isLoading} className="mt-2">

@@ -1,21 +1,53 @@
 "use client";
 
+import {
+  useGetCostingByIdQuery,
+  useUpdateCostingByIdMutation,
+} from "@/redux/features/costing/costing.api";
+import { ICosting, IQueryMutationErrorResponse } from "@/types";
+import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
-import { CostingForm, PageHeadingTitle } from "@/components";
-import { useRouter } from "next/navigation";
-import { CreateCostingPayload, IInvestment } from "@/types";
+import { CostingForm, DataNotFound, Loader, PageHeadingTitle } from "@/components";
 
 const EditCostingView = ({ slug }: { slug: string }) => {
+  const { data, isLoading, isError } = useGetCostingByIdQuery({ costingId: slug });
+  const [updateCosting, { isLoading: isUpdating }] = useUpdateCostingByIdMutation();
   const router = useRouter();
 
-  const handleSubmit = async (payload: CreateCostingPayload) => {
-    const formattedValues: CreateCostingPayload = {
+  if (isLoading) {
+    return <Loader />;
+  }
+
+  if (!data?.data || isError) {
+    return <DataNotFound title="Costing Not Found" />;
+  }
+
+  const handleSubmit = async (payload: Partial<ICosting>) => {
+    const formattedValues = {
       ...payload,
-      costingDate: payload.costingDate.split("T")[0],
+      costingDate: payload.costingDate?.split("T")[0],
     };
 
-    console.log(formattedValues, "formattedValues");
+    if (isUpdating) {
+      return;
+    }
+
+    const res = await updateCosting({ costingId: data.data._id, payload: formattedValues });
+    const error = res.error as IQueryMutationErrorResponse;
+    if (error) {
+      if (error?.data?.message) {
+        toast(error.data?.message);
+      } else {
+        toast("Something went wrong");
+      }
+      return;
+    }
+
+    toast.success("Costing updated successfully");
+    router.push("/costing-list");
+
+    return;
   };
 
   return (
@@ -24,10 +56,8 @@ const EditCostingView = ({ slug }: { slug: string }) => {
       <CostingForm
         buttonLabel="Update Costing"
         onSubmit={handleSubmit}
-        isLoading={false}
-        /* defaultValue={{
-          ...data.data,
-        }} */
+        isLoading={isUpdating}
+        defaultValue={data?.data}
       />
     </div>
   );

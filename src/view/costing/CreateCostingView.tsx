@@ -1,17 +1,24 @@
 "use client";
 
 import { useCreateCostingMutation } from "@/redux/features/costing/costing.api";
-import { CostingForm, PageHeadingTitle } from "@/components";
 import { ICosting, IQueryMutationErrorResponse } from "@/types";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
-const CreateCostingView = () => {
-  const [createCosting, {isLoading}] = useCreateCostingMutation();
-  const router = useRouter()
+import { CostingForm, PageHeadingTitle } from "@/components";
 
-  const handleSubmit = async (payload: ICosting) => {
-    const res = await createCosting(payload);
+const CreateCostingView = () => {
+  const [createCosting, { isLoading }] = useCreateCostingMutation();
+  const router = useRouter();
+
+  const handleSubmit = async (payload: Partial<ICosting>) => {
+    const formattedValues = {
+      ...payload,
+      costingDate: payload.costingDate?.split("T")[0],
+      fileUrl: payload.fileUrl || undefined,
+    };
+
+    const res = await createCosting(formattedValues);
     const error = res.error as IQueryMutationErrorResponse;
     if (error) {
       if (error?.data?.message) {

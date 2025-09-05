@@ -1,48 +1,62 @@
 "use client";
 
-import { HorizontalLine, TableDataNotFound, TableSkeleton, Pagination } from "@/components";
 import { useDebounce } from "@/hooks";
-
+import { useGetAllInvestmentsQuery } from "@/redux/features/investments/investments.api";
+import dateUtils from "@/utils/date";
 import Link from "next/link";
 import { useState } from "react";
+
 import { FaChevronDown, FaChevronUp } from "react-icons/fa";
-import { GoPencil } from "react-icons/go";
 import { RxMagnifyingGlass } from "react-icons/rx";
-import DeleteInvestmentById from "./DeleteInvestmentById";
-import dateUtils from "@/utils/date";
-import { useGetAllInvestmentsQuery } from "@/redux/features/investments/investments.api";
-import { investmentData } from "@/constants/investmentsData";
+
+import {
+  HorizontalLine,
+  Pagination,
+  PartnerDropDown,
+  TableDataNotFound,
+  TableSkeleton,
+} from "@/components";
+import { truncateWords } from "@/utils";
+import DownloadInvestmentReport from "./DownloadInvestmentReport";
 
 const tableHead = [
-  { label: "#", field: "" },
-  { label: "Partner Name", field: "" },
-  { label: "Investment Amount", field: "amount" },
+  { label: "SL", field: "" },
   { label: "Date", field: "investmentDate" },
-  { label: "Type", field: "" },
-  { label: "Note", field: "" },
-  { label: "Attachment", field: "" },
-  { label: "Create Date", field: "createdAt" },
-  { label: "Actions", field: "" },
+  { label: "Partner Name", field: "" },
+  { label: "Description", field: "" },
+  { label: "Transaction Method", field: "" },
+  { label: "Invested Amount", field: "" },
+  { label: "Last Investment", field: "" },
+  { label: "Total Investment Balance", field: "" },
+  { label: "Remarks", field: "" },
 ];
 
 const AllInvestmentsTable = () => {
-  const [, /* searchTerm */ setSearchTerm] = useDebounce("");
-  const [sort, setSort] = useState({ field: "createdAt", order: "desc" });
+  const [selectedPartner, setSelectedPartner] = useState<{
+    label: string;
+    value: string;
+    partnerDesignation?: string;
+    joiningDate?: string;
+  } | null>(null);
 
+  const [searchTerm, setSearchTerm] = useDebounce("");
+  const [sort, setSort] = useState({ field: "createdAt", order: "desc" });
   const [query, setQuery] = useState<Record<string, string | number>>({
     page: 1,
-    fields: "partnerName,amount,investmentDate,type,note,attachment,createdAt",
     sort: `${sort.order === "desc" ? "-" : ""}${sort.field}`,
+    partner: "",
   });
 
-  // const { data, isLoading } = useGetAllInvestmentsQuery({ ...query, searchTerm });
-  // console.log(data, "all products table");
-  // const investmentData = data?.data || [];
-  // const metaData = data?.meta || { totalDoc: 0, page: 1 };
+  const { data, isLoading } = useGetAllInvestmentsQuery({
+    ...query,
+    searchTerm,
+    ...(selectedPartner?.value ? { partner: selectedPartner.value } : {}),
+  });
 
-  const mockInvestmentData = investmentData;
-  const metaData = { totalDoc: 0, page: 1 };
-  const isLoading = false;
+  const investmentData = data?.data || [];
+
+  // const investmentData = data?.data || [];
+  const metaData = data?.meta || { totalDoc: 0, page: 1 };
 
   const handleSort = (field: string) => {
     const newOrder = sort.field === field && sort.order === "asc" ? "desc" : "asc";
@@ -56,6 +70,50 @@ const AllInvestmentsTable = () => {
   return (
     <div className="flex flex-col gap-[10px]">
       <div className="flex flex-col gap-[15px] bg-white p-[16px]">
+        <div className="flex flex-col-reverse flex-wrap items-end justify-between gap-y-5 lg:flex-row">
+          <PartnerDropDown
+            onSelect={(item) => {
+              setSelectedPartner(item);
+              setQuery((prev) => ({ ...prev, partnerId: item.value, page: 1 }));
+            }}
+            defaultValue={
+              selectedPartner
+                ? { label: selectedPartner.label, value: selectedPartner.value }
+                : undefined
+            }
+          />
+
+          {/* create investment link */}
+          <Link
+            href="/investments/create"
+            className="rounded-[5px] bg-primary px-[20px] py-[6px] text-white"
+          >
+            Create Investment
+          </Link>
+        </div>
+        {selectedPartner ? (
+          <div className="mb-4 flex justify-center">
+            <div className="flex flex-col items-center gap-[5px]">
+              <h1 className="text-[16px] font-[600]">
+                Investor: {selectedPartner?.label || "N/A"}
+              </h1>
+              <p className="text-[12px] text-muted md:text-[14px]">
+                Designation: {selectedPartner?.partnerDesignation || "N/A"}
+              </p>
+              <span className="text-[12px] text-muted md:text-[14px]">
+                Joining Date:{" "}
+                {selectedPartner?.joiningDate
+                  ? dateUtils.formatDate(selectedPartner.joiningDate)
+                  : "N/A"}
+              </span>
+            </div>
+          </div>
+        ) : (
+          ""
+        )}
+
+        <HorizontalLine className="my-[10px]" />
+
         <div className="flex flex-col gap-[5px]">
           <h1 className="text-[16px] font-[600]">Investment List</h1>
           <p className="text-[12px] text-muted md:text-[14px]">
@@ -69,8 +127,11 @@ const AllInvestmentsTable = () => {
             <span className="font-bold text-dashboard">{metaData.page}.</span>
           </p>
         </div>
+
         <HorizontalLine className="my-[10px]" />
+
         <div className="flex flex-wrap items-center justify-between gap-y-5">
+          {/* search input */}
           <div className="flex w-full max-w-[300px] items-center justify-between rounded-[5px] border-[1px] border-dashboard/20 p-[5px] outline-none">
             <input
               type="text"
@@ -80,22 +141,19 @@ const AllInvestmentsTable = () => {
             />
             <RxMagnifyingGlass />
           </div>
-
-          <Link
-            href="/investments/create"
-            className="rounded-[5px] bg-primary px-[20px] py-[6px] text-white"
-          >
-            Create Investment
-          </Link>
+          <DownloadInvestmentReport />
         </div>
+
+        {/* table */}
         <div className="overflow-x-auto">
           <table className="w-full divide-y divide-dashboard/20">
+            {/* table head */}
             <thead className="bg-dashboard/10">
               <tr>
                 {tableHead.map((heading) => (
                   <th
                     key={heading.field || heading.label}
-                    className="px-6 py-3 text-left text-sm font-semibold text-dashboard uppercase"
+                    className="px-6 py-3 text-left text-sm font-semibold text-dashboard"
                   >
                     {heading.field ? (
                       <button
@@ -131,71 +189,55 @@ const AllInvestmentsTable = () => {
             <tbody className="divide-y divide-gray-200 bg-white">
               {isLoading ? (
                 <TableSkeleton columns={tableHead.length} />
-              ) : mockInvestmentData?.length ? (
-                mockInvestmentData?.map((investment, index) => (
+              ) : investmentData?.length ? (
+                investmentData?.map((investment, index) => (
                   <tr key={index} className="hover:bg-gray-50">
-                    {/* Index */}
+                    {/* index */}
                     <td className="px-6 py-4 text-sm text-gray-900">{index + 1}</td>
 
-                    {/* Partner Name */}
-                    <td className="px-6 py-4">
-                      <span className="line-clamp-1 text-[14px]">{investment.partnerName}</span>
-                    </td>
-
-                    {/* Investment Amount */}
-                    <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
-                      <span className="text-sm">{investment.amount}</span>
-                    </td>
-
-                    {/* Investment Date */}
-                    <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
-                      <span className="text-sm">{investment.investmentDate}</span>
-                    </td>
-
-                    {/* Type */}
-                    <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
-                      <span className="text-sm">{investment.type}</span>
-                    </td>
-
-                    {/* Note */}
-                    <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
-                      <span className="text-sm">{investment.note}</span>
-                    </td>
-
-                    {/* Attachment */}
-                    <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
-                      <Link
-                        href={investment.attachment}
-                        target="_blank"
-                        className="text-sm hover:underline"
-                      >
-                        link
-                      </Link>
-                    </td>
-
-                    {/* Updated Time */}
+                    {/* investment date */}
                     <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
                       <span className="text-sm">
-                        {dateUtils.formateCreateOrUpdateDate(investment.createdAt || "")}
+                        {dateUtils.formatDate(investment?.investmentDate)}
                       </span>
                     </td>
 
-                    {/* Actions */}
+                    {/* partner name */}
                     <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
-                      <div className="flex items-center gap-2">
-                        <Link
-                          href={`/investments/${investment._id}`}
-                          className="center aspect-square w-[30px] cursor-pointer rounded-full border-[1px] border-dashboard bg-dashboard/5 text-dashboard"
-                          title="Edit Investment"
-                        >
-                          <GoPencil />
-                        </Link>
+                      <span className="text-sm">{investment?.partner?.partnerName || "N/A"}</span>
+                    </td>
 
-                        <DeleteInvestmentById
-                          investmentId={investment._id}
-                          investmentName={investment.partnerName}
-                        />
-                      </div>
+                    {/* description */}
+                    <td className="max-w-[250px] px-6 py-4 text-sm text-gray-700">
+                      {truncateWords(investment?.note || "-", 10)}
+                    </td>
+
+                    {/* transaction method */}
+                    <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
+                      {investment?.transactionMethod ? (
+                        <span className="text-sm">{investment?.transactionMethod}</span>
+                      ) : (
+                        <span className="text-sm text-gray-400">N/A</span>
+                      )}
+                    </td>
+
+                    {/* investment note */}
+                    <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
+                      <span className="text-sm">{investment?.investmentAmount}</span>
+                    </td>
+                    {/* investment note */}
+                    <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
+                      <span className="text-sm">{investment?.lastInvestment}</span>
+                    </td>
+
+                    {/* total investment balance */}
+                    <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
+                      <span className="text-sm">{investment?.totalBalance}</span>
+                    </td>
+
+                    {/* remarks */}
+                    <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
+                      <span className="text-sm">{investment?.remarks || "N/A"}</span>
                     </td>
                   </tr>
                 ))

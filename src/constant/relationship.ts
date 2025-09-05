@@ -1,0 +1,16 @@
+export const relationOptions = [
+  { label: "Son", value: "Son" },
+  { label: "Daughter", value: "Daughter" },
+  { label: "Spouse", value: "Spouse" },
+  { label: "Business Partner", value: "Business Partner" },
+  { label: "Friend", value: "Friend" },
+  { label: "Mother", value: "Mother" },
+  { label: "Father", value: "Father" },
+  { label: "Uncle", value: "Uncle" },
+  { label: "Aunt", value: "Aunt" },
+  { label: "Daughter", value: "Daughter" },
+  { label: "Sibling", value: "Sibling" },
+  { label: "Grand Father", value: "Grand Father" },
+  { label: "Grand Mother", value: "Grand Mother" },
+  { label: "Other", value: "Other" },
+];

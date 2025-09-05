@@ -36,15 +36,6 @@ const ViewPurchase = ({ setIsViewPurchase, purchaseItem }: ViewPurchaseProps) =>
           <h2 className="mb-4 text-xl font-semibold text-dashboard">Supplier Information</h2>
 
           <div className="flex flex-col gap-4 lg:flex-row">
-            <div className="h-14 w-14 overflow-hidden rounded-full border border-border-muted object-cover object-center">
-              <Image
-                src={purchaseItem?.supplier?.logoUrl || "/images/avatar.jpg"}
-                width={100}
-                height={100}
-                alt={`${purchaseItem?.supplier?.name || "Company"} avatar`}
-              />
-            </div>
-
             <div className="flex flex-col gap-2">
               <p>
                 <span className="text-[14px] font-[700] text-primary">Name: </span>

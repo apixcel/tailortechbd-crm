@@ -1,10 +1,10 @@
-import { PageHeadingTitle, PurchaseListTable } from "@/components";
+import { PageHeadingTitle, AllPurchaseListTable } from "@/components";
 
 const PurchaseListView = () => {
   return (
     <div className="flex flex-col gap-4">
       <PageHeadingTitle title="Purchase List" />
-      <PurchaseListTable />
+      <AllPurchaseListTable />
     </div>
   );
 };

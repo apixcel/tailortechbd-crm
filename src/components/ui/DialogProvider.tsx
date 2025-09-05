@@ -1,3 +1,5 @@
+"use client";
+
 import React, { ReactNode, SetStateAction, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { twMerge } from "tailwind-merge";

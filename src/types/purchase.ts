@@ -24,6 +24,7 @@ export interface IProduct {
 export interface IPurchase {
   _id: string;
   purchaseTitle: string;
+  purchaseType: string;
   supplier: ISupplier;
   invoiceNumber: string;
   products: IProduct[];
@@ -31,9 +32,21 @@ export interface IPurchase {
   updatedAt?: string;
 }
 
-export type TPurchasePayload = {
-  purchaseTitle: string;
-  supplier: string;
-  invoiceNumber: string;
-  products: Omit<IProduct, "category">[];
-};
+export interface IPurchaseStatisticsChartItem {
+  time: string;
+  "Total Purchase": number;
+  "Purchase Amount": number;
+}
+
+export interface IPurchaseStatistics {
+  totalPurchaseQuantity: number;
+  totalPurchaseAmount: number;
+  chartData: IPurchaseStatisticsChartItem[];
+}
+
+export interface IPurchaseStatisticsResponse {
+  success: boolean;
+  statusCode: number;
+  message: string;
+  data: IPurchaseStatistics;
+}

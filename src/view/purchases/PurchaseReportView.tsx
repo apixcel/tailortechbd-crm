@@ -1,10 +1,26 @@
-import { PageHeadingTitle, PurchaseReportOverview } from "@/components";
+"use client";
+
+import { AnalyticsOverviewFilter, PageHeadingTitle, PurchaseReportOverview } from "@/components";
+import { DateObject } from "react-multi-date-picker";
+import { useState } from "react";
 
 const PurchaseReportView = () => {
+  const today = new DateObject();
+  const copyDate = (date: DateObject) => new DateObject(date.toDate());
+  const last7Days = [copyDate(today).subtract(6, "days"), copyDate(today)];
+  const [selectedRange, setSelectedRange] = useState<DateObject[] | null>(last7Days);
+
   return (
     <div className="flex flex-col gap-4">
-      <PageHeadingTitle title="Purchase Report" />
-      <PurchaseReportOverview />
+      <div className="flex justify-between">
+        <PageHeadingTitle title="Purchase Report" />
+
+        <div className="flex items-center gap-2">
+          Filter by: <AnalyticsOverviewFilter value={selectedRange} onChange={setSelectedRange} />
+        </div>
+      </div>
+
+      <PurchaseReportOverview selectedRange={selectedRange || undefined} />
     </div>
   );
 };

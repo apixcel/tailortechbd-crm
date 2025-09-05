@@ -8,14 +8,35 @@ function formatSecondsToMMSS(totalSeconds: number): string {
   return `${formattedMinutes}:${formattedSeconds}`;
 }
 
-const formateCreateOrUpdateDate = (dateString?: string | Date | undefined) => {
+const formatDate = (dateString?: string | Date | undefined) => {
   if (!dateString) return "";
   const date = new Date(dateString);
-  return date.toLocaleDateString("en-US", { month: "long", year: "numeric", day: "numeric" });
+  return date.toLocaleDateString("en-US", { month: "short", year: "numeric", day: "numeric" });
 };
+
+function getTimeFromISOString(isoString: string): string {
+  const date = new Date(isoString);
+  const hours = date.getUTCHours().toString().padStart(2, "0");
+  const minutes = date.getUTCMinutes().toString().padStart(2, "0");
+  return `${hours}:${minutes}`;
+}
+
+function formatDateToDDMMYYYY(dateString?: string | Date | undefined): string {
+  if (!dateString) return "";
+  const date = new Date(dateString);
+
+  const day = String(date.getDate()).padStart(2, "0");
+  const month = String(date.getMonth() + 1).padStart(2, "0"); // months are 0-based
+  const year = date.getFullYear();
+
+  return `${day}/${month}/${year}`;
+}
 
 const dateUtils = {
   formatSecondsToMMSS,
-  formateCreateOrUpdateDate,
+  formatDate,
+  getTimeFromISOString,
+  formatDateToDDMMYYYY,
 };
+
 export default dateUtils;

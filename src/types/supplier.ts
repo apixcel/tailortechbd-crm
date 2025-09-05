@@ -1,10 +1,15 @@
 export interface ISupplier {
   _id: string;
   name: string;
-  address: string;
+  supplierId: string;
   phoneNumber: string;
   email: string;
-  logoUrl: string;
-  createdAt?: string;
-  updatedAt?: string;
+  contactPerson?: string;
+  suppliedProductsCategories: string[];
+  address: string;
+  preferredPaymentMethod: string;
+  notes?: string;
+  docuemnt?: string; // url
+  createdAt: string;
+  updatedAt: string;
 }

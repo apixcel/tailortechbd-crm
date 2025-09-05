@@ -4,8 +4,8 @@ import DialogProvider from "@/components/ui/DialogProvider";
 import HorizontalLine from "@/components/ui/HorizontalLine";
 import Input from "@/components/ui/Input";
 import { ICountry } from "@/hooks";
-import { useCreateSuperAdminMutation } from "@/redux/features/super-admin/super-admin.api";
-import { IQueruMutationErrorResponse } from "@/types";
+// import { useCreateSuperAdminMutation } from "@/redux/features/role/role.api";
+// import { IQueruMutationErrorResponse } from "@/types";
 import { IUser } from "@/types/user";
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import React, { useState } from "react";
@@ -36,7 +36,7 @@ const CreateSuperAdmin = () => {
   const [country, setCountry] = useState<ICountry>();
   const [isOpen, setIsOpen] = React.useState(false);
 
-  const [createSuperAdmin, { isLoading }] = useCreateSuperAdminMutation();
+  // const [createSuperAdmin, { isLoading }] = useCreateSuperAdminMutation();
 
   const handleSubmit = async (values: typeof initialValues) => {
     const payload = {
@@ -45,19 +45,19 @@ const CreateSuperAdmin = () => {
       phoneNumber: `${country?.dial_code}${values.phoneNumber}`,
       geo_profile: { country: country?.name || "", phone_code: country?.dial_code || "" },
     };
-    const res = await createSuperAdmin(payload as IUser);
-    const error = res.error as IQueruMutationErrorResponse;
+    // const res = await createSuperAdmin(payload as IUser);
+    // const error = res.error as IQueruMutationErrorResponse;
 
-    if (error) {
-      if (error.data?.message) {
-        toast.error(error.data?.message);
-      } else {
-        toast.error("Something went wrong");
-      }
-      return;
-    }
-    toast.success("Super Admin created successfully");
-    setIsOpen(false);
+    // if (error) {
+    //   if (error.data?.message) {
+    //     toast.error(error.data?.message);
+    //   } else {
+    //     toast.error("Something went wrong");
+    //   }
+    //   return;
+    // }
+    // toast.success("Super Admin created successfully");
+    // setIsOpen(false);
   };
 
   return (
@@ -170,7 +170,7 @@ const CreateSuperAdmin = () => {
                     <Button
                       type="submit"
                       className="flex-1 hover:bg-primary/90"
-                      isLoading={isLoading}
+                      // isLoading={isLoading}
                     >
                       Create Super Admin
                     </Button>

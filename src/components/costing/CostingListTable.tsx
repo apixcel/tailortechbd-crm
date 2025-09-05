@@ -1,36 +1,30 @@
 "use client";
 
-import {
-  useDeleteCostingByIdMutation,
-  useGetAllCostingsQuery,
-} from "@/redux/features/costing/costing.api";
 import { useDebounce } from "@/hooks";
-import { useState } from "react";
-import Link from "next/link";
+import { useGetAllCostingsQuery } from "@/redux/features/costing/costing.api";
 import { truncateWords } from "@/utils";
-import dateUtils from "@/utils/date";
+import { useState } from "react";
 
 import { FaChevronDown, FaChevronUp } from "react-icons/fa";
-import { GoPencil } from "react-icons/go";
 import { RxMagnifyingGlass } from "react-icons/rx";
 
-import {
-  HorizontalLine,
-  TableDataNotFound,
-  TableSkeleton,
-  Pagination,
-  DeleteConfirmationDialog,
-} from "@/components";
+import { HorizontalLine, Pagination, TableDataNotFound, TableSkeleton } from "@/components";
+import dateUtils from "@/utils/date";
+import Link from "next/link";
+import { IoPencil } from "react-icons/io5";
+import DeleteCostingById from "./DeleteCostingById";
+import DownloadCostingReport from "./DownloadCostingReport";
 
 const tableHead = [
-  { label: "#", field: "" },
-  { label: "Partner Name", field: "" },
-  { label: "Costing Amount", field: "costingAmount" },
+  { label: "SL", field: "" },
+  { label: "Name", field: "" },
+  { label: "Designation", field: "" },
+  { label: "Costing Category", field: "" },
+  { label: "Description", field: "" },
   { label: "Date", field: "costingDate" },
-  { label: "Type", field: "" },
-  { label: "Note", field: "" },
-  { label: "Attachment", field: "" },
-  { label: "Create Date", field: "createdAt" },
+  { label: "Cost Amount", field: "costingAmount" },
+  { label: "Remarks", field: "" },
+  { label: "Documents", field: "" },
   { label: "Actions", field: "" },
 ];
 
@@ -39,11 +33,9 @@ const CostingListTable = () => {
   const [sort, setSort] = useState({ field: "createdAt", order: "desc" });
   const [query, setQuery] = useState<Record<string, string | number>>({
     page: 1,
-    fields: "partnerName,costingAmount,costingDate,costingType,note,fileUrl,createdAt",
     sort: `${sort.order === "desc" ? "-" : ""}${sort.field}`,
   });
 
-  const [deleteCosting, { isLoading: isDeleting }] = useDeleteCostingByIdMutation();
   const { data, isLoading } = useGetAllCostingsQuery({ ...query, searchTerm });
   const costingData = data?.data || [];
   const metaData = data?.meta || { totalDoc: 0, page: 1 };
@@ -87,6 +79,8 @@ const CostingListTable = () => {
             />
             <RxMagnifyingGlass />
           </div>
+
+          <DownloadCostingReport />
         </div>
 
         {/* table */}
@@ -98,7 +92,7 @@ const CostingListTable = () => {
                 {tableHead.map((heading) => (
                   <th
                     key={heading.field || heading.label}
-                    className="px-6 py-3 text-left text-sm font-semibold text-dashboard uppercase"
+                    className="px-6 py-3 text-left text-sm font-semibold text-dashboard"
                   >
                     {heading.field ? (
                       <button
@@ -130,6 +124,7 @@ const CostingListTable = () => {
                 ))}
               </tr>
             </thead>
+
             <tbody className="divide-y divide-gray-200 bg-white">
               {isLoading ? (
                 <TableSkeleton columns={tableHead.length} />
@@ -139,74 +134,74 @@ const CostingListTable = () => {
                     {/* index */}
                     <td className="px-6 py-4 text-sm text-gray-900">{index + 1}</td>
 
-                    {/* partner name */}
-                    <td className="px-6 py-4">
-                      <span className="line-clamp-1 text-[14px]">{costing.partnerName}</span>
-                    </td>
-
-                    {/* costing amount */}
-                    <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
-                      <span className="text-sm">{costing.costingAmount}</span>
-                    </td>
-
-                    {/* costing date */}
-                    <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
-                      <span className="text-sm">{costing.costingDate}</span>
-                    </td>
-
-                    {/* type */}
-                    <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
-                      <span className="text-sm">{costing.costingType}</span>
-                    </td>
-
-                    {/* note */}
-                    <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
-                      <span className="text-sm">{truncateWords(costing.note || "-", 10)}</span>
-                    </td>
-
-                    {/* attachment */}
-                    <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
-                      {costing.fileUrl?.length ? (
-                        <Link
-                          href={costing.fileUrl}
-                          target="_blank"
-                          className="text-sm hover:underline"
-                        >
-                          link
-                        </Link>
-                      ) : (
+                    {/* name */}
+                    <td className="px-6 py-4 text-sm text-gray-900">
+                      {!costing.preparedByName ? (
                         "-"
+                      ) : (
+                        <span className="font-[500]">{costing.preparedByName}</span>
                       )}
                     </td>
 
-                    {/* updated time */}
-                    <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
-                      <span className="text-sm">
-                        {dateUtils.formateCreateOrUpdateDate(costing.createdAt || "")}
-                      </span>
+                    {/* designation */}
+                    <td className="px-6 py-4 text-sm text-gray-900">
+                      {!costing.preparedByDesignation ? (
+                        "-"
+                      ) : (
+                        <span className="font-[500]">{costing.preparedByDesignation}</span>
+                      )}
                     </td>
 
-                    {/* actions */}
+                    {/* costing category */}
+                    <td className="px-6 py-4 text-sm text-gray-700">
+                      <span className="text-sm">{costing.costingCategory}</span>
+                    </td>
+
+                    {/* description */}
+                    <td className="max-w-[250px] px-6 py-4 text-sm text-gray-700">
+                      {truncateWords(costing.note || "-", 10)}
+                    </td>
+
+                    {/* costing date */}
+                    <td className="px-6 py-4 text-sm text-gray-700">
+                      <span className="text-sm">{dateUtils.formatDate(costing.costingDate)}</span>
+                    </td>
+
+                    {/* costing amount */}
+                    <td className="px-6 py-4 text-sm text-gray-700">
+                      <span className="text-sm">{costing.costingAmount}</span>
+                    </td>
+
+                    {/* remarks */}
+                    <td className="max-w-[250px] px-6 py-4 text-sm text-gray-700">
+                      {truncateWords(costing.costingRemark || "-", 10)}
+                    </td>
+
                     <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
-                      <div className="flex items-center gap-2">
-                        {/* update */}
+                      {costing.fileUrl ? (
+                        <Link
+                          href={costing.fileUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-primary underline"
+                        >
+                          View
+                        </Link>
+                      ) : (
+                        <span className="text-primary">—</span>
+                      )}
+                    </td>
+
+                    <td>
+                      <span className="flex items-center gap-[5px]">
                         <Link
                           href={`/costing-list/${costing._id}`}
-                          className="center aspect-square w-[30px] cursor-pointer rounded-full border-[1px] border-dashboard bg-dashboard/5 text-dashboard"
-                          title="Edit Costing"
+                          className="flex h-[30px] w-[30px] items-center justify-center rounded-full bg-primary/10 text-primary hover:bg-primary hover:text-white"
                         >
-                          <GoPencil />
+                          <IoPencil />
                         </Link>
-
-                        {/* delete */}
-                        <DeleteConfirmationDialog
-                          entityId={costing._id!}
-                          entityName={costing.partnerName}
-                          entityLabel="Costing"
-                          onDelete={(id) => deleteCosting({ costingId: id })}
-                          isLoading={isDeleting}
-                        />
-                      </div>
+                        <DeleteCostingById costing={costing} />
+                      </span>
                     </td>
                   </tr>
                 ))

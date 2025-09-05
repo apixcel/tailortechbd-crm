@@ -1,15 +1,23 @@
-export type TRoles = "user" | "admin";
-export type TGender = "male" | "female";
+export interface IRoleAction {
+  _id: string;
+  label: string;
+  value: string;
+}
+
+export interface IRole {
+  _id: string;
+  name: string;
+  actions: string[] | IRoleAction[];
+}
 export interface IUser {
   _id: string;
   fullName: string;
   avatar?: string;
-  email: string;
+  email?: string;
   password: string;
   phoneNumber: string;
-  isVerified: boolean;
   isActive: boolean;
-  gender?: TGender;
+  role: IRole;
   token?: string;
   createdAt: string;
   updatedAt: string;
@@ -17,5 +25,4 @@ export interface IUser {
     country: string;
     phone_code: string;
   };
-  role: TRoles;
 }
