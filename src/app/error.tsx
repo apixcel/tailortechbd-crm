@@ -1,7 +1,7 @@
 "use client";
 
 const error = () => {
-  return <div>now api be working</div>;
+  return <div>ok no more error</div>;
 };
 
 export default error;
