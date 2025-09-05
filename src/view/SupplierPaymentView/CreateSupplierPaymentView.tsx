@@ -12,7 +12,7 @@ const CreateSupplierPaymentView = () => {
 
   const handleSubmit = async (values: Partial<ISupplierPayment>) => {
     console.log(values);
-    return;
+    // return;
     if (isLoading) return;
     const res = await createSupplierPayment(values);
     const error = res.error as IQueryMutationErrorResponse;

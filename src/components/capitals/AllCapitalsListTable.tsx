@@ -20,10 +20,10 @@ const tableHead = [
 
 const AllCapitalsListTable = () => {
   const [searchTerm, setSearchTerm] = useDebounce("");
-  const [sort, setSort] = useState({ field: "date", order: "asc" });
+  const [sort, setSort] = useState({ field: "date", order: "desc" }); // latest first
   const [query, setQuery] = useState<Record<string, string | number>>({
     page: 1,
-    sort: `${sort.order === "desc" ? "-" : ""}${sort.field}`,
+    sort: "-date", // desc
   });
 
   const { data, isLoading } = useGetAllCapitalJournalQuery({ ...query, searchTerm });
@@ -105,18 +105,16 @@ const AllCapitalsListTable = () => {
                           <span>{heading.label}</span>
                           <span className="flex flex-col text-[10px] leading-[10px]">
                             <FaChevronUp
-                              className={`${
-                                sort.field === heading.field && sort.order === "asc"
+                              className={`${sort.field === heading.field && sort.order === "asc"
                                   ? "font-bold text-dashboard"
                                   : "text-dashboard/30"
-                              }`}
+                                }`}
                             />
                             <FaChevronDown
-                              className={`${
-                                sort.field === heading.field && sort.order === "desc"
+                              className={`${sort.field === heading.field && sort.order === "desc"
                                   ? "font-bold text-dashboard"
                                   : "text-dashboard/30"
-                              }`}
+                                }`}
                             />
                           </span>
                         </button>
