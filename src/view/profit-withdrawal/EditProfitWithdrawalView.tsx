@@ -26,10 +26,10 @@ const EditProfitWithdrawalView = ({ slug }: { slug: string }) => {
     return <DataNotFound title="Profit Distribution Not Found" />;
   }
 
-  const handleSubmit = async (payload: IProfitWithdrawal) => {
-    const formattedValues: IProfitWithdrawal = {
+  const handleSubmit = async (payload: Partial<IProfitWithdrawal>) => {
+    const formattedValues = {
       ...payload,
-      withdrawalDate: payload.withdrawalDate.split("T")[0],
+      withdrawalDate: payload.withdrawalDate?.split("T")[0],
     };
 
     if (isUpdating) {
@@ -62,6 +62,8 @@ const EditProfitWithdrawalView = ({ slug }: { slug: string }) => {
         buttonLabel="Update Profit Withdrawal"
         onSubmit={handleSubmit}
         isLoading={isUpdating}
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         defaultValue={data?.data}
       />
     </div>

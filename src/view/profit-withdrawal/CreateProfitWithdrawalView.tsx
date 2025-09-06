@@ -11,11 +11,15 @@ const CreateProfitWithdrawalView = () => {
   const [createProfitWithdrawal, { isLoading }] = useCreateProfitWithdrawalMutation();
   const router = useRouter();
 
-  const handleSubmit = async (payload: IProfitWithdrawal) => {
+  const handleSubmit = async (payload: Partial<IProfitWithdrawal>) => {
     const formattedValues: IProfitWithdrawalPayload = {
       ...payload,
-      partner: payload.partner._id,
+      partner: payload.partner?._id || "",
       attachment: payload.attachment || "",
+      comment: payload.comment || "",
+      percentage: payload.percentage || 0,
+      status: payload.status || "not_paid",
+      withdrawalAmount: payload.withdrawalAmount || 0,
     };
 
     const res = await createProfitWithdrawal(formattedValues);

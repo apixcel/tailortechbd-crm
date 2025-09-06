@@ -137,7 +137,6 @@ const DownloadProfitWithdrawalReport = () => {
                       <tr>
                         <th className="px-3 py-2 text-left">Withdrawal Date</th>
                         <th className="max-w-[150px] px-3 py-2 text-left">Partner</th>
-                        <th className="px-3 py-2 text-left">Profit Period</th>
                         <th className="px-3 py-2 text-right">Share</th>
                         <th className="px-3 py-2 text-right">Amount</th>
                         <th className="px-3 py-2 text-left">Status</th>
@@ -152,10 +151,6 @@ const DownloadProfitWithdrawalReport = () => {
                             {w.partner?.partnerName || "-"}({w.partner?.partnerDesignation || "-"})
                           </td>
 
-                          <td className="px-3 py-2">
-                            {dateUtils.formatDate(w.profitPeriod?.startDate)}-{" "}
-                            {dateUtils.formatDate(w.profitPeriod?.endDate)}
-                          </td>
                           <td className="px-3 py-2 text-right">{Number(w.percentage) || 0}%</td>
                           <td className="px-3 py-2 text-right">
                             {formatCurrency(w.totalProfitAmount)}

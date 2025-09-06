@@ -1,6 +1,5 @@
 import { useUpdateProfiteWithdrawalStatusByIdMutation } from "@/redux/features/profit-withdrawal/profit-withdrawal.api";
 import { IProfitWithdrawal, IQueryMutationErrorResponse, TProfitWithdrawalStatus } from "@/types";
-import dateUtils from "@/utils/date";
 import { useState } from "react";
 import { toast } from "sonner";
 import Button from "../ui/Button";
@@ -93,15 +92,6 @@ const UpdateProfitWithdrawalStatus = ({
                       d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
                     />
                   </svg>
-                </div>
-                <div className="flex-1">
-                  <span className="mb-[4px] block text-[14px] font-[600] text-gray-600">
-                    Profit Period
-                  </span>
-                  <span className="text-[15px] font-[500] text-gray-900">
-                    {dateUtils.formatDate(profitWithdrawal.profitPeriod?.startDate)} to{" "}
-                    {dateUtils.formatDate(profitWithdrawal.profitPeriod?.endDate)}
-                  </span>
                 </div>
               </div>
 
