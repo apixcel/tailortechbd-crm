@@ -219,9 +219,7 @@ const AllProfitWithdrawalTable = () => {
 
                     {/* get amount */}
                     <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
-                      <span className="font-bold">
-                        {Math.round(pw.totalProfitAmount * (pw.percentage / 100))} TK
-                      </span>
+                      <span className="font-bold">{pw.withdrawalAmount} TK</span>
                       <span className="text-success"> ({pw.percentage}%)</span>
                     </td>
 
