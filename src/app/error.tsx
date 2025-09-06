@@ -1,7 +1,7 @@
 "use client";
 
 const error = () => {
-  return <div>ok no more error</div>;
+  return <div className="flex h-dvh w-dvh items-center justify-center">Something went wrong</div>;
 };
 
 export default error;
