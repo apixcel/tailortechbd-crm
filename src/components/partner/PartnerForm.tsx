@@ -69,229 +69,259 @@ const PartnerForm = ({
         onSubmit(values, {} as FormikHelpers<PartnerFormValues>);
       }}
     >
-      {({ setFieldValue, values, touched, submitCount }) => (
-        <Form className="flex flex-col gap-4">
-          <div className="flex flex-col gap-4 bg-white p-4">
-            <SectionTitle>Partner Information</SectionTitle>
+      {({ setFieldValue, values }) => {
+        const isNomineesSharePercentageExceeds =
+          values.nominees.reduce((acc, curr) => acc + curr.sharePercentage, 0) > 100;
 
-            {/* partner name and designation */}
-            <div className="grid grid-cols-1 gap-[16px] lg:grid-cols-2">
-              {/* partner name */}
-              <div className="flex w-full flex-col gap-[5px]">
-                <label className="form-label">Partner Name</label>
-                <Field as={Input} name="partnerName" placeholder="Partner name" />
-                <ErrorMessage name="partnerName" component="div" className="text-sm text-danger" />
+        return (
+          <Form className="flex flex-col gap-4">
+            <div className="flex flex-col gap-4 bg-white p-4">
+              <SectionTitle>Partner Information</SectionTitle>
+
+              {/* partner name and designation */}
+              <div className="grid grid-cols-1 gap-[16px] lg:grid-cols-2">
+                {/* partner name */}
+                <div className="flex w-full flex-col gap-[5px]">
+                  <label className="form-label">Partner Name</label>
+                  <Field as={Input} name="partnerName" placeholder="Partner name" />
+                  <ErrorMessage
+                    name="partnerName"
+                    component="div"
+                    className="text-sm text-danger"
+                  />
+                </div>
+
+                {/* designation */}
+                <div className="flex w-full flex-col gap-[5px]">
+                  <label className="form-label">Designation</label>
+                  <Field as={Input} name="partnerDesignation" placeholder="Designation" />
+                  <ErrorMessage
+                    name="partnerDesignation"
+                    component="div"
+                    className="text-sm text-danger"
+                  />
+                </div>
+
+                {/* joining date */}
+                <div className="flex w-full flex-col gap-[5px]">
+                  <label className="form-label">Joining Date</label>
+                  <Field name="joiningDate">
+                    {(fieldProps: FieldProps) => <PickDate {...fieldProps} />}
+                  </Field>
+                  <ErrorMessage
+                    name="joiningDate"
+                    component="div"
+                    className="text-sm text-danger"
+                  />
+                </div>
+                <div className="flex w-full flex-col gap-[5px]">
+                  <label className="form-label">Profit Share (%)</label>
+                  <Field
+                    as={Input}
+                    type="number"
+                    name="sharePercentage"
+                    placeholder="Share Percentage"
+                  />
+                  <ErrorMessage
+                    name="sharePercentage"
+                    component="div"
+                    className="text-sm text-danger"
+                  />
+                </div>
               </div>
 
-              {/* designation */}
-              <div className="flex w-full flex-col gap-[5px]">
-                <label className="form-label">Designation</label>
-                <Field as={Input} name="partnerDesignation" placeholder="Designation" />
-                <ErrorMessage
-                  name="partnerDesignation"
-                  component="div"
-                  className="text-sm text-danger"
-                />
-              </div>
+              {/* Nominee Information */}
+              <SectionTitle>Nominee Information</SectionTitle>
+              <FieldArray
+                name="nominees"
+                render={(arrayHelpers) => (
+                  <div>
+                    {values.nominees.map((nominee, index) => (
+                      <div key={index} className="mb-4">
+                        <h4 className="text-lg font-bold">Nominee {index + 1}</h4>
 
-              {/* joining date */}
-              <div className="flex w-full flex-col gap-[5px]">
-                <label className="form-label">Joining Date</label>
-                <Field name="joiningDate">
-                  {(fieldProps: FieldProps) => <PickDate {...fieldProps} />}
-                </Field>
-                <ErrorMessage name="joiningDate" component="div" className="text-sm text-danger" />
-              </div>
-              <div className="flex w-full flex-col gap-[5px]">
-                <label className="form-label">Profit Share (%)</label>
-                <Field
-                  as={Input}
-                  type="number"
-                  name="sharePercentage"
-                  placeholder="Share Percentage"
-                />
-                <ErrorMessage
-                  name="sharePercentage"
-                  component="div"
-                  className="text-sm text-danger"
-                />
-              </div>
+                        {/* Nominee details in two columns */}
+                        <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+                          <div className="flex flex-col gap-[5px]">
+                            <label className="form-label">Full Name</label>
+                            <Field
+                              as={Input}
+                              name={`nominees[${index}].fullName`}
+                              placeholder="Full Name"
+                            />
+                            <ErrorMessage
+                              name={`nominees[${index}].fullName`}
+                              component="div"
+                              className="text-sm text-danger"
+                            />
+                          </div>
+
+                          <div className="flex flex-col gap-[5px]">
+                            <label className="form-label">Relation with Partner</label>
+                            <SelectionBox
+                              data={relationOptions}
+                              onSelect={(opt) =>
+                                setFieldValue(`nominees[${index}].relationWithPartner`, opt.value)
+                              }
+                              defaultValue={relationOptions.find(
+                                (opt) => opt.value === values.nominees[index].relationWithPartner
+                              )}
+                              displayValue={
+                                relationOptions.find(
+                                  (opt) => opt.value === values.nominees[index].relationWithPartner
+                                )?.label
+                              }
+                              showSearch={false}
+                            />
+                            <ErrorMessage
+                              name={`nominees[${index}].relationWithPartner`}
+                              component="div"
+                              className="text-sm text-danger"
+                            />
+                          </div>
+
+                          <div className="flex flex-col gap-[5px]">
+                            <label className="form-label">Phone Number</label>
+                            <Field
+                              as={Input}
+                              name={`nominees[${index}].phoneNumber`}
+                              placeholder="Phone Number"
+                            />
+                            <ErrorMessage
+                              name={`nominees[${index}].phoneNumber`}
+                              component="div"
+                              className="text-sm text-danger"
+                            />
+                          </div>
+
+                          <div className="flex flex-col gap-[5px]">
+                            <label className="form-label">Email</label>
+                            <Field
+                              as={Input}
+                              name={`nominees[${index}].email`}
+                              placeholder="Email"
+                            />
+                            <ErrorMessage
+                              name={`nominees[${index}].email`}
+                              component="div"
+                              className="text-sm text-danger"
+                            />
+                          </div>
+
+                          <div className="flex flex-col gap-[5px]">
+                            <label className="form-label">Share Percentage</label>
+                            <Field
+                              as={Input}
+                              name={`nominees[${index}].sharePercentage`}
+                              placeholder="Share Percentage"
+                              type="number"
+                            />
+                            <ErrorMessage
+                              name={`nominees[${index}].sharePercentage`}
+                              component="div"
+                              className="text-sm text-danger"
+                            />
+                          </div>
+
+                          <div className="flex flex-col gap-[5px] lg:col-span-2">
+                            <label className="form-label">Address</label>
+                            <Field
+                              as={TextArea}
+                              name={`nominees[${index}].address`}
+                              placeholder="Address"
+                              className="min-h-[150px]"
+                            />
+                            <ErrorMessage
+                              name={`nominees[${index}].address`}
+                              component="div"
+                              className="text-sm text-danger"
+                            />
+                          </div>
+
+                          <div className="flex flex-col gap-[5px] lg:col-span-2">
+                            <label className="form-label">Attachment (Document)</label>
+                            <p className="text-[12px] text-muted">
+                              Govment ID/Passport/Birt Certificate/Othe verificaton documents.
+                            </p>
+                            <ImageUploader
+                              defaultImages={
+                                values.nominees[index].attachment
+                                  ? [values.nominees[index].attachment]
+                                  : []
+                              }
+                              inputId={`nominees[${index}].attachment`}
+                              mode="single"
+                              title=""
+                              acceptPDF
+                              onChange={(url) => {
+                                setFieldValue(
+                                  `nominees[${index}].attachment`,
+                                  url ? url[0] || "" : ""
+                                );
+                              }}
+                            />
+                            <ErrorMessage
+                              name={`nominees[${index}].attachment`}
+                              component="div"
+                              className="text-sm text-danger"
+                            />
+                          </div>
+                        </div>
+                        <div className="mt-2">
+                          <Button
+                            className="bg-danger"
+                            type="button"
+                            onClick={() => arrayHelpers.remove(index)}
+                          >
+                            Remove Nominee {index + 1}
+                          </Button>
+                        </div>
+                      </div>
+                    ))}
+
+                    {/* Add new nominee button */}
+                    {values.nominees.length < 3 && (
+                      <Button
+                        type="button"
+                        onClick={() =>
+                          arrayHelpers.push({
+                            nomineeId: "",
+                            fullName: "",
+                            relationWithPartner: "",
+                            phoneNumber: "",
+                            email: "",
+                            address: "",
+                            sharePercentage: 0,
+                            attachment: "",
+                          })
+                        }
+                      >
+                        Add Nominee
+                      </Button>
+                    )}
+                  </div>
+                )}
+              />
+
+              {isNomineesSharePercentageExceeds && (
+                <p className="text-danger">
+                  Maximum share percentage reached. Total nominee share percentage cannot exceed
+                  100%.
+                </p>
+              )}
             </div>
 
-            {/* Nominee Information */}
-            <SectionTitle>Nominee Information</SectionTitle>
-            <FieldArray
-              name="nominees"
-              render={(arrayHelpers) => (
-                <div>
-                  {values.nominees.map((nominee, index) => (
-                    <div key={index} className="mb-4">
-                      <h4 className="text-lg font-bold">Nominee {index + 1}</h4>
-
-                      {/* Nominee details in two columns */}
-                      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-                        <div className="flex flex-col gap-[5px]">
-                          <label className="form-label">Full Name</label>
-                          <Field
-                            as={Input}
-                            name={`nominees[${index}].fullName`}
-                            placeholder="Full Name"
-                          />
-                          <ErrorMessage
-                            name={`nominees[${index}].fullName`}
-                            component="div"
-                            className="text-sm text-danger"
-                          />
-                        </div>
-
-                        <div className="flex flex-col gap-[5px]">
-                          <label className="form-label">Relation with Partner</label>
-                          <SelectionBox
-                            data={relationOptions}
-                            onSelect={(opt) =>
-                              setFieldValue(`nominees[${index}].relationWithPartner`, opt.value)
-                            }
-                            defaultValue={relationOptions.find(
-                              (opt) => opt.value === values.nominees[index].relationWithPartner
-                            )}
-                            displayValue={
-                              relationOptions.find(
-                                (opt) => opt.value === values.nominees[index].relationWithPartner
-                              )?.label
-                            }
-                            showSearch={false}
-                          />
-                          <ErrorMessage
-                            name={`nominees[${index}].relationWithPartner`}
-                            component="div"
-                            className="text-sm text-danger"
-                          />
-                        </div>
-
-                        <div className="flex flex-col gap-[5px]">
-                          <label className="form-label">Phone Number</label>
-                          <Field
-                            as={Input}
-                            name={`nominees[${index}].phoneNumber`}
-                            placeholder="Phone Number"
-                          />
-                          <ErrorMessage
-                            name={`nominees[${index}].phoneNumber`}
-                            component="div"
-                            className="text-sm text-danger"
-                          />
-                        </div>
-
-                        <div className="flex flex-col gap-[5px]">
-                          <label className="form-label">Email</label>
-                          <Field as={Input} name={`nominees[${index}].email`} placeholder="Email" />
-                          <ErrorMessage
-                            name={`nominees[${index}].email`}
-                            component="div"
-                            className="text-sm text-danger"
-                          />
-                        </div>
-
-                        <div className="flex flex-col gap-[5px]">
-                          <label className="form-label">Share Percentage</label>
-                          <Field
-                            as={Input}
-                            name={`nominees[${index}].sharePercentage`}
-                            placeholder="Share Percentage"
-                            type="number"
-                          />
-                          <ErrorMessage
-                            name={`nominees[${index}].sharePercentage`}
-                            component="div"
-                            className="text-sm text-danger"
-                          />
-                        </div>
-
-                        <div className="flex flex-col gap-[5px] lg:col-span-2">
-                          <label className="form-label">Address</label>
-                          <Field
-                            as={TextArea}
-                            name={`nominees[${index}].address`}
-                            placeholder="Address"
-                            className="min-h-[150px]"
-                          />
-                          <ErrorMessage
-                            name={`nominees[${index}].address`}
-                            component="div"
-                            className="text-sm text-danger"
-                          />
-                        </div>
-
-                        <div className="flex flex-col gap-[5px] lg:col-span-2">
-                          <label className="form-label">Attachment (Document)</label>
-                          <p className="text-[12px] text-muted">
-                            Govment ID/Passport/Birt Certificate/Othe verificaton documents.
-                          </p>
-                          <ImageUploader
-                            defaultImages={
-                              values.nominees[index].attachment
-                                ? [values.nominees[index].attachment]
-                                : []
-                            }
-                            inputId={`nominees[${index}].attachment`}
-                            mode="single"
-                            title=""
-                            acceptPDF
-                            onChange={(url) => {
-                              setFieldValue(
-                                `nominees[${index}].attachment`,
-                                url ? url[0] || "" : ""
-                              );
-                            }}
-                          />
-                          <ErrorMessage
-                            name={`nominees[${index}].attachment`}
-                            component="div"
-                            className="text-sm text-danger"
-                          />
-                        </div>
-                      </div>
-                      <div className="mt-2">
-                        <Button
-                          className="bg-danger"
-                          type="button"
-                          onClick={() => arrayHelpers.remove(index)}
-                        >
-                          Remove Nominee {index + 1}
-                        </Button>
-                      </div>
-                    </div>
-                  ))}
-                  {/* Add new nominee button */}
-                  {values.nominees.length < 3 && (
-                    <Button
-                      type="button"
-                      onClick={() =>
-                        arrayHelpers.push({
-                          nomineeId: "",
-                          fullName: "",
-                          relationWithPartner: "",
-                          phoneNumber: "",
-                          email: "",
-                          address: "",
-                          sharePercentage: 0,
-                          attachment: "",
-                        })
-                      }
-                    >
-                      Add Nominee
-                    </Button>
-                  )}
-                </div>
-              )}
-            />
-          </div>
-
-          <Button type="submit" isLoading={isLoading} className="mt-2">
-            {buttonLabel}
-          </Button>
-        </Form>
-      )}
+            <Button
+              disabled={isLoading || isNomineesSharePercentageExceeds}
+              type="submit"
+              isLoading={isLoading}
+              className="mt-2"
+            >
+              {buttonLabel}
+            </Button>
+          </Form>
+        );
+      }}
     </Formik>
   );
 };

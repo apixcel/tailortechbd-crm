@@ -3,8 +3,6 @@
 import { useGetAllProfitBalanceListQuery } from "@/redux/features/ProfitBalance/profitBalance.api";
 import { useState } from "react";
 import { FaChevronDown, FaChevronUp } from "react-icons/fa6";
-import { DateObject } from "react-multi-date-picker";
-import AnalyticsOverviewFilter from "../shared/AnalyticsOverviewFilter";
 import HorizontalLine from "../ui/HorizontalLine";
 import Pagination from "../ui/Pagination";
 import TableDataNotFound from "../ui/TableDataNotFound";
@@ -18,14 +16,8 @@ const tableHead = [
   { label: "Last Profit Withdrawal Amount", field: "" },
   { label: "Current Profit Balance", field: "" },
 ];
-const today = new DateObject();
 
 const AllProfitBalanceListTable = () => {
-  const copyDate = (date: DateObject) => new DateObject(date.toDate());
-
-  const lasat30Days = [copyDate(today).subtract(30, "days"), copyDate(today)];
-  const [selectedRange, setSelectedRange] = useState<DateObject[] | null>(lasat30Days);
-
   const [sort, setSort] = useState({ field: "createdAt", order: "desc" });
   const [query, setQuery] = useState<Record<string, string | number>>({
     page: 1,
@@ -34,8 +26,6 @@ const AllProfitBalanceListTable = () => {
 
   const { data } = useGetAllProfitBalanceListQuery({
     ...query,
-    startDate: selectedRange?.[0] ? selectedRange[0].format("YYYY-MM-DD") : "",
-    endDate: selectedRange?.[1] ? selectedRange[1].format("YYYY-MM-DD") : "",
   });
 
   const profitBalanceData = data?.data?.result || [];
@@ -79,13 +69,6 @@ const AllProfitBalanceListTable = () => {
 
           <HorizontalLine />
 
-          <div className="flex w-fit flex-col items-start gap-2">
-            <label className="form-label">Date Range</label>
-            <AnalyticsOverviewFilter
-              onChange={(date) => setSelectedRange(date)}
-              value={selectedRange}
-            />
-          </div>
           {/* table */}
           <div className="overflow-x-auto">
             <table className="w-full divide-y divide-dashboard/20">

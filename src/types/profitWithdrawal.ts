@@ -10,25 +10,17 @@ export interface IProfitWithdrawal {
   status: TProfitWithdrawalStatus;
   comment: string;
   attachment?: string;
-  profitPeriod: {
-    startDate: string;
-    endDate: string;
-  };
+  withdrawalAmount: number;
   partner: IPartner;
   createdAt?: string;
   updatedAt?: string;
 }
 
 export interface IProfitWithdrawalPayload {
-  totalProfitAmount: number;
   percentage: number;
-  withdrawalDate: string;
   status: string;
   comment: string;
   attachment?: string;
-  profitPeriod: {
-    startDate: string;
-    endDate: string;
-  };
+  withdrawalAmount: number;
   partner: string;
 }

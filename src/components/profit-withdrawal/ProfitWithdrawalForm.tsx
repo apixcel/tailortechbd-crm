@@ -1,16 +1,14 @@
 "use client";
 
-import { IPartner, IProfitWithdrawal } from "@/types";
-import { ErrorMessage, Field, FieldProps, Form, Formik, FormikHelpers } from "formik";
+import { IProfitWithdrawal, TProfitWithdrawalStatus } from "@/types";
+import { ErrorMessage, Field, Form, Formik, FormikHelpers } from "formik";
 import * as Yup from "yup";
 
 import {
   AddPartnerOnForm,
   Button,
-  FormikDateRangePicker,
   ImageUploader,
   Input,
-  PickDate,
   SectionTitle,
   SelectionBox,
   TextArea,
@@ -27,20 +25,12 @@ const today = new Date();
 const tomorrow = new Date();
 tomorrow.setDate(today.getDate() + 1);
 
-const initialValues: Omit<IProfitWithdrawal, "_id" | "createdAt" | "updatedAt" | "partner"> & {
-  partner: Omit<IPartner, "createdAt" | "updatedAt">;
-} = {
-  totalProfitAmount: 0,
-  percentage: 0,
-  withdrawalDate: new Date().toISOString(),
-  status: "not_paid",
+const initialValues = {
+  status: "not_paid" as TProfitWithdrawalStatus,
   comment: "",
   attachment: "",
   paymentMethod: "",
-  profitPeriod: {
-    endDate: today.toISOString(),
-    startDate: tomorrow.toISOString(),
-  },
+  withdrawalAmount: 0,
   partner: {
     _id: "",
     sharePercentage: 0,
@@ -51,21 +41,13 @@ const initialValues: Omit<IProfitWithdrawal, "_id" | "createdAt" | "updatedAt" |
 };
 
 const validationSchema = Yup.object().shape({
-  totalProfitAmount: Yup.number()
-    .required("Profit amount is required")
-    .min(1, "Profit amount must be at least 1"),
-  percentage: Yup.number()
-    .required("Percentage is required")
-    .min(1, "Percentage must be at least 1")
-    .max(100, "Percentage must be at most 100"),
-  withdrawalDate: Yup.string().required("Date is required"),
+  withdrawalAmount: Yup.number()
+    .max(10000000, "Amount must be less than 10000000")
+    .required("Amount is required"),
   comment: Yup.string().required("Comment is required"),
+  attachment: Yup.string().optional(),
   paymentMethod: Yup.string().required("Payment Method is required"),
   status: Yup.string().required("Status is required"),
-  profitPeriod: Yup.object().shape({
-    startDate: Yup.string().required("Start date is required"),
-    endDate: Yup.string().required("End date is required"),
-  }),
   partner: Yup.object().shape({
     _id: Yup.string().required("Invalid partner"),
     partnerName: Yup.string().required("Partner name is required"),
@@ -82,7 +64,10 @@ const ProfitWithdrawalForm = ({
 }: {
   isLoading: boolean;
   defaultValue?: typeof initialValues;
-  onSubmit: (values: IProfitWithdrawal, { resetForm }: FormikHelpers<typeof initialValues>) => void;
+  onSubmit: (
+    values: Partial<IProfitWithdrawal>,
+    { resetForm }: FormikHelpers<typeof initialValues>
+  ) => void;
   buttonLabel?: string;
 }) => {
   return (
@@ -90,7 +75,7 @@ const ProfitWithdrawalForm = ({
       initialValues={defaultValue || initialValues}
       validationSchema={validationSchema}
       onSubmit={(values) => {
-        onSubmit(values as IProfitWithdrawal, {} as FormikHelpers<typeof initialValues>);
+        onSubmit(values, {} as FormikHelpers<typeof initialValues>);
       }}
     >
       {({ setFieldValue, values, touched, submitCount }) => (
@@ -98,59 +83,6 @@ const ProfitWithdrawalForm = ({
           <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
             <div className="flex flex-col gap-4 bg-white p-4">
               <SectionTitle>Profit Withdrawal Information</SectionTitle>
-
-              {/* total profit amount and percentage */}
-              <div className="flex w-full flex-col items-start justify-start gap-[16px] sm:flex-row">
-                {/* profit period */}
-                <div className="flex w-full flex-col gap-[5px]">
-                  <label className="form-label">Profit Period (Date Range)</label>
-                  <Field name="profitPeriod" component={FormikDateRangePicker} />
-                  <ErrorMessage
-                    name="profitPeriod.startDate"
-                    component="div"
-                    className="text-sm text-danger"
-                  />
-                  <ErrorMessage
-                    name="profitPeriod.endDate"
-                    component="div"
-                    className="text-sm text-danger"
-                  />
-                </div>
-
-                {/* profit amount */}
-                <div className="flex w-full flex-col gap-[5px]">
-                  <label className="form-label">Total Profit Amount</label>
-                  <Field as={Input} type="number" name="totalProfitAmount" placeholder="Amount" />
-                  <ErrorMessage
-                    name="totalProfitAmount"
-                    component="div"
-                    className="text-sm text-danger"
-                  />
-                </div>
-              </div>
-
-              {/* percentage and withdrawal date */}
-              <div className="flex w-full flex-col items-start justify-start gap-[16px] sm:flex-row">
-                {/* percentage */}
-                <div className="flex w-full flex-col gap-[5px]">
-                  <label className="form-label">Percentage</label>
-                  <Field as={Input} type="number" name="percentage" placeholder="Percentage" />
-                  <ErrorMessage name="percentage" component="div" className="text-sm text-danger" />
-                </div>
-
-                {/* date picker */}
-                <div className="flex w-full flex-col gap-[5px]">
-                  <label className="form-label">Withdrawal Date</label>
-                  <Field name="withdrawalDate">
-                    {(fieldProps: FieldProps) => <PickDate {...fieldProps} />}
-                  </Field>
-                  <ErrorMessage
-                    name="withdrawalDate"
-                    component="div"
-                    className="text-sm text-danger"
-                  />
-                </div>
-              </div>
 
               {/* status and withdrawal date */}
               <div className="flex w-full flex-col items-start justify-start gap-[16px] sm:flex-row">
@@ -186,6 +118,21 @@ const ProfitWithdrawalForm = ({
                   />
                   <ErrorMessage name="status" component="div" className="text-sm text-danger" />
                 </div>
+              </div>
+
+              <div className="flex w-full flex-col gap-[5px]">
+                <label className="form-label">Withdrawal Amount</label>
+                <Field
+                  as={Input}
+                  name="withdrawalAmount"
+                  placeholder="Withdrawal Amount"
+                  rows={4}
+                />
+                <ErrorMessage
+                  name="withdrawalAmount"
+                  component="spam"
+                  className="text-sm text-danger"
+                />
               </div>
 
               {/* comment */}

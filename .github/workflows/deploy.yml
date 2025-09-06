@@ -1,0 +1,59 @@
+name: Deploy
+
+on:
+  push:
+    branches: ["main", "dev"]
+  pull_request:
+    branches: ["main", "dev"]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set deployment target path
+        id: setpath
+        run: |
+          if [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
+            echo "target_path=/home/ubuntu/tailortech_crm/production/frontend" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Copy Files to VPS
+        uses: appleboy/scp-action@v0.1.0
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USER }}
+          port: ${{ secrets.PORT }}
+          key: ${{ secrets.SSH_KEY }}
+          source: "./"
+          target: ${{ steps.setpath.outputs.target_path }}
+
+      - name: Deploy App to Server
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USER }}
+          port: ${{ secrets.PORT }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            export NVM_DIR="$HOME/.nvm"
+            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+            [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+            nvm use node || nvm install node
+
+            if [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
+              DEPLOY_PATH="/home/ubuntu/tailortech_crm/production/frontend"
+              PM2_NAME="backend-main"
+            fi
+
+            cd $DEPLOY_PATH
+            echo "Installing dependencies..."
+            yarn install
+            echo "Building..."
+            yarn build || echo "No build step or build failed"
+            echo "Reloading PM2..."
+            pm2 reload $PM2_NAME || pm2 reload all
+            pm2 save
