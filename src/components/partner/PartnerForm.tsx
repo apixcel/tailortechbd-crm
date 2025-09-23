@@ -16,6 +16,10 @@ import { relationOptions } from "@/constant/relationship";
 import { IPartnerNominee } from "@/types";
 
 const initialValues = {
+  phoneNumber: "",
+  email: "",
+  address: "",
+  attachment: "",
   partnerName: "",
   partnerDesignation: "",
   joiningDate: new Date().toISOString(),
@@ -32,6 +36,10 @@ const validationSchema = Yup.object().shape({
   sharePercentage: Yup.number()
     .required("Share percentage is required")
     .max(100, "Share percentage must be between 0 and 100"),
+  phoneNumber: Yup.string().required("Phone number is required"),
+  email: Yup.string().email("Invalid email address").required("Email is required"),
+  address: Yup.string().required("Address is required"),
+  attachment: Yup.string().required("Attachment is required"),
   nominees: Yup.array()
     .of(
       Yup.object().shape({
@@ -80,53 +88,114 @@ const PartnerForm = ({
 
               {/* partner name and designation */}
               <div className="grid grid-cols-1 gap-[16px] lg:grid-cols-2">
-                {/* partner name */}
-                <div className="flex w-full flex-col gap-[5px]">
-                  <label className="form-label">Partner Name</label>
-                  <Field as={Input} name="partnerName" placeholder="Partner name" />
-                  <ErrorMessage
-                    name="partnerName"
-                    component="div"
-                    className="text-sm text-danger"
-                  />
+                <div className="flex flex-col gap-3">
+                  {/* partner name */}
+                  <div className="flex w-full flex-col gap-[5px]">
+                    <label className="form-label">Partner Name</label>
+                    <Field as={Input} name="partnerName" placeholder="Partner name" />
+                    <ErrorMessage
+                      name="partnerName"
+                      component="div"
+                      className="text-sm text-danger"
+                    />
+                  </div>
+
+                  {/* designation */}
+                  <div className="flex w-full flex-col gap-[5px]">
+                    <label className="form-label">Designation</label>
+                    <Field as={Input} name="partnerDesignation" placeholder="Designation" />
+                    <ErrorMessage
+                      name="partnerDesignation"
+                      component="div"
+                      className="text-sm text-danger"
+                    />
+                  </div>
+
+                  {/* phone number */}
+                  <div className="flex flex-col gap-[5px]">
+                    <label className="form-label">Phone Number</label>
+                    <Field as={Input} name={`phoneNumber`} placeholder="Phone Number" />
+                    <ErrorMessage
+                      name={`phoneNumber`}
+                      component="div"
+                      className="text-sm text-danger"
+                    />
+                  </div>
+
+                  {/* email */}
+                  <div className="flex flex-col gap-[5px]">
+                    <label className="form-label">Email</label>
+                    <Field as={Input} name={`email`} placeholder="Email" />
+                    <ErrorMessage name={`email`} component="div" className="text-sm text-danger" />
+                  </div>
+
+                  {/* address */}
+                  <div className="flex w-full flex-col gap-[5px]">
+                    <label className="form-label">Address</label>
+                    <Field
+                      as={TextArea}
+                      name={`address`}
+                      placeholder="Address"
+                      className="min-h-[150px]"
+                    />
+                    <ErrorMessage
+                      name={`address`}
+                      component="div"
+                      className="text-sm text-danger"
+                    />
+                  </div>
                 </div>
 
-                {/* designation */}
-                <div className="flex w-full flex-col gap-[5px]">
-                  <label className="form-label">Designation</label>
-                  <Field as={Input} name="partnerDesignation" placeholder="Designation" />
-                  <ErrorMessage
-                    name="partnerDesignation"
-                    component="div"
-                    className="text-sm text-danger"
-                  />
-                </div>
+                <div className="flex flex-col gap-3">
+                  {/* profit share */}
+                  <div className="flex w-full flex-col gap-[5px]">
+                    <label className="form-label">Profit Share (%)</label>
+                    <Field
+                      as={Input}
+                      type="number"
+                      name="sharePercentage"
+                      placeholder="Share Percentage"
+                    />
+                    <ErrorMessage
+                      name="sharePercentage"
+                      component="div"
+                      className="text-sm text-danger"
+                    />
+                  </div>
 
-                {/* joining date */}
-                <div className="flex w-full flex-col gap-[5px]">
-                  <label className="form-label">Joining Date</label>
-                  <Field name="joiningDate">
-                    {(fieldProps: FieldProps) => <PickDate {...fieldProps} />}
-                  </Field>
-                  <ErrorMessage
-                    name="joiningDate"
-                    component="div"
-                    className="text-sm text-danger"
-                  />
-                </div>
-                <div className="flex w-full flex-col gap-[5px]">
-                  <label className="form-label">Profit Share (%)</label>
-                  <Field
-                    as={Input}
-                    type="number"
-                    name="sharePercentage"
-                    placeholder="Share Percentage"
-                  />
-                  <ErrorMessage
-                    name="sharePercentage"
-                    component="div"
-                    className="text-sm text-danger"
-                  />
+                  {/* joining date */}
+                  <div className="flex w-full flex-col gap-[5px]">
+                    <label className="form-label">Joining Date</label>
+                    <Field name="joiningDate">
+                      {(fieldProps: FieldProps) => <PickDate {...fieldProps} />}
+                    </Field>
+                    <ErrorMessage
+                      name="joiningDate"
+                      component="div"
+                      className="text-sm text-danger"
+                    />
+                  </div>
+
+                  {/* attachment */}
+                  <div className="flex w-full flex-col">
+                    <label className="form-label">Attachment (Document)</label>
+                    <p className="text-[12px] text-muted">
+                      Govment ID/Passport/Birt Certificate/Othe verificaton documents.
+                    </p>
+                    <ImageUploader
+                      mode="single"
+                      title=""
+                      acceptPDF
+                      onChange={(url) => {
+                        setFieldValue(`attachment`, url ? url[0] || "" : "");
+                      }}
+                    />
+                    <ErrorMessage
+                      name={`attachment`}
+                      component="div"
+                      className="text-sm text-danger"
+                    />
+                  </div>
                 </div>
               </div>
 

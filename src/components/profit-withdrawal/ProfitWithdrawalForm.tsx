@@ -74,8 +74,21 @@ const ProfitWithdrawalForm = ({
     <Formik
       initialValues={defaultValue || initialValues}
       validationSchema={validationSchema}
-      onSubmit={(values) => {
-        onSubmit(values, {} as FormikHelpers<typeof initialValues>);
+      onSubmit={(values, formikHelpers) => {
+        const completePartner = {
+          phoneNumber: "",
+          email: "",
+          address: "",
+          attachment: "",
+          ...values.partner,
+        };
+        onSubmit(
+          {
+            ...values,
+            partner: completePartner,
+          },
+          formikHelpers
+        );
       }}
     >
       {({ setFieldValue, values, touched, submitCount }) => (

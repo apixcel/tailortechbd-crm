@@ -55,7 +55,7 @@ const CreatePartnerNomineeView = () => {
       return;
     }
     toast.success("Nominee created successfully");
-    router.push("/partner-list");
+    router.push(`/partner-list/nominee/${params.id}`);
   };
 
   return (

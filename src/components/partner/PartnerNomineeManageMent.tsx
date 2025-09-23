@@ -46,7 +46,7 @@ const PartnerNomineeManageMent: React.FC<Props> = ({ partner }) => {
               <span>No nominees found for this partner.</span>
               <Link
                 className="w-fit rounded-[2px] bg-primary px-4 py-1 text-sm text-white hover:bg-primary/70"
-                href={`/partner-list/create/nominee/${partner._id}`}
+                href={`/partner-list/nominee/${partner._id}/create`}
               >
                 Add Nominee
               </Link>
@@ -81,7 +81,7 @@ const PartnerNomineeManageMent: React.FC<Props> = ({ partner }) => {
               {nominees.length < 3 ? (
                 <Link
                   className="w-fit rounded-[2px] bg-primary px-4 py-1 text-sm text-white hover:bg-primary/70"
-                  href={`/partner-list/create/nominee/${partner._id}`}
+                  href={`/partner-list/nominee/${partner._id}`}
                 >
                   Add Nominee
                 </Link>

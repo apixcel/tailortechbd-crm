@@ -9,13 +9,18 @@ import Link from "next/link";
 import { useState } from "react";
 import { RxMagnifyingGlass } from "react-icons/rx";
 import DeletePartner from "./DeletePartner";
-import PartnerNomineeManageMent from "./PartnerNomineeManageMent";
+import { AiOutlineUserSwitch } from "react-icons/ai";
 
 const tableHead = [
   { label: "SL", field: "" },
   { label: "Name", field: "" },
   { label: "Designation", field: "" },
   { label: "Total Nominee", field: "" },
+  { label: "Contact No", field: "" },
+  { label: "Email", field: "" },
+  { label: "Address", field: "" },
+  { label: "Profit Share", field: "" },
+  { label: "Attachment", field: "" },
   { label: "Joining Date", field: "" },
   {
     label: "Action",
@@ -110,8 +115,45 @@ const AllPartnerListTable = () => {
                     <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
                       <span className="text-sm">{partner.partnerDesignation}</span>
                     </td>
+
                     <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
-                      <PartnerNomineeManageMent partner={partner} />
+                      <Link
+                        href={`/partner-list/nominee/${partner._id}`}
+                        className="flex cursor-pointer items-center gap-1 text-sm text-blue-600 hover:underline"
+                      >
+                        <AiOutlineUserSwitch /> {partner.nomineeCount || 0} Nominees
+                      </Link>
+                    </td>
+
+                    {/* contact no */}
+                    <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
+                      <span className="text-sm">{partner.phoneNumber || "-"}</span>
+                    </td>
+
+                    {/* email */}
+                    <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
+                      <span className="text-sm">{partner.email || "-"}</span>
+                    </td>
+
+                    {/* address */}
+                    <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
+                      <span className="text-sm">{partner.address || "-"}</span>
+                    </td>
+
+                    {/* profit share */}
+                    <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
+                      <span className="text-sm">{partner.sharePercentage}%</span>
+                    </td>
+
+                    {/* attachment */}
+                    <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
+                      {partner.attachment ? (
+                        <Link href={partner.attachment} target="_blank" className="underline">
+                          View
+                        </Link>
+                      ) : (
+                        "-"
+                      )}
                     </td>
 
                     {/* joining date */}

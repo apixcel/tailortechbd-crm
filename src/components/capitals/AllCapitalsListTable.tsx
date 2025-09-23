@@ -105,16 +105,18 @@ const AllCapitalsListTable = () => {
                           <span>{heading.label}</span>
                           <span className="flex flex-col text-[10px] leading-[10px]">
                             <FaChevronUp
-                              className={`${sort.field === heading.field && sort.order === "asc"
+                              className={`${
+                                sort.field === heading.field && sort.order === "asc"
                                   ? "font-bold text-dashboard"
                                   : "text-dashboard/30"
-                                }`}
+                              }`}
                             />
                             <FaChevronDown
-                              className={`${sort.field === heading.field && sort.order === "desc"
+                              className={`${
+                                sort.field === heading.field && sort.order === "desc"
                                   ? "font-bold text-dashboard"
                                   : "text-dashboard/30"
-                                }`}
+                              }`}
                             />
                           </span>
                         </button>
