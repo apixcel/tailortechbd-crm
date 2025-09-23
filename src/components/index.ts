@@ -84,6 +84,7 @@ export { default as AllProfitBalanceListTable } from "./profit-balance/AllProfit
 
 // partner
 export { default as AllPartnerListTable } from "./partner/AllPartnerListTable";
+export { default as AllNomineeListTable } from "./partner/AllNomineeListTable";
 export { default as PartnerDropDown } from "./partner/PartnerDropDown";
 export { default as PartnerForm } from "./partner/PartnerForm";
 

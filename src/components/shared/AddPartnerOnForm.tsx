@@ -28,11 +28,11 @@ const AddPartnerOnForm = ({ setFieldValue, onSelect }: IProps) => {
 
   const handleSelectPartner = (partner: Omit<IPartner, "createdAt" | "updatedAt">) => {
     setFieldValue?.("partner", {
-      _id: partner._id,
-      partnerName: partner.partnerName,
-      partnerDesignation: partner.partnerDesignation,
-      joiningDate: partner.joiningDate,
-      sharePercentage: partner.sharePercentage,
+      ...partner,
+      phoneNumber: (partner as IPartner).phoneNumber ?? "",
+      email: (partner as IPartner).email ?? "",
+      address: (partner as IPartner).address ?? "",
+      attachment: (partner as IPartner).attachment ?? "",
     });
     onSelect?.(partner);
     setIsOpen(false);

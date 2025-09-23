@@ -5,6 +5,10 @@ export interface IPartner {
   partnerDesignation: string;
   joiningDate: string;
   sharePercentage: number;
+  phoneNumber: string;
+  email: string;
+  address: string;
+  attachment: string;
   createdAt?: string;
   updatedAt?: string;
 }

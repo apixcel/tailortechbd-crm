@@ -189,8 +189,8 @@ const SupplierPaymentForm = ({
                   />
                 </div>
 
-                <div>k
-                  {/* Payment Document (optional) */}
+                <div>
+                  k{/* Payment Document (optional) */}
                   <ImageUploader
                     inputId="payment-attachment"
                     mode="single"
