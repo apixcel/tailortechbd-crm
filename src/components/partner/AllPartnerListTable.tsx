@@ -127,17 +127,17 @@ const AllPartnerListTable = () => {
 
                     {/* contact no */}
                     <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
-                      <span className="text-sm">{partner.phoneNumber || "-"}</span>
+                      <span className="text-sm">{partner.phoneNumber}</span>
                     </td>
 
                     {/* email */}
                     <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
-                      <span className="text-sm">{partner.email || "-"}</span>
+                      <span className="text-sm">{partner.email}</span>
                     </td>
 
                     {/* address */}
                     <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
-                      <span className="text-sm">{partner.address || "-"}</span>
+                      <span className="text-sm">{partner.address}</span>
                     </td>
 
                     {/* profit share */}
