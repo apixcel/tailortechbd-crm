@@ -20,6 +20,7 @@ import {
 import dateUtils from "@/utils/date";
 import { useState } from "react";
 import { FaChevronDown, FaChevronUp } from "react-icons/fa6";
+import DownloadSupplierPaymentsReport from "./DownloadSupplierPaymentsReport";
 
 const tableHead = [
   { label: "SL", field: "" },
@@ -61,9 +62,9 @@ const SupplierPaymentsListTable = () => {
     <div className="mt-4 flex flex-col gap-[10px]">
       <div className="flex flex-col gap-[15px] bg-white p-4">
         <div className="flex flex-col gap-[5px]">
-          <h1 className="text-[16px] font-[600]">Supplier Payments List</h1>
+          <h1 className="text-[16px] font-[600]">All Supplier Payments</h1>
           <p className="text-[12px] text-muted md:text-[14px]">
-            Displaying All the available suppliers payments in your store. There is total{" "}
+            Displaying all the available suppliers payments in your Dashboard. There is total{" "}
             <span className="font-bold text-dashboard">{metaData.totalDoc}</span> suppliers. Data is
             divided into{" "}
             <span className="font-bold text-dashboard">
@@ -91,12 +92,7 @@ const SupplierPaymentsListTable = () => {
             <RxMagnifyingGlass />
           </div>
 
-          <Link
-            href="/supplier-payments-list/create"
-            className="max-w-[300px] rounded-[4px] bg-primary px-[14px] py-[8px] text-white sm:max-w-full"
-          >
-            Create Supplier Payment
-          </Link>
+          <DownloadSupplierPaymentsReport />
         </div>
 
         {/* table */}
@@ -228,14 +224,6 @@ const SupplierPaymentsListTable = () => {
                     {/* actions */}
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-[8px]">
-                        {/* update */}
-                        <Link
-                          href={`/supplier-list/${supllierPayment._id}`}
-                          className="center aspect-square w-[30px] cursor-pointer rounded-full border-[1px] border-dashboard bg-dashboard/5 text-dashboard"
-                          title="Edit Supplier"
-                        >
-                          <GoPencil />
-                        </Link>
                         {/* delete */}
                         <DeleteConfirmationDialog
                           entityId={supllierPayment._id}

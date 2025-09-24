@@ -115,9 +115,9 @@ const AllInvestmentsTable = () => {
         <HorizontalLine className="my-[10px]" />
 
         <div className="flex flex-col gap-[5px]">
-          <h1 className="text-[16px] font-[600]">Investment List</h1>
+          <h1 className="text-[16px] font-[600]">All Investments</h1>
           <p className="text-[12px] text-muted md:text-[14px]">
-            Displaying All the available investments in your store. There is total{" "}
+            Displaying all the available investments in your Dashboard. There is total{" "}
             <span className="font-bold text-dashboard">{metaData.totalDoc}</span> investments. Data
             is Divided into{" "}
             <span className="font-bold text-dashboard">

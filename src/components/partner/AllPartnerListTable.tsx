@@ -44,11 +44,11 @@ const AllPartnerListTable = () => {
     <div className="flex flex-col gap-[10px]">
       <div className="flex flex-col gap-[15px] bg-white p-[16px]">
         <div className="flex flex-col gap-[5px]">
-          <h1 className="text-[16px] font-[600]">Partner List</h1>
+          <h1 className="text-[16px] font-[600]">All Partners</h1>
           <p className="text-[12px] text-muted md:text-[14px]">
-            Displaying All the available partners in your dashboard. There is total{" "}
+            Displaying all the available partners in your Dashboard. There is total{" "}
             <span className="font-bold text-dashboard">{metaData.totalDoc}</span> partners. Data is
-            Divided into{" "}
+            divided into{" "}
             <span className="font-bold text-dashboard">
               {Math.ceil(metaData.totalDoc / 10)} pages
             </span>{" "}

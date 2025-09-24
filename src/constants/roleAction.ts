@@ -11,6 +11,10 @@ export const ROLE_ACTIONS = {
 
   CREATE_SUPPLIER: { label: "Create Supplier", value: "create_supplier" },
   VIEW_SUPPLIER_LIST: { label: "View Supplier List", value: "view_supplier_list" },
+  CREATE_SUPPLIER_PAYMENTS_LIST: {
+    label: "Create Supplier Payments List",
+    value: "create_supplier_payments_list",
+  },
   VIEW_SUPPLIER_PAYMENTS_LIST: {
     label: "View Supplier Payments List",
     value: "view_supplier_payments_list",

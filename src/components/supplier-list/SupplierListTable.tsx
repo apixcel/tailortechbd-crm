@@ -73,9 +73,9 @@ const SupplierListTable = () => {
         <div className="flex flex-col gap-[10px]">
           <div className="flex flex-col gap-[15px] bg-white p-4">
             <div className="flex flex-col gap-[5px]">
-              <h1 className="text-[16px] font-[600]">Supplier List</h1>
+              <h1 className="text-[16px] font-[600]">All Suppliers</h1>
               <p className="text-[12px] text-muted md:text-[14px]">
-                Displaying All the available suppliers in your store. There is total{" "}
+                Displaying all suppliers in your Dashboard. There is total{" "}
                 <span className="font-bold text-dashboard">{metaData.totalDoc}</span> suppliers.
                 Data is divided into{" "}
                 <span className="font-bold text-dashboard">
