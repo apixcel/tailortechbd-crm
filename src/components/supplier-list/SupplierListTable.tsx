@@ -106,13 +106,13 @@ const SupplierListTable = () => {
 
             {/* table */}
             <div className="overflow-x-auto bg-white shadow">
-              <table className="min-w-[1400px] table-auto divide-y divide-dashboard/20">
+              <table className="min-w-[1000px] divide-y divide-dashboard/20">
                 <thead className="bg-dashboard/10">
                   <tr>
                     {tableHead.map((heading) => (
                       <th
                         key={heading.field || heading.label}
-                        className="px-6 py-3 text-left text-sm font-semibold whitespace-nowrap text-dashboard"
+                        className="px-4 py-3 text-left text-sm font-semibold whitespace-nowrap text-dashboard sm:px-6"
                       >
                         {heading.label}
                       </th>
@@ -127,26 +127,26 @@ const SupplierListTable = () => {
                     supplierData.map((supplier) => (
                       <tr key={supplier._id} className="hover:bg-gray-50">
                         {/* Supplier ID */}
-                        <td className="min-w-[120px] px-6 py-4 align-top break-normal whitespace-nowrap">
+                        <td className="px-4 py-4 align-top break-normal whitespace-nowrap sm:px-6">
                           <div className="text-sm font-medium text-gray-900">
                             {supplier.supplierId}
                           </div>
                         </td>
 
                         {/* Supplier Name */}
-                        <td className="min-w-[180px] px-6 py-4 align-top break-normal whitespace-nowrap">
+                        <td className="px-4 py-4 align-top break-normal whitespace-nowrap sm:px-6">
                           <div className="text-sm font-medium text-gray-900">{supplier.name}</div>
                         </td>
 
                         {/* Contact Person */}
-                        <td className="min-w-[180px] px-6 py-4 align-top break-normal whitespace-nowrap">
+                        <td className="px-4 py-4 align-top break-normal whitespace-nowrap sm:px-6">
                           <div className="text-sm font-medium text-gray-900">
                             {supplier.contactPerson}
                           </div>
                         </td>
 
                         {/* Phone Number */}
-                        <td className="min-w-[150px] px-6 py-4 align-top break-normal whitespace-nowrap">
+                        <td className="px-4 py-4 align-top break-normal whitespace-nowrap sm:px-6">
                           <Link
                             href={`tel:${supplier.phoneNumber}`}
                             className="text-sm hover:underline"
@@ -156,7 +156,7 @@ const SupplierListTable = () => {
                         </td>
 
                         {/* Email */}
-                        <td className="min-w-[220px] px-6 py-4 align-top break-normal whitespace-nowrap">
+                        <td className="px-4 py-4 align-top break-normal whitespace-nowrap sm:px-6">
                           <Link
                             href={`mailto:${supplier.email}`}
                             className="text-sm hover:underline"
@@ -166,12 +166,12 @@ const SupplierListTable = () => {
                         </td>
 
                         {/* Address */}
-                        <td className="min-w-[220px] px-6 py-4 align-top break-normal whitespace-nowrap">
+                        <td className="px-4 py-4 align-top break-normal whitespace-nowrap sm:px-6">
                           <span className="text-sm">{supplier.address}</span>
                         </td>
 
                         {/* Supplied Products Categories */}
-                        <td className="min-w-[260px] px-6 py-4 align-top break-normal whitespace-nowrap">
+                        <td className="px-4 py-4 align-top break-normal whitespace-nowrap sm:px-6">
                           <div className="text-sm">
                             {supplier.suppliedProductsCategories.length ? (
                               supplier.suppliedProductsCategories.join(", ")
@@ -182,12 +182,12 @@ const SupplierListTable = () => {
                         </td>
 
                         {/* Preferred Payment Method */}
-                        <td className="min-w-[180px] px-6 py-4 align-top break-normal whitespace-nowrap">
+                        <td className="px-4 py-4 align-top break-normal whitespace-nowrap sm:px-6">
                           <div className="text-sm">{supplier.preferredPaymentMethod || "—"}</div>
                         </td>
 
                         {/* Supplier Document */}
-                        <td className="min-w-[140px] px-6 py-4 align-top break-normal whitespace-nowrap">
+                        <td className="px-4 py-4 align-top break-normal whitespace-nowrap sm:px-6">
                           {supplier.docuemnt ? (
                             <a
                               href={supplier.docuemnt}
@@ -204,14 +204,14 @@ const SupplierListTable = () => {
 
                         {/* Notes (show full text; no truncation) */}
                         <td
-                          className="min-w-[300px] px-6 py-4 align-top break-normal whitespace-nowrap"
+                          className="px-4 py-4 align-top break-normal whitespace-nowrap sm:px-6"
                           title={supplier.notes || "—"}
                         >
                           <span className="text-sm">{supplier.notes || "—"}</span>
                         </td>
 
                         {/* Actions */}
-                        <td className="min-w-[150px] px-6 py-4 align-top whitespace-nowrap">
+                        <td className="px-4 py-4 align-top whitespace-nowrap sm:px-6">
                           <div className="flex items-center gap-[8px]">
                             <Link
                               href={`/supplier-list/${supplier._id}`}

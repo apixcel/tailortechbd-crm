@@ -48,6 +48,12 @@ const validationSchema = Yup.object().shape({
   note: Yup.string().required("Note is required"),
   remarks: Yup.string().required("Remarks is required"),
   attachment: Yup.string().optional(),
+  partner: Yup.object().shape({
+    _id: Yup.string().required("Invalid partner"),
+    partnerName: Yup.string().required("Partner name is required"),
+    partnerDesignation: Yup.string().required("Designation is required"),
+    joiningDate: Yup.string().required("Date is required"),
+  }),
   transactionMethod: Yup.string()
     .oneOf(transactionMethodOptions.map((o) => o.value))
     .optional(), // 👈 optional to match your DB schema
