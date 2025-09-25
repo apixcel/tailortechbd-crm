@@ -24,14 +24,13 @@ const AllProfitBalanceListTable = () => {
     sort: `${sort.order === "desc" ? "-" : ""}${sort.field}`,
   });
 
-  const { data } = useGetAllProfitBalanceListQuery({
+  const { data, isLoading } = useGetAllProfitBalanceListQuery({
     ...query,
   });
 
   const profitBalanceData = data?.data?.result || [];
 
   const metaData = data?.meta || { totalDoc: 0, page: 1 };
-  const isLoading = false;
 
   const handleSort = (field: string) => {
     const newOrder = sort.field === field && sort.order === "asc" ? "desc" : "asc";
@@ -46,7 +45,7 @@ const AllProfitBalanceListTable = () => {
     <div className="flex flex-col gap-4">
       {/* current balance */}
       <div className="bg-white p-4">
-        <h1 className="text-[20px] font-bold text-dashboard">
+        <h1 className="text-center text-[20px] font-bold text-dashboard">
           Total Profit Amount: {Math.round(data?.data?.total_profit || 0)} Tk
         </h1>
       </div>
@@ -54,11 +53,11 @@ const AllProfitBalanceListTable = () => {
       <div className="flex flex-col gap-[10px]">
         <div className="flex flex-col gap-[15px] bg-white p-4">
           <div className="flex flex-col gap-[5px]">
-            <h1 className="text-[16px] font-[600]">Profit Balance History List</h1>
+            <h1 className="text-[16px] font-[600]">Profit Balance History</h1>
             <p className="text-[12px] text-muted md:text-[14px]">
-              Displaying All the available profit balance history in your dashboard. There is total{" "}
+              Displaying all available profit balance history in your dashboard. There is total{" "}
               <span className="font-bold text-dashboard">{metaData.totalDoc}</span> history. Data is
-              Divided into{" "}
+              divided into{" "}
               <span className="font-bold text-dashboard">
                 {Math.ceil(metaData.totalDoc / 10)} pages
               </span>{" "}

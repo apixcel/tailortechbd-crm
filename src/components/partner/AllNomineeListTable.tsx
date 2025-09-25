@@ -11,12 +11,12 @@ import TableDataNotFound from "../ui/TableDataNotFound";
 
 const tableHead = [
   { label: "SL", field: "" },
-  { label: "Name", field: "" },
+  { label: "Beneficiary Name", field: "" },
   { label: "Relation", field: "" },
   { label: "Contact No", field: "" },
   { label: "Email", field: "" },
   { label: "Address", field: "" },
-  { label: "Profit Share", field: "" },
+  { label: "Share of Partner’s Profit (%)", field: "" },
   { label: "Attachment", field: "" },
   {
     label: "Action",

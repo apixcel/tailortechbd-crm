@@ -119,9 +119,9 @@ const AllProfitWithdrawalTable = () => {
 
         {/* table Title */}
         <div className="flex flex-col gap-[5px]">
-          <h1 className="text-[16px] font-[600]">Profit Withdrawal List</h1>
+          <h1 className="text-[16px] font-[600]">Partner Profit Withdrawal List</h1>
           <p className="text-[12px] text-muted md:text-[14px]">
-            Displaying all available profit withdrawals in your store. There is a total of{" "}
+            Displaying all available profit withdrawals in your Dashboard. There is a total{" "}
             <span className="font-bold text-dashboard">{metaData.totalDoc}</span> profit
             withdrawals. Data is divided into{" "}
             <span className="font-bold text-dashboard">{Math.ceil(metaData.totalDoc / 10)}</span>{" "}

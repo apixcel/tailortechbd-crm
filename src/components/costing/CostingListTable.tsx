@@ -11,8 +11,6 @@ import { RxMagnifyingGlass } from "react-icons/rx";
 import { HorizontalLine, Pagination, TableDataNotFound, TableSkeleton } from "@/components";
 import dateUtils from "@/utils/date";
 import Link from "next/link";
-import { IoPencil } from "react-icons/io5";
-import DeleteCostingById from "./DeleteCostingById";
 import DownloadCostingReport from "./DownloadCostingReport";
 
 const tableHead = [
@@ -25,7 +23,6 @@ const tableHead = [
   { label: "Cost Amount", field: "costingAmount" },
   { label: "Remarks", field: "" },
   { label: "Documents", field: "" },
-  { label: "Actions", field: "" },
 ];
 
 const CostingListTable = () => {
@@ -53,9 +50,9 @@ const CostingListTable = () => {
     <div className="flex flex-col gap-[10px]">
       <div className="flex flex-col gap-[15px] bg-white p-4">
         <div className="flex flex-col gap-[5px]">
-          <h1 className="text-[16px] font-[600]">Costing List</h1>
+          <h1 className="text-[16px] font-[600]">All Costings</h1>
           <p className="text-[12px] text-muted md:text-[14px]">
-            Displaying All the available costings in your store. There is total{" "}
+            Displaying all the available costings in your Dashboard. There is total{" "}
             <span className="font-bold text-dashboard">{metaData.totalDoc}</span> costings. Data is
             Divided into{" "}
             <span className="font-bold text-dashboard">
@@ -190,18 +187,6 @@ const CostingListTable = () => {
                       ) : (
                         <span className="text-primary">—</span>
                       )}
-                    </td>
-
-                    <td>
-                      <span className="flex items-center gap-[5px]">
-                        <Link
-                          href={`/costing-list/${costing._id}`}
-                          className="flex h-[30px] w-[30px] items-center justify-center rounded-full bg-primary/10 text-primary hover:bg-primary hover:text-white"
-                        >
-                          <IoPencil />
-                        </Link>
-                        <DeleteCostingById costing={costing} />
-                      </span>
                     </td>
                   </tr>
                 ))

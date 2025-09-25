@@ -39,6 +39,7 @@ const supplierPaymentApi = api.injectEndpoints({
 
 export const {
   useGetAllSupplierPaymentsQuery,
+  useLazyGetAllSupplierPaymentsQuery,
   useCreateSupplierPaymentMutation,
   useDeleteSupplierPaymentByIdMutation,
 } = supplierPaymentApi;
