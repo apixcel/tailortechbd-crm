@@ -21,7 +21,7 @@ import DownloadInvestmentReport from "./DownloadInvestmentReport";
 
 const tableHead = [
   { label: "SL", field: "" },
-  { label: "Date", field: "investmentDate" },
+  { label: "Date", field: "" },
   { label: "Partner Name", field: "" },
   { label: "Description", field: "" },
   { label: "Transaction Method", field: "" },
@@ -40,7 +40,7 @@ const AllInvestmentsTable = () => {
   } | null>(null);
 
   const [searchTerm, setSearchTerm] = useDebounce("");
-  const [sort, setSort] = useState({ field: "createdAt", order: "desc" });
+  const [sort, setSort] = useState({ field: "investmentDate", order: "desc" });
   const [query, setQuery] = useState<Record<string, string | number>>({
     page: 1,
     sort: `${sort.order === "desc" ? "-" : ""}${sort.field}`,
