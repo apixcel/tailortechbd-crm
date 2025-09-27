@@ -25,8 +25,8 @@ const tableHead = [
   { label: "Partner Name", field: "" },
   { label: "Description", field: "" },
   { label: "Transaction Method", field: "" },
-  { label: "Invested Amount", field: "" },
-  { label: "Last Investment", field: "" },
+  { label: "Last Invested Amount", field: "" },
+  // { label: "Last Investment", field: "" },
   { label: "Total Investment Balance", field: "" },
   { label: "Remarks", field: "" },
 ];
@@ -221,14 +221,14 @@ const AllInvestmentsTable = () => {
                       )}
                     </td>
 
-                    {/* investment note */}
+                    {/* last invested amount */}
                     <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
                       <span className="text-sm">{investment?.investmentAmount}</span>
                     </td>
-                    {/* investment note */}
-                    <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
+                    {/* previous last investment */}
+                    {/* <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
                       <span className="text-sm">{investment?.lastInvestment}</span>
-                    </td>
+                    </td> */}
 
                     {/* total investment balance */}
                     <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">

@@ -41,7 +41,12 @@ const DownloadInvestmentReport = () => {
     }
   };
 
-  const investments: IInvestment[] = data?.data || [];
+  const investments: IInvestment[] = [...(data?.data || [])].sort(
+    (a, b) =>
+      new Date(a.investmentDate || "").getTime() - new Date(b.investmentDate || "").getTime()
+  );
+  console.log(investments);
+
   const totalAmount = investments.reduce(
     (sum, inv) => sum + (Number(inv.investmentAmount) || 0),
     0
