@@ -80,7 +80,7 @@ const InvestmentsForm = ({
     >
       {({ setFieldValue, values, touched, submitCount }) => (
         <Form className="flex flex-col gap-4">
-          <div className="grid h-full grid-cols-1 items-stretch gap-4 lg:grid-cols-2">
+          <div className="grid h-full grid-cols-1 items-stretch gap-4">
             <div className="flex h-full flex-col gap-6 bg-white p-4">
               {/* investment information */}
               <div className="flex flex-col gap-4">
