@@ -186,7 +186,7 @@ const InvestmentsForm = ({
             </div>
 
             {/* attachment */}
-            <div className="flex h-full flex-col gap-4 bg-white p-4">
+            {/* <div className="flex h-full flex-col gap-4 bg-white p-4">
               <SectionTitle>Remark</SectionTitle>
 
               <ImageUploader
@@ -195,7 +195,7 @@ const InvestmentsForm = ({
                 acceptPDF={true}
                 title="Upload Image or PDF (Optional)"
               />
-            </div>
+            </div> */}
           </div>
 
           <Button type="submit" isLoading={isLoading} className="mt-2">
