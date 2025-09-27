@@ -166,7 +166,6 @@ const DownloadProfitWithdrawalReport = () => {
                               </span>
                             )}
                           </td>
-                          <td className="px-3 py-2">{w.comment || "-"}</td>
                         </tr>
                       ))}
                     </tbody>
