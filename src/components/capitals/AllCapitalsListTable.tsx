@@ -4,15 +4,14 @@ import { HorizontalLine, Pagination, TableDataNotFound, TableSkeleton } from "@/
 import { useDebounce } from "@/hooks";
 import { useGetAllCapitalJournalQuery } from "@/redux/features/capital/capital.api";
 import dateUtils from "@/utils/date";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { FaChevronDown, FaChevronUp } from "react-icons/fa";
 import { RxMagnifyingGlass } from "react-icons/rx";
 
 const tableHead = [
   { label: "SL", field: "" },
   { label: "Date", field: "date" },
-  { label: "Time", field: "" },
-  { label: "Type", field: "type" },
+  { label: "Type", field: "" },
   { label: "Description", field: "" },
   { label: "Amount", field: "amount" },
   { label: "Balance", field: "balance" },
@@ -20,7 +19,7 @@ const tableHead = [
 
 const AllCapitalsListTable = () => {
   const [searchTerm, setSearchTerm] = useDebounce("");
-  const [sort, setSort] = useState({ field: "date", order: "desc" }); // latest first
+  const [sort, setSort] = useState({ field: "date", order: "desc" });
   const [query, setQuery] = useState<Record<string, string | number>>({
     page: 1,
     sort: "-date", // desc
@@ -29,6 +28,7 @@ const AllCapitalsListTable = () => {
   const { data, isLoading } = useGetAllCapitalJournalQuery({ ...query, searchTerm });
 
   const capitalData = data?.data?.data || [];
+  console.log(capitalData);
   const metaData = data?.meta || { totalDoc: 0, page: 1 };
 
   const handleSort = (field: string) => {
@@ -41,10 +41,6 @@ const AllCapitalsListTable = () => {
   };
 
   const totalCapitalBalance = data?.data?.currentCapitalBalance || 0;
-  useEffect(() => {
-    const totalPage = Math.ceil(metaData.totalDoc / 10);
-    setQuery((prev) => ({ ...prev, page: totalPage ? totalPage : 1 }));
-  }, [metaData.totalDoc]);
 
   return (
     <div className="flex flex-col gap-4">
@@ -141,13 +137,6 @@ const AllCapitalsListTable = () => {
                         {/* capital date */}
                         <td className="px-6 py-4">
                           <span className="text-[14px]">{dateUtils.formatDate(capital.date)}</span>
-                        </td>
-
-                        {/* capital time */}
-                        <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
-                          <span className="text-sm">
-                            {dateUtils.getTimeFromISOString(capital.date)}
-                          </span>
                         </td>
 
                         {/* capital type */}

@@ -8,7 +8,7 @@ export interface IProfitWithdrawal {
   withdrawalDate: string;
   paymentMethod: string;
   status: TProfitWithdrawalStatus;
-  comment: string;
+  currentProfitBalance: number;
   attachment?: string;
   withdrawalAmount: number;
   partner: IPartner;
@@ -19,7 +19,6 @@ export interface IProfitWithdrawal {
 export interface IProfitWithdrawalPayload {
   percentage: number;
   status: string;
-  comment: string;
   attachment?: string;
   withdrawalAmount: number;
   partner: string;

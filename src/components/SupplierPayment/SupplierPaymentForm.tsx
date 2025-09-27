@@ -79,16 +79,6 @@ const SupplierPaymentForm = ({
               <div className="flex items-start gap-[20px]">
                 {/* left column */}
                 <div className="flex w-full flex-col items-start justify-start gap-[16px]">
-                  {/* Supplier */}
-                  <div className="flex w-full flex-col gap-[5px]">
-                    <SupplierDropdown
-                      className="w-full max-w-[unset]"
-                      selectionBoxClassName="w-full"
-                      onSelect={(option) => setFieldValue("supplier", option.value)}
-                    />
-                    <ErrorMessage name="supplier" component="div" className="text-sm text-danger" />
-                  </div>
-
                   {/* Date */}
                   <div className="flex w-full flex-col gap-[5px]">
                     <label className="form-label">Payment Date</label>
@@ -96,6 +86,57 @@ const SupplierPaymentForm = ({
                       {(fieldProps: FieldProps) => <PickDate {...fieldProps} />}
                     </Field>
                     <ErrorMessage name="date" component="div" className="text-sm text-danger" />
+                  </div>
+
+                  {/* Advanced Amount */}
+                  <div className="flex w-full flex-col gap-[5px]">
+                    <label className="form-label">Advanced Amount</label>
+                    <Field
+                      as={Input}
+                      type="number"
+                      inputMode="decimal"
+                      step="0.01"
+                      name="advancedAmount"
+                      placeholder="0.00"
+                      className="w-full"
+                    />
+                    <ErrorMessage
+                      name="advancedAmount"
+                      component="div"
+                      className="text-sm text-danger"
+                    />
+                  </div>
+
+                  {/* Dues (read-only) */}
+                  <div className="flex w-full flex-col gap-[5px]">
+                    <label className="form-label">Dues Amount (Computed)</label>
+                    <Field as={Input} type="number" name="duesAmount" step="0.01" disabled />
+                    <ErrorMessage
+                      name="duesAmount"
+                      component="div"
+                      className="text-sm text-danger"
+                    />
+                  </div>
+                </div>
+
+                {/* right column */}
+                <div className="flex w-full flex-col gap-[16px]">
+                  {/* Invoice Bill Amount */}
+                  <div className="flex w-full flex-col gap-[5px]">
+                    <label className="form-label">Invoice Bill Amount</label>
+                    <Field
+                      as={Input}
+                      type="number"
+                      inputMode="decimal"
+                      step="0.01"
+                      name="invoiceBillAmount"
+                      placeholder="0.00"
+                    />
+                    <ErrorMessage
+                      name="invoiceBillAmount"
+                      component="div"
+                      className="text-sm text-danger"
+                    />
                   </div>
 
                   {/* Payment Method */}
@@ -119,55 +160,15 @@ const SupplierPaymentForm = ({
                       className="text-sm text-danger"
                     />
                   </div>
-                </div>
 
-                {/* right column */}
-                <div className="flex w-full flex-col gap-[16px]">
-                  {/* Invoice/Bill Amount */}
+                  {/* Supplier */}
                   <div className="flex w-full flex-col gap-[5px]">
-                    <label className="form-label">Invoice/Bill Amount</label>
-                    <Field
-                      as={Input}
-                      type="number"
-                      inputMode="decimal"
-                      step="0.01"
-                      name="invoiceBillAmount"
-                      placeholder="0.00"
+                    <SupplierDropdown
+                      className="w-full max-w-[unset]"
+                      selectionBoxClassName="w-full"
+                      onSelect={(option) => setFieldValue("supplier", option.value)}
                     />
-                    <ErrorMessage
-                      name="invoiceBillAmount"
-                      component="div"
-                      className="text-sm text-danger"
-                    />
-                  </div>
-
-                  {/* Advanced Amount */}
-                  <div className="w/full flex flex-col gap-[5px]">
-                    <label className="form-label">Advanced Amount</label>
-                    <Field
-                      as={Input}
-                      type="number"
-                      inputMode="decimal"
-                      step="0.01"
-                      name="advancedAmount"
-                      placeholder="0.00"
-                    />
-                    <ErrorMessage
-                      name="advancedAmount"
-                      component="div"
-                      className="text-sm text-danger"
-                    />
-                  </div>
-
-                  {/* Dues (read-only) */}
-                  <div className="flex w-full flex-col gap-[5px]">
-                    <label className="form-label">Dues Amount</label>
-                    <Field as={Input} type="number" name="duesAmount" step="0.01" disabled />
-                    <ErrorMessage
-                      name="duesAmount"
-                      component="div"
-                      className="text-sm text-danger"
-                    />
+                    <ErrorMessage name="supplier" component="div" className="text-sm text-danger" />
                   </div>
                 </div>
               </div>

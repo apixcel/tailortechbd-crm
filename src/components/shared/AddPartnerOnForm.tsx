@@ -7,7 +7,7 @@ import { useState } from "react";
 import { FaPlus } from "react-icons/fa";
 import { RxMagnifyingGlass } from "react-icons/rx";
 
-import { DialogProvider, HorizontalLine, Loader } from "@/components";
+import { DialogProvider, HorizontalLine, Skeleton } from "@/components";
 import { useGetAllPartnersQuery } from "@/redux/features/partners/partner.api";
 import dateUtils from "@/utils/date";
 
@@ -24,7 +24,7 @@ const AddPartnerOnForm = ({ setFieldValue, onSelect }: IProps) => {
   const { data, isLoading } = useGetAllPartnersQuery({ searchTerm });
   const partnerData = data?.data || [];
 
-  if (isLoading) return <Loader />;
+  if (isLoading) return <div><Skeleton className="h-[40px] w-[100%]" /></div>;
 
   const handleSelectPartner = (partner: Omit<IPartner, "createdAt" | "updatedAt">) => {
     setFieldValue?.("partner", {
