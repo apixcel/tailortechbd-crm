@@ -11,7 +11,6 @@ import {
   Input,
   SectionTitle,
   SelectionBox,
-  TextArea,
 } from "@/components";
 import { paymentMethodOptions } from "@/constant/paymentMethods";
 import dateUtils from "@/utils/date";
@@ -27,7 +26,6 @@ tomorrow.setDate(today.getDate() + 1);
 
 const initialValues = {
   status: "not_paid" as TProfitWithdrawalStatus,
-  comment: "",
   attachment: "",
   paymentMethod: "",
   withdrawalAmount: 0,
@@ -44,7 +42,6 @@ const validationSchema = Yup.object().shape({
   withdrawalAmount: Yup.number()
     .max(10000000, "Amount must be less than 10000000")
     .required("Amount is required"),
-  comment: Yup.string().required("Comment is required"),
   attachment: Yup.string().optional(),
   paymentMethod: Yup.string().required("Payment Method is required"),
   status: Yup.string().required("Status is required"),
@@ -94,42 +91,45 @@ const ProfitWithdrawalForm = ({
       {({ setFieldValue, values, touched, submitCount }) => (
         <Form className="flex flex-col gap-4">
           <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-            <div className="flex flex-col gap-4 bg-white p-4">
-              <SectionTitle>Profit Withdrawal Information</SectionTitle>
+            <div className="bg-white p-4 flex flex-col gap-4">
+              <div className="flex flex-col gap-4">
+                <SectionTitle>Profit Withdrawal Information</SectionTitle>
 
-              {/* status and withdrawal date */}
-              <div className="flex w-full flex-col items-start justify-start gap-[16px] sm:flex-row">
-                {/* status */}
-                <div className="flex w-full flex-col gap-[5px]">
-                  <label className="form-label">Withdrawal Status</label>
-                  <SelectionBox
-                    data={withdrawalStatusOptions}
-                    onSelect={(option) => setFieldValue("status", option.value)}
-                    defaultValue={withdrawalStatusOptions.find(
-                      (opt) => opt.value === values.status
-                    )}
-                    displayValue={
-                      withdrawalStatusOptions.find((opt) => opt.value === values.status)?.label
-                    }
-                    showSearch={false}
-                  />
-                  <ErrorMessage name="status" component="div" className="text-sm text-danger" />
-                </div>
-                {/* paymentMethod */}
-                <div className="flex w-full flex-col gap-[5px]">
-                  <label className="form-label">Payment Method</label>
-                  <SelectionBox
-                    data={paymentMethodOptions}
-                    onSelect={(option) => setFieldValue("paymentMethod", option.value)}
-                    defaultValue={paymentMethodOptions.find(
-                      (opt) => opt.value === values.paymentMethod
-                    )}
-                    displayValue={
-                      paymentMethodOptions.find((opt) => opt.value === values.paymentMethod)?.label
-                    }
-                    showSearch={false}
-                  />
-                  <ErrorMessage name="status" component="div" className="text-sm text-danger" />
+                {/* status and withdrawal date */}
+                <div className="flex w-full flex-col items-start justify-start gap-[16px] sm:flex-row">
+                  {/* status */}
+                  <div className="flex w-full flex-col gap-[5px]">
+                    <label className="form-label">Withdrawal Status</label>
+                    <SelectionBox
+                      data={withdrawalStatusOptions}
+                      onSelect={(option) => setFieldValue("status", option.value)}
+                      defaultValue={withdrawalStatusOptions.find(
+                        (opt) => opt.value === values.status
+                      )}
+                      displayValue={
+                        withdrawalStatusOptions.find((opt) => opt.value === values.status)?.label
+                      }
+                      showSearch={false}
+                    />
+                    <ErrorMessage name="status" component="div" className="text-sm text-danger" />
+                  </div>
+                  {/* paymentMethod */}
+                  <div className="flex w-full flex-col gap-[5px]">
+                    <label className="form-label">Payment Method</label>
+                    <SelectionBox
+                      data={paymentMethodOptions}
+                      onSelect={(option) => setFieldValue("paymentMethod", option.value)}
+                      defaultValue={paymentMethodOptions.find(
+                        (opt) => opt.value === values.paymentMethod
+                      )}
+                      displayValue={
+                        paymentMethodOptions.find((opt) => opt.value === values.paymentMethod)
+                          ?.label
+                      }
+                      showSearch={false}
+                    />
+                    <ErrorMessage name="status" component="div" className="text-sm text-danger" />
+                  </div>
                 </div>
               </div>
 
@@ -148,15 +148,6 @@ const ProfitWithdrawalForm = ({
                 />
               </div>
 
-              {/* comment */}
-              <div className="flex w-full flex-col gap-[5px]">
-                <label className="form-label">Comment</label>
-                <Field as={TextArea} name="comment" placeholder="Comment" rows={4} />
-                <ErrorMessage name="comment" component="div" className="text-sm text-danger" />
-              </div>
-            </div>
-
-            <div className="flex h-full flex-col gap-6 bg-white p-4">
               {/* partner information */}
               <div className="flex flex-col gap-4">
                 <SectionTitle>Partner Information</SectionTitle>
@@ -166,7 +157,7 @@ const ProfitWithdrawalForm = ({
                 )}
 
                 {values.partner.partnerName && (
-                  <div className="flex flex-col gap-2 p-3 text-sm">
+                  <div className="flex flex-col gap-2 pt-0 p-3 text-sm">
                     <div>
                       <strong>Name:</strong> {values.partner.partnerName}
                     </div>
@@ -191,7 +182,9 @@ const ProfitWithdrawalForm = ({
                   <div className="text-sm text-danger">No partner selected</div>
                 )}
               </div>
+            </div>
 
+            <div className="flex h-full flex-col gap-6 bg-white p-4">
               {/* attachment information */}
               <div className="flex flex-col gap-4">
                 <SectionTitle>Attachment</SectionTitle>

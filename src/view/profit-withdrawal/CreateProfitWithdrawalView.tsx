@@ -16,7 +16,6 @@ const CreateProfitWithdrawalView = () => {
       ...payload,
       partner: payload.partner?._id || "",
       attachment: payload.attachment || "",
-      comment: payload.comment || "",
       percentage: payload.percentage || 0,
       status: payload.status || "not_paid",
       withdrawalAmount: payload.withdrawalAmount || 0,

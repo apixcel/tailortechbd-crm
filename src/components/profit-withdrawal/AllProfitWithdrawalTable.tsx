@@ -54,6 +54,8 @@ const AllProfitWithdrawalTable = () => {
   });
 
   const profitWithdrawalData = data?.data || [];
+  console.log(profitWithdrawalData);
+
   const metaData = data?.meta || { totalDoc: 0, page: 1 };
 
   const handleSort = (field: string) => {
@@ -214,13 +216,12 @@ const AllProfitWithdrawalTable = () => {
 
                     {/* current profit balance */}
                     <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
-                      <span className="text-primary">{pw.totalProfitAmount}</span>
+                      <span className="text-primary">{Math.round(pw.currentProfitBalance)}</span>
                     </td>
 
-                    {/* get amount */}
+                    {/* withdrawal amount */}
                     <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
                       <span className="font-bold">{pw.withdrawalAmount} TK</span>
-                      <span className="text-success"> ({pw.percentage}%)</span>
                     </td>
 
                     {/* payment method */}
