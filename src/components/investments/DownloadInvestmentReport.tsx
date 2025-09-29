@@ -141,7 +141,7 @@ const DownloadInvestmentReport = () => {
                           <td className="px-3 py-2">{dateUtils.formatDate(inv.investmentDate)}</td>
                           <td className="px-3 py-2">{inv.partner?.partnerName || "-"}</td>
                           <td className="px-3 py-2">{inv.partner?.partnerDesignation || "-"}</td>
-                          <td className="px-3 py-2">{inv.note || "-"}</td>
+                          <td className="px-3 py-2">{inv.description || "-"}</td>
                           <td className="px-3 py-2 text-right">
                             {formatCurrency(inv.investmentAmount)}
                           </td>

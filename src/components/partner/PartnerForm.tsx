@@ -1,17 +1,9 @@
 "use client";
 
-import { ErrorMessage, Field, FieldArray, FieldProps, Form, Formik, FormikHelpers } from "formik";
+import { ErrorMessage, Field, FieldArray, Form, Formik, FormikHelpers } from "formik";
 import * as Yup from "yup";
 
-import {
-  Button,
-  ImageUploader,
-  Input,
-  PickDate,
-  SectionTitle,
-  SelectionBox,
-  TextArea,
-} from "@/components";
+import { Button, ImageUploader, Input, SectionTitle, SelectionBox, TextArea } from "@/components";
 import { relationOptions } from "@/constant/relationship";
 import { IPartnerNominee } from "@/types";
 
@@ -19,12 +11,14 @@ const initialValues = {
   phoneNumber: "",
   email: "",
   address: "",
-  attachment: "",
   partnerName: "",
   partnerDesignation: "",
-  joiningDate: new Date().toISOString(),
+  partnerId: "",
+  activeStatus: true,
+  remarks: "",
   sharePercentage: 0,
   nominees: [] as IPartnerNominee[],
+  bankDetails: "",
 };
 
 export type PartnerFormValues = typeof initialValues;
@@ -32,14 +26,14 @@ export type PartnerFormValues = typeof initialValues;
 const validationSchema = Yup.object().shape({
   partnerName: Yup.string().required("Partner name is required"),
   partnerDesignation: Yup.string().required("Designation is required"),
-  joiningDate: Yup.string().required("Date is required"),
   sharePercentage: Yup.number()
     .required("Share percentage is required")
     .max(100, "Share percentage must be between 0 and 100"),
   phoneNumber: Yup.string().required("Phone number is required"),
   email: Yup.string().email("Invalid email address").required("Email is required"),
   address: Yup.string().required("Address is required"),
-  attachment: Yup.string().required("Attachment is required"),
+  bankDetails: Yup.string().required("Bank details is required"),
+  remarks: Yup.string().required("Remarks is required"),
   nominees: Yup.array()
     .of(
       Yup.object().shape({
@@ -163,35 +157,28 @@ const PartnerForm = ({
                     />
                   </div>
 
-                  {/* joining date */}
+                  {/* bank details */}
                   <div className="flex w-full flex-col gap-[5px]">
-                    <label className="form-label">Joining Date</label>
-                    <Field name="joiningDate">
-                      {(fieldProps: FieldProps) => <PickDate {...fieldProps} />}
-                    </Field>
+                    <label className="form-label">Bank Details</label>
+                    <Field as={Input} type="text" name="bankDetails" placeholder="Bank Details" />
                     <ErrorMessage
-                      name="joiningDate"
+                      name="bankDetails"
                       component="div"
                       className="text-sm text-danger"
                     />
                   </div>
 
-                  {/* attachment */}
-                  <div className="flex w-full flex-col">
-                    <label className="form-label">Attachment (Document)</label>
-                    <p className="text-[12px] text-muted">
-                      Govment ID/Passport/Birt Certificate/Othe verificaton documents.
-                    </p>
-                    <ImageUploader
-                      mode="single"
-                      title=""
-                      acceptPDF
-                      onChange={(url) => {
-                        setFieldValue(`attachment`, url ? url[0] || "" : "");
-                      }}
+                  {/* remarks */}
+                  <div className="flex w-full flex-col gap-[5px]">
+                    <label className="form-label">Remarks</label>
+                    <Field
+                      as={TextArea}
+                      name={`remarks`}
+                      placeholder="Remarks"
+                      className="min-h-[100px]"
                     />
                     <ErrorMessage
-                      name={`attachment`}
+                      name={`remarks`}
                       component="div"
                       className="text-sm text-danger"
                     />

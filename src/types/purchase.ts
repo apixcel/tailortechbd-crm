@@ -16,9 +16,13 @@ export interface IColor {
 export interface IProduct {
   productName: string;
   price: number;
-  category: string | ICategory;
-  colors: IColor[];
+  category?: string | ICategory;
+  colors?: IColor[];
   images: string[];
+  quantity?: number;
+  brand?: string;
+  model?: string;
+  sn?: string;
 }
 
 export interface IPurchase {
@@ -36,6 +40,46 @@ export interface IPurchaseStatisticsChartItem {
   time: string;
   "Total Purchase": number;
   "Purchase Amount": number;
+}
+
+export type SupplierRef = string | Pick<ISupplier, "name" | "address" | "phoneNumber" | "email">;
+
+export interface ProductWrite {
+  productName: string;
+  price: number;
+  category?: string;
+  images?: string[];
+  quantity?: number;
+  brand?: string;
+  model?: string;
+  sn?: string;
+  colors?: {
+    color: string;
+    sizes: { size: string; quantity: number }[];
+  }[];
+}
+
+export interface IPurchaseWrite {
+  purchaseTitle: string;
+  purchaseType: string;
+  supplier: SupplierRef;
+  products: ProductWrite[];
+}
+
+export interface IPurchase {
+  _id: string;
+  purchaseTitle: string;
+  purchaseType: string;
+  invoiceNumber: string;
+  supplier: ISupplier;
+  productName: string;
+  brand: string;
+  model: string;
+  sn: string;
+  quantity: number;
+  price: number;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface IPurchaseStatistics {

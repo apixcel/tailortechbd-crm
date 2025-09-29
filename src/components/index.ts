@@ -44,15 +44,15 @@ export { default as SalesOverview } from "./sales/SalesOverview";
 export { default as SalesProfitAmountCard } from "./sales/SalesProfitAmountCard";
 export { default as TotalSalesAmountCard } from "./sales/TotalSalesAmountCard";
 
-// purchase report
-export { default as PurchaseReportOverview } from "./purchase-report/PurchaseReportOverview";
-
 // create purchase
-export { default as PurchaseForm } from "./create-purchase/PurchaseForm";
+export { default as ApparelForm } from "./create-purchase/ApparelForm";
+export { default as OtherPurchaseForm } from "./create-purchase/OtherPurchaseForm";
 
 // purchase list
-export { default as AllPurchaseListTable } from "./purchase-list/AllPurchaseListTable";
-
+export { default as ApparelPurchaseListTable } from "./purchase-list/ApparelPurchaseListTable";
+export { default as OtherPurchaseListTable } from "./purchase-list/OtherPurchaseListTable";
+// purchase report
+export { default as PurchaseReportOverview } from "./purchase-report/PurchaseReportOverview";
 // costing
 export { default as CostingForm } from "./costing/CostingForm";
 export { default as CostingListTable } from "./costing/CostingListTable";

@@ -1,14 +1,16 @@
 export interface IPartner {
   _id: string;
+  partnerId: string;
   partnerName: string;
   nomineeCount?: number;
   partnerDesignation: string;
-  joiningDate: string;
   sharePercentage: number;
   phoneNumber: string;
   email: string;
   address: string;
-  attachment: string;
+  bankDetails: string;
+  activeStatus: boolean;
+  remarks: string;
   createdAt?: string;
   updatedAt?: string;
 }

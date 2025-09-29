@@ -18,7 +18,7 @@ const CreatePartnerView = () => {
 
   const handleSubmit = async (payload: PartnerFormValues) => {
     const { nominees, ...rest } = payload;
-    const res = await createPartner(rest);
+    const res = await createPartner({ ...rest, partnerId: rest.partnerId || "" });
     const error = res.error as IQueryMutationErrorResponse;
 
     if (error) {

@@ -89,10 +89,13 @@ const ViewPurchase = ({ setIsViewPurchase, purchaseItem }: ViewPurchaseProps) =>
               {purchaseItem?.products.reduce(
                 (sum, item) =>
                   sum +
-                  item.colors.reduce(
-                    (sum, c) => sum + c.sizes.reduce((s, sz) => s + Number(sz.quantity || 0), 0),
+                  (item.colors?.reduce(
+                    (colorSum, c) =>
+                      colorSum +
+                      (c.sizes?.reduce((sizeSum, sz) => sizeSum + Number(sz.quantity || 0), 0) ||
+                        0),
                     0
-                  ),
+                  ) || 0),
                 0
               )}{" "}
               pcs
@@ -104,15 +107,15 @@ const ViewPurchase = ({ setIsViewPurchase, purchaseItem }: ViewPurchaseProps) =>
                   (sum, item) =>
                     sum +
                     item.price *
-                      item.colors.reduce(
+                      (item.colors?.reduce(
                         (colorSum, color) =>
                           colorSum +
-                          color.sizes.reduce(
+                          (color.sizes?.reduce(
                             (sizeSum, size) => sizeSum + Number(size.quantity || 0),
                             0
-                          ),
+                          ) || 0),
                         0
-                      ),
+                      ) || 0),
                   0
                 )
                 .toFixed(2)}{" "}
@@ -144,18 +147,22 @@ const ViewPurchase = ({ setIsViewPurchase, purchaseItem }: ViewPurchaseProps) =>
             </thead>
             <tbody className="divide-y divide-gray-200 bg-white">
               {purchaseItem?.products?.map((product, index) => {
-                const totalQuantity = product.colors.reduce(
-                  (colorSum, color) =>
-                    colorSum +
-                    color.sizes.reduce((sizeSum, size) => sizeSum + Number(size.quantity || 0), 0),
-                  0
-                );
+                const totalQuantity =
+                  product.colors?.reduce(
+                    (colorSum, color) =>
+                      colorSum +
+                      color.sizes.reduce(
+                        (sizeSum, size) => sizeSum + Number(size.quantity || 0),
+                        0
+                      ),
+                    0
+                  ) ?? 0;
 
-                const totalPrice = totalQuantity * product.price;
+                const totalPrice = (totalQuantity ?? 0) * (product.price ?? 0);
 
                 // Create a string like: Black - M (20), L (15), Red - XL (5)
                 const colorSizeString = product.colors
-                  .map((color) => {
+                  ?.map((color) => {
                     const sizes = color.sizes
                       .map((size) => `${size.size} (${size.quantity})`)
                       .join(", ");
