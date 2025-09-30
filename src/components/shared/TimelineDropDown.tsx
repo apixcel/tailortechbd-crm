@@ -7,7 +7,7 @@ const dayFilterings = [
   },
   {
     label: "Today",
-    value: "1",
+    value: "0",
   },
   {
     label: "Last 7 days",

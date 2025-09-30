@@ -35,7 +35,7 @@ const PurchaseListView = () => {
       case "ELECTRICAL":
         return <OtherPurchaseListTable type="ELECTRICAL" />;
       default:
-        return null;
+        return <ApparelPurchaseListTable />;
     }
   }, [purchaseType]);
 

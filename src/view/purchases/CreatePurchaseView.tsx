@@ -2,28 +2,15 @@
 
 import { PageHeadingTitle, SelectionBox, ApparelForm, OtherPurchaseForm } from "@/components";
 import { purchaseTypes } from "@/constants/purchase";
-import { useEffect, useMemo, useState } from "react";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useMemo } from "react";
+import { useSearchParams } from "next/navigation";
+import useSetSearchParams from "@/hooks/useSetSearchParams";
 
 const CreatePurchaseView = () => {
-  const router = useRouter();
-  const pathname = usePathname();
   const searchParams = useSearchParams();
+  const { updateSearchParams } = useSetSearchParams();
 
-  const [purchaseType, setPurchaseType] = useState<string>("Apparel");
-
-  const setQueryParam = (key: string, value?: string) => {
-    const params = new URLSearchParams(searchParams?.toString());
-    if (value && value.length) params.set(key, value);
-    else params.delete(key);
-    const qs = params.toString();
-    router.replace(qs ? `${pathname}?${qs}` : pathname, { scroll: false });
-  };
-
-  useEffect(() => {
-    const t = searchParams.get("type");
-    setPurchaseType(t ? t.toUpperCase() : "APPAREL");
-  }, [searchParams]);
+  const purchaseType = searchParams.get("type");
 
   const defaultSelectValue = useMemo(
     () => (purchaseType ? { label: purchaseType, value: purchaseType } : undefined),
@@ -43,7 +30,7 @@ const CreatePurchaseView = () => {
       case "ELECTRICAL":
         return <OtherPurchaseForm type="ELECTRICAL" />;
       default:
-        return null;
+        return <ApparelForm />;
     }
   }, [purchaseType]);
 
@@ -58,8 +45,7 @@ const CreatePurchaseView = () => {
           defaultValue={defaultSelectValue}
           onSelect={(item) => {
             const nextType = item?.value?.toUpperCase?.() ?? "";
-            setPurchaseType(nextType);
-            setQueryParam("type", nextType.toLowerCase());
+            updateSearchParams({ type: nextType });
           }}
         />
       </div>
