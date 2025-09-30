@@ -48,11 +48,15 @@ const ApparelPurchaseListTable = () => {
   const [page, setPage] = useState<number>(1);
   const [query, setQuery] = useState<Record<string, string | number>>({
     day_count: "",
-    purchaseType: "APPAREL",
   });
 
   const [deletePurchase, { isLoading: isDeleting }] = useDeletePurchaseByIdMutation();
-  const { data, isLoading } = useGetAllPurchasesQuery({ ...query, searchTerm, page });
+  const { data, isLoading } = useGetAllPurchasesQuery({
+    ...query,
+    purchaseType: "APPAREL",
+    searchTerm,
+    page,
+  });
 
   const purchaseData = data?.data || [];
   const metaData = data?.meta || { totalDoc: 0, page: 1 };
@@ -220,7 +224,7 @@ const ApparelPurchaseListTable = () => {
                           <div className="flex items-center gap-[8px]">
                             {/* update */}
                             <Link
-                              href={`/purchase-list/${purchase._id}?type=apparel`}
+                              href={`/purchase-list/${purchase._id}?type=APPAREL`}
                               className="center aspect-square w-[30px] cursor-pointer rounded-full border-[1px] border-dashboard bg-dashboard/5 text-dashboard"
                               title="Edit Purchase"
                             >
