@@ -4,7 +4,6 @@ export { default as SalesView } from "./SalesView";
 // purchases
 export { default as CreatePurchaseView } from "./purchases/CreatePurchaseView";
 export { default as PurchaseListView } from "./purchases/PurchaseListView";
-export { default as ViewPurchase } from "./purchases/ViewPurchase";
 export { default as PurchaseReportView } from "./purchases/PurchaseReportView";
 
 // costing
