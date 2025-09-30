@@ -1,41 +1,49 @@
 "use client";
 
-import { IPurchase, ISupplier } from "@/types";
-import { ErrorMessage, Field, FieldArray, Form, Formik, FormikHelpers } from "formik";
-import Link from "next/link";
-import { FaRegTrashAlt } from "react-icons/fa";
+import { ErrorMessage, Field, FieldArray, Form, Formik } from "formik";
 import * as Yup from "yup";
-
-import CategorySelector from "@/components/shared/CategorySelector";
-import ImageUploader from "@/components/shared/ImageUploader";
-import SectionTitle from "@/components/shared/SectionTitle";
-import Button from "@/components/ui/Button";
-import HorizontalLine from "@/components/ui/HorizontalLine";
-import Input from "@/components/ui/Input";
+import SectionTitle from "../shared/SectionTitle";
+import Input from "../ui/Input";
+import Link from "next/link";
 import AddSupplierOnPurchase from "../create-supplier/AddSupplierOnPurchase";
-import SelectionBox from "../ui/SelectionBox";
-import { purchaseTypes } from "@/constants/purchase";
-
-const initialValues: Omit<
+import HorizontalLine from "../ui/HorizontalLine";
+import CategorySelector from "../shared/CategorySelector";
+import { FaRegTrashAlt } from "react-icons/fa";
+import ImageUploader from "../shared/ImageUploader";
+import Button from "../ui/Button";
+import {
+  IProduct,
   IPurchase,
-  "_id" | "createdAt" | "updatedAt" | "supplier" | "invoiceNumber"
-> & {
-  supplier: Pick<ISupplier, "name" | "address" | "phoneNumber" | "email">;
-} = {
+  ICategory,
+  IColor,
+  IQueryMutationErrorResponse,
+  ISize,
+  ISupplier,
+} from "@/types";
+import {
+  useCreatePurchaseMutation,
+  useGetPurchaseByIdQuery,
+  useUpdatePurchaseByIdMutation,
+} from "@/redux/features/purchase/purchase.api";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
+
+const emptyFormValues = {
   purchaseTitle: "",
-  purchaseType: "",
+  purchaseType: "APPAREL",
   supplier: {
     name: "",
     address: "",
     phoneNumber: "",
     email: "",
+    _id: "" as unknown as string | undefined,
   },
   products: [
     {
       productName: "",
       price: 0,
       category: "",
-      images: [],
+      images: [] as string[],
       colors: [
         {
           color: "",
@@ -46,96 +54,176 @@ const initialValues: Omit<
   ],
 };
 
-const validationSchema = Yup.object().shape({
-  purchaseTitle: Yup.string().required("Title is required"),
-  products: Yup.array().of(
-    Yup.object().shape({
-      productName: Yup.string().required("Name is required"),
-      price: Yup.number().required("Price is required").min(1, "Price must be greater than 1"),
-      category: Yup.string().required("Category is required"),
-      images: Yup.array()
-        .min(1, "At least one image is required")
-        .of(Yup.string().url("Must be a valid URL")),
-      colors: Yup.array()
-        .min(1, "At least one color is required")
-        .of(
-          Yup.object().shape({
-            color: Yup.string().required("Color is required"),
-            sizes: Yup.array()
-              .min(1, "At least one size is required")
-              .of(
-                Yup.object().shape({
-                  size: Yup.string().required("Size is required"),
-                  quantity: Yup.number()
-                    .required("Quantity is required")
-                    .min(1, "Quantity must be at least 1"),
-                })
-              ),
-          })
-        ),
-    })
-  ),
+const apparelProductSchema = Yup.object().shape({
+  productName: Yup.string().required("Name is required"),
+  price: Yup.number()
+    .typeError("Price must be a number")
+    .required("Price is required")
+    .min(1, "Price must be greater than 1"),
+  category: Yup.string().required("Category is required"),
+  images: Yup.array()
+    .of(Yup.string().url("Must be a valid URL"))
+    .min(1, "At least one image is required"),
+  colors: Yup.array()
+    .min(1, "At least one color is required")
+    .of(
+      Yup.object({
+        color: Yup.string().required("Color is required"),
+        sizes: Yup.array()
+          .min(1, "At least one size is required")
+          .of(
+            Yup.object({
+              size: Yup.string().required("Size is required"),
+              quantity: Yup.number()
+                .typeError("Quantity must be a number")
+                .required("Quantity is required")
+                .min(1, "Quantity must be at least 1"),
+            })
+          ),
+      })
+    ),
 });
 
-const PurchaseForm = ({
-  isLoading = false,
-  defaultValue,
-  onSubmit,
-  buttonLabel = "Create Purchase",
-}: {
-  isLoading?: boolean;
-  defaultValue?: typeof initialValues;
-  onSubmit: (
-    values: Omit<IPurchase, "_id" | "createdAt" | "updatedAt" | "invoiceNumber">,
-    helpers: FormikHelpers<typeof initialValues>
-  ) => void;
-  buttonLabel?: string;
-}) => {
-  const initValue = defaultValue
-    ? {
-        ...defaultValue,
-        products: defaultValue.products.map((p) => ({
-          ...p,
-          category: typeof p.category == "string" ? p.category : p.category?._id,
+const apparelSchema = Yup.object({
+  purchaseTitle: Yup.string().required("Title is required"),
+  supplier: Yup.object({
+    name: Yup.string().when(["_id"], {
+      is: (id: string | undefined) => !id,
+      then: (schema) => schema.required("Supplier name is required"),
+      otherwise: (schema) => schema.notRequired(),
+    }),
+    address: Yup.string().when(["_id"], {
+      is: (id: string | undefined) => !id,
+      then: (schema) => schema.required("Address is required"),
+      otherwise: (schema) => schema.notRequired(),
+    }),
+    phoneNumber: Yup.string().when(["_id"], {
+      is: (id: string | undefined) => !id,
+      then: (schema) => schema.required("Phone number is required"),
+      otherwise: (schema) => schema.notRequired(),
+    }),
+    email: Yup.string()
+      .email("Invalid email")
+      .when(["_id"], {
+        is: (id: string | undefined) => !id,
+        then: (schema) => schema.required("Email is required"),
+        otherwise: (schema) => schema.notRequired(),
+      }),
+    _id: Yup.string().notRequired(),
+  }),
+  products: Yup.array().min(1, "At least one product is required").of(apparelProductSchema),
+});
+
+const mapApiToForm = (api: IPurchase) => {
+  const supplier = api?.supplier || {};
+  return {
+    purchaseTitle: api?.purchaseTitle ?? "",
+    purchaseType: "APPAREL",
+    supplier: {
+      name: supplier?.name ?? "",
+      address: supplier?.address ?? "",
+      phoneNumber: supplier?.phoneNumber ?? "",
+      email: supplier?.email ?? "",
+      _id: supplier?._id,
+    },
+    products:
+      api?.products?.map((p) => ({
+        productName: p?.productName ?? "",
+        price: Number(p?.price ?? 0),
+        category: typeof p?.category === "object" ? (p?.category?._id ?? "") : (p?.category ?? ""),
+        images: Array.isArray(p?.images) ? p.images : [],
+        colors: p?.colors?.map((c: IColor) => ({
+          color: c?.color ?? "",
+          sizes: c?.sizes?.map((s: ISize) => ({
+            size: s?.size ?? "",
+            quantity: Number(s?.quantity ?? 0),
+          })) ?? [{ size: "", quantity: 0 }],
+        })) ?? [
+          {
+            color: "",
+            sizes: [{ size: "", quantity: 0 }],
+          },
+        ],
+      })) ?? emptyFormValues.products,
+  };
+};
+
+const mapFormToPayload = (values: typeof emptyFormValues) => {
+  return {
+    purchaseTitle: values.purchaseTitle,
+    purchaseType: "APPAREL",
+    supplier: (values.supplier as unknown as ISupplier)._id ?? values.supplier,
+    products: values.products.map((product) => ({
+      productName: product.productName,
+      price: Number(product.price),
+      category:
+        typeof product.category === "object"
+          ? (product.category as unknown as ICategory)._id
+          : (product.category as string),
+      images: product.images,
+      colors: product.colors.map((c) => ({
+        color: c.color,
+        sizes: c.sizes.map((s) => ({
+          size: s.size,
+          quantity: Number(s.quantity),
         })),
+      })),
+    })),
+  };
+};
+
+const ApparelForm = ({ defaultValue }: { defaultValue?: string }) => {
+  const purchaseId = defaultValue || "";
+  const router = useRouter();
+
+  const [createPurchase, { isLoading: isCreating }] = useCreatePurchaseMutation();
+  const [updatePurchase, { isLoading: isUpdating }] = useUpdatePurchaseByIdMutation();
+
+  const {
+    data: purchaseRes,
+    isLoading: isLoadingPurchase,
+    isError: isErrorPurchase,
+  } = useGetPurchaseByIdQuery({ purchaseId }, { skip: !purchaseId });
+
+  const isEditing = Boolean(purchaseId);
+  const initialValues =
+    isEditing && purchaseRes?.data ? mapApiToForm(purchaseRes.data) : emptyFormValues;
+
+  const handleSubmit = async (values: typeof emptyFormValues) => {
+    const payload = mapFormToPayload(values);
+
+    if (isEditing) {
+      const res = await updatePurchase({ purchaseId, payload });
+      const error = res.error as IQueryMutationErrorResponse;
+      if (error?.data?.message) {
+        toast.error(error.data.message || "Update failed");
+        return;
       }
-    : undefined;
+      toast.success("Purchase updated successfully");
+    } else {
+      const res = await createPurchase(payload);
+      const error = res.error as IQueryMutationErrorResponse;
+      if (error?.data?.message) {
+        toast.error(error.data.message || "Creation failed");
+        return;
+      }
+      toast.success("Purchase created successfully");
+    }
+
+    router.push("/purchase-list?type=apparel");
+  };
+
+  if (isEditing) {
+    if (isLoadingPurchase) return <div className="p-4">Loading purchase...</div>;
+    if (isErrorPurchase) return <div className="p-4 text-danger">Failed to load purchase.</div>;
+  }
 
   return (
     <Formik
-      initialValues={initValue || initialValues}
-      validationSchema={validationSchema}
-      onSubmit={(values, helpers) => {
-        const { supplier, ...rest } = values;
-
-        const supplierId = (supplier as ISupplier)._id;
-
-        if (!supplierId) {
-          helpers.setSubmitting(false);
-          return;
-        }
-
-        const products = values.products.map((product) => ({
-          ...product,
-          category: typeof product.category === "string" ? product.category : product.category._id,
-        }));
-
-        const payload: Omit<
-          IPurchase,
-          "_id" | "createdAt" | "updatedAt" | "supplier" | "invoiceNumber"
-        > & {
-          supplier: string;
-        } = {
-          ...rest,
-          supplier: supplierId,
-          products,
-        };
-
-        onSubmit(
-          payload as Omit<IPurchase, "_id" | "createdAt" | "updatedAt" | "invoiceNumber">,
-          helpers
-        );
-      }}
+      initialValues={initialValues}
+      enableReinitialize
+      validationSchema={apparelSchema}
+      onSubmit={handleSubmit}
     >
       {({ values, setFieldValue, touched, submitCount }) => (
         <Form className="flex flex-col gap-4">
@@ -144,7 +232,7 @@ const PurchaseForm = ({
             <div className="flex flex-col gap-4 bg-white p-4">
               <SectionTitle>Purchase Information</SectionTitle>
 
-              {/* purchase title */}
+              {/* title */}
               <div className="flex flex-col gap-[5px]">
                 <label className="form-label">Purchase Title</label>
                 <Field as={Input} name="purchaseTitle" placeholder="Enter title" />
@@ -154,26 +242,13 @@ const PurchaseForm = ({
                   className="text-sm text-danger"
                 />
               </div>
-              <div className="flex flex-col gap-[5px]">
-                <label className="form-label">Purchase Type</label>
-                <SelectionBox
-                  data={purchaseTypes}
-                  onSelect={(item) => setFieldValue("purchaseType", item.value)}
-                  defaultValue={
-                    values.purchaseType
-                      ? { label: values.purchaseType, value: values.purchaseType }
-                      : undefined
-                  }
-                />
-                <ErrorMessage name="purchaseType" component="div" className="text-sm text-danger" />
-              </div>
             </div>
 
-            {/* Supplier Information */}
+            {/* Supplier */}
             <div className="flex flex-col gap-4 bg-white p-4">
               <SectionTitle>Supplier Information</SectionTitle>
 
-              {values.supplier?.name && (
+              {(values.supplier?.name || values.supplier?._id) && (
                 <div className="flex flex-col gap-2 p-3 text-sm">
                   <span>
                     <strong>Name:</strong> {values.supplier.name}
@@ -181,32 +256,40 @@ const PurchaseForm = ({
                   <div>
                     <strong>Address:</strong> {values.supplier.address}
                   </div>
-                  <Link href={`tel:${values.supplier.phoneNumber}`}>
-                    <strong>Phone:</strong> {values.supplier.phoneNumber}
-                  </Link>
-                  <Link href={`mailto:${values.supplier.email}`}>
-                    <strong>Email:</strong> {values.supplier.email}
-                  </Link>
+                  {values.supplier.phoneNumber && (
+                    <Link href={`tel:${values.supplier.phoneNumber}`}>
+                      <strong>Phone:</strong> {values.supplier.phoneNumber}
+                    </Link>
+                  )}
+                  {values.supplier.email && (
+                    <Link href={`mailto:${values.supplier.email}`}>
+                      <strong>Email:</strong> {values.supplier.email}
+                    </Link>
+                  )}
                 </div>
               )}
+
+              {/* This component should call setFieldValue("supplier", supplierObjWith_Id) when a supplier is chosen */}
               <AddSupplierOnPurchase setFieldValue={setFieldValue} values={values} />
 
-              {/* Error if no supplier added */}
-              {(touched.supplier || submitCount > 0) && !values.supplier?.name && (
-                <div className="text-sm text-danger">No supplier selected</div>
-              )}
+              {(touched.supplier || submitCount > 0) &&
+                !values.supplier?.name &&
+                !values.supplier?._id && (
+                  <div className="text-sm text-danger">No supplier selected</div>
+                )}
             </div>
           </div>
 
           <HorizontalLine />
 
-          {/* Products Information */}
+          {/* Products */}
           <FieldArray name="products">
             {({ push, remove }) => (
               <>
-                {values.products.map((product, index) => {
-                  const totalQty = product.colors.reduce(
-                    (sum, c) => sum + c.sizes.reduce((s, sz) => s + Number(sz.quantity || 0), 0),
+                {values.products.map((product: IProduct, index: number) => {
+                  const totalQty = product?.colors?.reduce(
+                    (sum, c) =>
+                      sum + (c.sizes?.reduce((s, sz) => s + Number(sz.quantity || 0), 0) || 0),
                     0
                   );
 
@@ -215,7 +298,7 @@ const PurchaseForm = ({
                       <div className="flex flex-col gap-4 bg-white p-4">
                         <SectionTitle>Product #{index + 1}</SectionTitle>
 
-                        {/* product name */}
+                        {/* name */}
                         <div className="flex w-full flex-col gap-[5px]">
                           <label className="form-label">Product Name</label>
                           <Field
@@ -230,7 +313,7 @@ const PurchaseForm = ({
                           />
                         </div>
 
-                        {/* product price and category */}
+                        {/* price & category */}
                         <div className="flex w-full flex-col items-start justify-start gap-[16px] sm:flex-row">
                           <div className="flex w-full flex-col gap-[5px]">
                             <label className="form-label">Price</label>
@@ -246,19 +329,19 @@ const PurchaseForm = ({
                               className="text-sm text-danger"
                             />
                           </div>
+
                           <div className="flex w-full flex-col gap-[5px]">
                             <label className="form-label">Category</label>
                             <CategorySelector
                               category={
-                                typeof defaultValue?.products[index]?.category === "object"
-                                  ? defaultValue?.products[index]?.category?.label
+                                typeof values?.products[index]?.category === "object"
+                                  ? (values?.products[index]?.category as ICategory)?.label
                                   : undefined
                               }
-                              onSelect={({ label, value }) =>
+                              onSelect={({ value }) =>
                                 setFieldValue(`products.${index}.category`, value)
                               }
                             />
-
                             <ErrorMessage
                               name={`products.${index}.category`}
                               component="div"
@@ -269,15 +352,13 @@ const PurchaseForm = ({
 
                         {/* Colors & Sizes */}
                         <FieldArray name={`products.${index}.colors`}>
-                          {({ push, remove }) => (
+                          {({ push: pushColor, remove: removeColor }) => (
                             <div className="mt-4">
                               <SectionTitle>Colors & Sizes #{index + 1}</SectionTitle>
-                              {/* colors */}
-                              {product.colors.map((color, colorIndex) => (
-                                <div
-                                  key={colorIndex}
-                                  className="mt-2 rounded border border-solid-slab p-4"
-                                >
+
+                              {(product.colors ?? []).map((color, colorIndex) => (
+                                <div key={colorIndex} className="mt-2 rounded p-4">
+                                  {/* color */}
                                   <div className="flex flex-1 flex-col gap-[5px]">
                                     <label className="form-label">Color #{colorIndex + 1}</label>
                                     <div className="flex gap-4">
@@ -286,12 +367,12 @@ const PurchaseForm = ({
                                         name={`products.${index}.colors.${colorIndex}.color`}
                                         placeholder="Color"
                                       />
-                                      {/* remove color button */}
                                       {colorIndex > 0 && (
                                         <button
                                           type="button"
-                                          onClick={() => remove(colorIndex)}
+                                          onClick={() => removeColor(colorIndex)}
                                           className="cursor-pointer text-danger"
+                                          aria-label="Remove color"
                                         >
                                           <FaRegTrashAlt />
                                         </button>
@@ -306,7 +387,7 @@ const PurchaseForm = ({
 
                                   {/* sizes */}
                                   <FieldArray name={`products.${index}.colors.${colorIndex}.sizes`}>
-                                    {({ push, remove }) => (
+                                    {({ push: pushSize, remove: removeSize }) => (
                                       <>
                                         {color.sizes.map((sz, szIndex) => (
                                           <div key={szIndex} className="mt-3">
@@ -333,12 +414,12 @@ const PurchaseForm = ({
                                                     name={`products.${index}.colors.${colorIndex}.sizes.${szIndex}.quantity`}
                                                     placeholder="Quantity"
                                                   />
-                                                  {/* remove size button */}
                                                   {szIndex > 0 && (
                                                     <button
                                                       type="button"
-                                                      onClick={() => remove(szIndex)}
+                                                      onClick={() => removeSize(szIndex)}
                                                       className="cursor-pointer text-danger"
+                                                      aria-label="Remove size"
                                                     >
                                                       <FaRegTrashAlt />
                                                     </button>
@@ -355,7 +436,7 @@ const PurchaseForm = ({
                                         ))}
                                         <button
                                           type="button"
-                                          onClick={() => push({ size: "", quantity: "" })}
+                                          onClick={() => pushSize({ size: "", quantity: 0 })}
                                           className="mt-2 cursor-pointer text-primary"
                                         >
                                           + Add Size
@@ -365,10 +446,11 @@ const PurchaseForm = ({
                                   </FieldArray>
                                 </div>
                               ))}
+
                               <button
                                 type="button"
                                 onClick={() =>
-                                  push({ color: "", sizes: [{ size: "", quantity: "" }] })
+                                  pushColor({ color: "", sizes: [{ size: "", quantity: 0 }] })
                                 }
                                 className="mt-2 cursor-pointer text-primary"
                               >
@@ -387,10 +469,12 @@ const PurchaseForm = ({
                       {/* Images & Remove Product */}
                       <div className="flex flex-col gap-4 bg-white p-4">
                         <SectionTitle>Product Images #{index + 1}</SectionTitle>
+
                         <div>
                           <ImageUploader
                             inputId={`product-image-${index}`}
                             onChange={(urls) => setFieldValue(`products.${index}.images`, urls)}
+                            defaultImages={values.products[index].images}
                           />
                           <ErrorMessage
                             name={`products.${index}.images`}
@@ -398,6 +482,7 @@ const PurchaseForm = ({
                             className="text-sm text-danger"
                           />
                         </div>
+
                         {index > 0 && (
                           <button
                             type="button"
@@ -417,11 +502,11 @@ const PurchaseForm = ({
                     type="button"
                     onClick={() =>
                       push({
-                        name: "",
+                        productName: "",
                         price: 0,
                         category: "",
                         images: [],
-                        colors: [{ color: "", sizes: [{ size: "", quantity: "" }] }],
+                        colors: [{ color: "", sizes: [{ size: "", quantity: 0 }] }],
                       })
                     }
                   >
@@ -432,8 +517,13 @@ const PurchaseForm = ({
             )}
           </FieldArray>
 
-          <Button type="submit" isLoading={isLoading} className="mt-2">
-            {buttonLabel}
+          <Button
+            type="submit"
+            isLoading={isCreating || isUpdating}
+            className="mt-2"
+            disabled={isCreating || isUpdating}
+          >
+            {isEditing ? "Save Changes" : "Create Purchase"}
           </Button>
         </Form>
       )}
@@ -441,4 +531,4 @@ const PurchaseForm = ({
   );
 };
 
-export default PurchaseForm;
+export default ApparelForm;

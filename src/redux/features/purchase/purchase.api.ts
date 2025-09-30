@@ -1,10 +1,10 @@
 import { api } from "@/redux/api/api";
-import { IMeta, IPurchase, IPurchaseStatisticsResponse } from "@/types";
+import { IPurchaseWrite, IPurchase, IMeta, IPurchaseStatisticsResponse } from "@/types";
 import { generateQueryParams } from "@/utils";
 
 const purchaseApi = api.injectEndpoints({
   endpoints: (builder) => ({
-    createPurchase: builder.mutation<{ data: IPurchase }, Partial<IPurchase>>({
+    createPurchase: builder.mutation<{ data: IPurchase }, IPurchaseWrite>({
       query: (payload) => ({
         url: "/purchase/create",
         method: "POST",
@@ -38,7 +38,6 @@ const purchaseApi = api.injectEndpoints({
       },
       providesTags: ["purchase"],
     }),
-
     getPurchaseById: builder.query<{ data: IPurchase }, { purchaseId: string }>({
       query: ({ purchaseId }) => ({
         url: `/purchase/get/${purchaseId}`,
@@ -48,7 +47,7 @@ const purchaseApi = api.injectEndpoints({
     }),
     updatePurchaseById: builder.mutation<
       { data: IPurchase },
-      { purchaseId: string; payload: Partial<IPurchase> }
+      { purchaseId: string; payload: Partial<IPurchaseWrite> }
     >({
       query: ({ purchaseId, payload }) => ({
         url: `/purchase/update/${purchaseId}`,
@@ -69,10 +68,9 @@ const purchaseApi = api.injectEndpoints({
 
 export const {
   useCreatePurchaseMutation,
+  useGetPurchaseByIdQuery,
   useUpdatePurchaseByIdMutation,
   useDeletePurchaseByIdMutation,
-  useGetPurchaseByIdQuery,
   useGetAllPurchasesQuery,
-  useLazyGetAllPurchasesQuery,
   useGetPurchaseStatisticsQuery,
 } = purchaseApi;

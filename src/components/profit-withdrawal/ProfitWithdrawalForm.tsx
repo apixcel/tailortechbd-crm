@@ -77,6 +77,10 @@ const ProfitWithdrawalForm = ({
           email: "",
           address: "",
           attachment: "",
+          partnerId: "",
+          bankDetails: "",
+          activeStatus: true,
+          remarks: "",
           ...values.partner,
         };
         onSubmit(
@@ -91,7 +95,7 @@ const ProfitWithdrawalForm = ({
       {({ setFieldValue, values, touched, submitCount }) => (
         <Form className="flex flex-col gap-4">
           <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-            <div className="bg-white p-4 flex flex-col gap-4">
+            <div className="flex flex-col gap-4 bg-white p-4">
               <div className="flex flex-col gap-4">
                 <SectionTitle>Profit Withdrawal Information</SectionTitle>
 
@@ -157,7 +161,7 @@ const ProfitWithdrawalForm = ({
                 )}
 
                 {values.partner.partnerName && (
-                  <div className="flex flex-col gap-2 pt-0 p-3 text-sm">
+                  <div className="flex flex-col gap-2 p-3 pt-0 text-sm">
                     <div>
                       <strong>Name:</strong> {values.partner.partnerName}
                     </div>

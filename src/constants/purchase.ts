@@ -1,22 +1,7 @@
 export const purchaseTypes = [
-  {
-    label: "Aparel",
-    value: "Aparel",
-  },
-  {
-    label: "IT Product",
-    value: "IT Product",
-  },
-  {
-    label: "Electronic Item",
-    value: "Electronic Item",
-  },
-  {
-    label: "Civil Item",
-    value: "Civil Item",
-  },
-  {
-    label: "Electrical Item",
-    value: "Electrical Item",
-  },
+  { label: "Apparel", value: "APPAREL" },
+  { label: "IT Product", value: "IT" },
+  { label: "Electronic Item", value: "ELECTRONIC" },
+  { label: "Civil Item", value: "CIVIL" },
+  { label: "Electrical Item", value: "ELECTRICAL" },
 ];

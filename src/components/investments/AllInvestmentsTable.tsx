@@ -209,7 +209,7 @@ const AllInvestmentsTable = () => {
 
                     {/* description */}
                     <td className="max-w-[250px] px-6 py-4 text-sm text-gray-700">
-                      {truncateWords(investment?.note || "-", 10)}
+                      {truncateWords(investment?.description || "-", 10)}
                     </td>
 
                     {/* transaction method */}
@@ -225,10 +225,6 @@ const AllInvestmentsTable = () => {
                     <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
                       <span className="text-sm">{investment?.investmentAmount}</span>
                     </td>
-                    {/* previous last investment */}
-                    {/* <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
-                      <span className="text-sm">{investment?.lastInvestment}</span>
-                    </td> */}
 
                     {/* total investment balance */}
                     <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">

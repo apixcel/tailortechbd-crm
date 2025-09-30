@@ -18,26 +18,29 @@ import {
   DeleteConfirmationDialog,
   HorizontalLine,
   Pagination,
-  SelectionBox,
   TableDataNotFound,
   TableSkeleton,
   TimelineDropDown,
 } from "@/components";
-import { purchaseTypes } from "@/constants/purchase";
 import { ViewPurchase } from "@/view";
-import DownloadPurchseReport from "./DownloadPurchseReport";
 
 const tableHead = [
-  { label: "#INV", field: "invoiceNumber" },
-  { label: "Supplier Info", field: "" },
-  { label: "Purchase Title", field: "name" },
-  { label: "Purchased Qty", field: "quantityPurchased" },
-  { label: "Total Amount", field: "totalAmount" },
-  { label: "Date", field: "createdAt" },
+  { label: "SL", field: "" },
+  { label: "Date", field: "" },
+  { label: "INV No", field: "invoiceNumber" },
+  { label: "Supplier Name", field: "" },
+  { label: "Category", field: "" },
+  { label: "Sub Category", field: "" },
+  { label: "Purchase Name", field: "nme" },
+  { label: "Size", field: "" },
+  { label: "Color", field: "" },
+  { label: "QTY", field: "" },
+  { label: "Unit Price", field: "" },
+  { label: "Total Price", field: "" },
   { label: "Actions", field: "" },
 ];
 
-const AllPurchaseListTable = () => {
+const ApparelPurchaseListTable = () => {
   const [isViewPurchase, setIsViewPurchase] = useState(false);
   const [purchaseItemView, setPurchaseItemView] = useState<IPurchase | null>(null);
 
@@ -45,7 +48,7 @@ const AllPurchaseListTable = () => {
   const [page, setPage] = useState<number>(1);
   const [query, setQuery] = useState<Record<string, string | number>>({
     day_count: "",
-    purchaseType: "",
+    purchaseType: "APPAREL",
   });
 
   const [deletePurchase, { isLoading: isDeleting }] = useDeletePurchaseByIdMutation();
@@ -76,7 +79,7 @@ const AllPurchaseListTable = () => {
         <div className="flex flex-col gap-[10px]">
           <div className="flex flex-col gap-[15px] bg-white p-4">
             <div className="flex flex-col gap-[5px]">
-              <h1 className="text-[16px] font-[600]">All Purchases</h1>
+              <h1 className="text-[16px] font-[600]">All Apparel Purchases</h1>
               <p className="text-[12px] text-muted md:text-[14px]">
                 Displaying all the available purchases in your Dashboard. There is total{" "}
                 <span className="font-bold text-dashboard">{metaData.totalDoc}</span> purchases.
@@ -107,30 +110,12 @@ const AllPurchaseListTable = () => {
               </div>
 
               <div className="flex flex-col gap-[10px] sm:flex-row sm:items-end">
-                <div className="flex w-[200px] flex-col gap-[5px]">
-                  <span className="text-[12px] font-[700] text-primary">Purchase Type</span>
-                  <SelectionBox
-                    data={[
-                      {
-                        label: "All",
-                        value: "",
-                      },
-                      ...purchaseTypes,
-                    ]}
-                    defaultValue={{
-                      label: "All",
-                      value: "",
-                    }}
-                    onSelect={({ value }) => setQuery({ ...query, purchaseType: value })}
-                  />
-                </div>
                 <TimelineDropDown
                   onSelect={({ value }) => {
                     setQuery({ ...query, day_count: value });
                     setPage(1);
                   }}
                 />
-                <DownloadPurchseReport />
               </div>
             </div>
 
@@ -153,8 +138,10 @@ const AllPurchaseListTable = () => {
                   {isLoading ? (
                     <TableSkeleton columns={tableHead.length} />
                   ) : purchaseData.length ? (
-                    purchaseData.map((purchase) => (
+                    purchaseData.map((purchase: IPurchase, idx) => (
                       <tr key={purchase._id} className="hover:bg-gray-50">
+                        <td className="px-6 py-4">{idx + 1}</td>
+                        <td className="px-6 py-4">{dateUtils.formatDate(purchase.createdAt)}</td>
                         <td className="px-6 py-4">{purchase.invoiceNumber}</td>
                         <td className="px-6 py-4">
                           <div className="text-sm font-medium text-gray-900">
@@ -165,23 +152,48 @@ const AllPurchaseListTable = () => {
                           </div>
                         </td>
                         <td className="px-6 py-4">
+                          {typeof purchase.products[0]?.category === "object"
+                            ? purchase.products[0]?.category?.label
+                            : purchase.products[0]?.category}
+                        </td>
+                        <td className="px-6 py-4">
+                          {typeof purchase.products[0]?.category === "object" &&
+                          purchase.products[0]?.category?.subcategories?.[0]
+                            ? purchase.products[0]?.category?.subcategories?.[0]?.label
+                            : "-"}
+                        </td>
+                        <td className="px-6 py-4">
                           <div className="flex items-center gap-3">
                             <span className="text-sm">{purchase.purchaseTitle}</span>
                           </div>
                         </td>
-                        {/* Total Quantity */}
+                        <td className="px-6 py-4">
+                          {purchase.products[0]?.colors?.[0]?.sizes?.[0]?.size ?? "-"}
+                        </td>
+                        <td className="px-6 py-4">
+                          {purchase.products[0]?.colors?.[0]?.color ?? "-"}
+                        </td>
+                        {/* Total quantity */}
                         <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
                           {purchase.products.reduce(
                             (sum, item) =>
                               sum +
-                              item.colors.reduce(
-                                (sum, c) =>
-                                  sum + c.sizes.reduce((s, sz) => s + Number(sz.quantity || 0), 0),
+                              (item.colors?.reduce(
+                                (colorSum, c) =>
+                                  colorSum +
+                                  (c.sizes?.reduce(
+                                    (sizeSum, sz) => sizeSum + Number(sz.quantity || 0),
+                                    0
+                                  ) ?? 0),
                                 0
-                              ),
+                              ) ?? 0),
                             0
                           )}{" "}
                           pcs
+                        </td>
+                        {/* Unit price */}
+                        <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
+                          {purchase.products[0]?.price} BDT
                         </td>
                         {/* Total Amount */}
                         <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
@@ -190,28 +202,25 @@ const AllPurchaseListTable = () => {
                               (sum, item) =>
                                 sum +
                                 item.price *
-                                  item.colors.reduce(
+                                  (item.colors?.reduce(
                                     (colorSum, color) =>
                                       colorSum +
-                                      color.sizes.reduce(
+                                      (color.sizes?.reduce(
                                         (sizeSum, size) => sizeSum + Number(size.quantity || 0),
                                         0
-                                      ),
+                                      ) ?? 0),
                                     0
-                                  ),
+                                  ) ?? 0),
                               0
                             )
                             .toFixed(2)}{" "}
                           BDT
                         </td>
-                        <td className="px-6 py-4 text-sm text-gray-500">
-                          {dateUtils.formatDate(purchase.createdAt)}
-                        </td>
                         <td className="px-6 py-4">
                           <div className="flex items-center gap-[8px]">
                             {/* update */}
                             <Link
-                              href={`/purchase-list/${purchase._id}`}
+                              href={`/purchase-list/${purchase._id}?type=apparel`}
                               className="center aspect-square w-[30px] cursor-pointer rounded-full border-[1px] border-dashboard bg-dashboard/5 text-dashboard"
                               title="Edit Purchase"
                             >
@@ -259,4 +268,4 @@ const AllPurchaseListTable = () => {
   );
 };
 
-export default AllPurchaseListTable;
+export default ApparelPurchaseListTable;

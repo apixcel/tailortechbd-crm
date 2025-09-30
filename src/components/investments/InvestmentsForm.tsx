@@ -1,20 +1,22 @@
 "use client";
 
-import { IInvestment } from "@/types";
 import { ErrorMessage, Field, FieldProps, Form, Formik, FormikHelpers } from "formik";
 import * as Yup from "yup";
 
 import {
   AddPartnerOnForm,
   Button,
-  ImageUploader,
   Input,
   PickDate,
   SectionTitle,
   SelectionBox,
-  TextArea, // 👈 added
+  TextArea,
 } from "@/components";
 import dateUtils from "@/utils/date";
+import { useCreateInvestmentMutation } from "@/redux/features/investments/investments.api";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
+import { IQueryMutationErrorResponse } from "@/types";
 
 const transactionMethodOptions = [
   { label: "Bkash", value: "Bkash" },
@@ -28,10 +30,9 @@ const transactionMethodOptions = [
 const initialValues = {
   investmentAmount: 0,
   investmentDate: new Date().toISOString(),
-  note: "",
-  attachment: "",
-  transactionMethod: "", // 👈 added
+  transactionMethod: "",
   remarks: "",
+  description: "",
   partner: {
     _id: "",
     partnerName: "",
@@ -40,43 +41,64 @@ const initialValues = {
   },
 };
 
-const validationSchema = Yup.object().shape({
+const validationSchema = Yup.object({
   investmentAmount: Yup.number()
     .required("Amount is required")
     .min(1, "Amount must be greater than 1"),
   investmentDate: Yup.string().required("Date is required"),
-  note: Yup.string().required("Note is required"),
   remarks: Yup.string().required("Remarks is required"),
-  attachment: Yup.string().optional(),
-  partner: Yup.object().shape({
-    _id: Yup.string().required("Invalid partner"),
-    partnerName: Yup.string().required("Partner name is required"),
-    partnerDesignation: Yup.string().required("Designation is required"),
-    joiningDate: Yup.string().required("Date is required"),
-  }),
+  description: Yup.string().required("Description is required"),
   transactionMethod: Yup.string()
     .oneOf(transactionMethodOptions.map((o) => o.value))
-    .optional(), // 👈 optional to match your DB schema
+    .notRequired(),
+  partner: Yup.object({
+    _id: Yup.string().required("Select a partner"),
+  }).required(),
 });
 
-const InvestmentsForm = ({
-  isLoading = false,
-  defaultValue,
-  onSubmit,
-  buttonLabel = "Create Investment",
-}: {
-  isLoading: boolean;
-  defaultValue?: typeof initialValues;
-  onSubmit: (values: IInvestment, { resetForm }: FormikHelpers<typeof initialValues>) => void;
-  buttonLabel?: string;
-}) => {
+const InvestmentsForm = () => {
+  const [createInvestment, { isLoading }] = useCreateInvestmentMutation();
+  const router = useRouter();
+
+  const handleSubmit = async (
+    values: typeof initialValues,
+    { resetForm }: FormikHelpers<typeof initialValues>
+  ) => {
+    console.log(values);
+    const payload = {
+      investmentAmount: values.investmentAmount,
+      investmentDate: values.investmentDate,
+      description: values.description,
+      partner: values.partner._id,
+      transactionMethod: values.transactionMethod || "",
+      remarks: values.remarks || "",
+    };
+
+    const res = await createInvestment(payload);
+
+    if (res.error) {
+      const error = res.error as IQueryMutationErrorResponse;
+      if (error) {
+        if (error?.data?.message) {
+          toast(error.data?.message);
+        } else {
+          toast("Something went wrong");
+        }
+
+        return;
+      }
+    } else {
+      toast.success("Investment created successfully");
+      resetForm();
+      router.push("/investments");
+    }
+  };
+
   return (
     <Formik
-      initialValues={defaultValue || initialValues}
+      initialValues={initialValues}
       validationSchema={validationSchema}
-      onSubmit={(values) => {
-        onSubmit(values as IInvestment, {} as FormikHelpers<typeof initialValues>);
-      }}
+      onSubmit={handleSubmit}
     >
       {({ setFieldValue, values, touched, submitCount }) => (
         <Form className="flex flex-col gap-4">
@@ -112,7 +134,7 @@ const InvestmentsForm = ({
                     />
                   </div>
 
-                  {/* transaction method 👇 */}
+                  {/* transaction method */}
                   <div className="flex w-full flex-col gap-[5px]">
                     <label className="form-label">Transaction Method</label>
                     <SelectionBox
@@ -136,15 +158,20 @@ const InvestmentsForm = ({
                   </div>
                 </div>
 
-                {/* note */}
+                {/* description */}
                 <div className="flex w-full flex-col gap-[5px]">
                   <label className="form-label">Description</label>
-                  <Field as={TextArea} name="note" placeholder="Note" />
-                  <ErrorMessage name="note" component="div" className="text-sm text-danger" />
+                  <Field as={TextArea} name="description" placeholder="Description" />
+                  <ErrorMessage
+                    name="description"
+                    component="div"
+                    className="text-sm text-danger"
+                  />
                 </div>
+                {/* remarks */}
                 <div className="flex w-full flex-col gap-[5px]">
-                  <label className="form-label">Remark</label>
-                  <Field as={TextArea} name="remarks" placeholder="Remark" />
+                  <label className="form-label">Remarks</label>
+                  <Field as={TextArea} name="remarks" placeholder="Remarks" />
                   <ErrorMessage name="remarks" component="div" className="text-sm text-danger" />
                 </div>
               </div>
@@ -170,6 +197,7 @@ const InvestmentsForm = ({
                       {dateUtils.formatDate(values.partner.joiningDate)}
                     </div>
                     <button
+                      type="button"
                       onClick={() => setFieldValue("partner", initialValues.partner)}
                       className="w-fit cursor-pointer bg-primary px-2 py-1 text-white"
                     >
@@ -184,22 +212,10 @@ const InvestmentsForm = ({
                 )}
               </div>
             </div>
-
-            {/* attachment */}
-            {/* <div className="flex h-full flex-col gap-4 bg-white p-4">
-              <SectionTitle>Remark</SectionTitle>
-
-              <ImageUploader
-                onChange={(fileUrls) => setFieldValue("attachment", fileUrls?.[0] || "")}
-                defaultImages={values.attachment ? [values.attachment] : []}
-                acceptPDF={true}
-                title="Upload Image or PDF (Optional)"
-              />
-            </div> */}
           </div>
 
           <Button type="submit" isLoading={isLoading} className="mt-2">
-            {buttonLabel}
+            Create Investment
           </Button>
         </Form>
       )}

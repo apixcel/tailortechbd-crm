@@ -24,7 +24,7 @@ const PartnerDropDown: React.FC<IProps> = ({
       label: `${partner.partnerName} (${partner.partnerDesignation})`,
       value: partner._id,
       partnerDesignation: partner.partnerDesignation,
-      joiningDate: partner.joiningDate,
+      joiningDate: partner.createdAt,
     })) || [];
 
   return (

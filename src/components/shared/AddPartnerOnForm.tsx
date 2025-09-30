@@ -24,7 +24,12 @@ const AddPartnerOnForm = ({ setFieldValue, onSelect }: IProps) => {
   const { data, isLoading } = useGetAllPartnersQuery({ searchTerm });
   const partnerData = data?.data || [];
 
-  if (isLoading) return <div><Skeleton className="h-[40px] w-[100%]" /></div>;
+  if (isLoading)
+    return (
+      <div>
+        <Skeleton className="h-[40px] w-[100%]" />
+      </div>
+    );
 
   const handleSelectPartner = (partner: Omit<IPartner, "createdAt" | "updatedAt">) => {
     setFieldValue?.("partner", {
@@ -32,7 +37,9 @@ const AddPartnerOnForm = ({ setFieldValue, onSelect }: IProps) => {
       phoneNumber: (partner as IPartner).phoneNumber ?? "",
       email: (partner as IPartner).email ?? "",
       address: (partner as IPartner).address ?? "",
-      attachment: (partner as IPartner).attachment ?? "",
+      bankDetails: (partner as IPartner).bankDetails ?? "",
+      activeStatus: (partner as IPartner).activeStatus ?? true,
+      remarks: (partner as IPartner).remarks ?? "",
     });
     onSelect?.(partner);
     setIsOpen(false);
@@ -81,7 +88,7 @@ const AddPartnerOnForm = ({ setFieldValue, onSelect }: IProps) => {
                       <strong>Designation:</strong> {partner.partnerDesignation}
                     </p>
                     <p>
-                      <strong>Joining Date:</strong> {dateUtils.formatDate(partner.joiningDate)}
+                      <strong>Joining Date:</strong> {dateUtils.formatDate(partner.createdAt)}
                     </p>
                   </div>
                 </div>

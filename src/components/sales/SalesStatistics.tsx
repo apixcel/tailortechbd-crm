@@ -33,7 +33,7 @@ export default function SalesStatistics({
       {isLoading ? (
         <ChartSkeleton />
       ) : chartData.length ? (
-        <div className="rounded-2xl bg-white p-6 shadow">
+        <div className="bg-white p-6">
           <div className="mb-6 flex flex-col gap-1">
             <h2 className="text-[1.15rem] font-bold tracking-tight text-[var(--primary,#101949)]">
               Daily Sales Overview

@@ -4,28 +4,23 @@ import { HorizontalLine, Pagination, TableDataNotFound, TableSkeleton } from "@/
 import { useDebounce } from "@/hooks";
 
 import { useGetAllPartnersQuery } from "@/redux/features/partners/partner.api";
-import dateUtils from "@/utils/date";
 import Link from "next/link";
 import { useState } from "react";
 import { RxMagnifyingGlass } from "react-icons/rx";
-import DeletePartner from "./DeletePartner";
 import { AiOutlineUserSwitch } from "react-icons/ai";
 
 const tableHead = [
-  { label: "SL", field: "" },
+  { label: "Partner ID", field: "" },
   { label: "Name", field: "" },
   { label: "Designation", field: "" },
-  { label: "Total Nominee", field: "" },
   { label: "Contact No", field: "" },
   { label: "Email", field: "" },
   { label: "Address", field: "" },
   { label: "Profit Share", field: "" },
-  { label: "Attachment", field: "" },
-  { label: "Joining Date", field: "" },
-  {
-    label: "Action",
-    field: "",
-  },
+  { label: "Bank Details", field: "" },
+  { label: "Active", field: "" },
+  { label: "Remarks", field: "" },
+  { label: "Nominee", field: "" },
 ];
 
 const AllPartnerListTable = () => {
@@ -104,25 +99,16 @@ const AllPartnerListTable = () => {
                 partnerData?.map((partner, index) => (
                   <tr key={index} className="hover:bg-gray-50">
                     {/* index */}
-                    <td className="px-6 py-4 text-sm text-gray-900">{index + 1}</td>
+                    <td className="px-6 py-4 text-sm text-gray-900">{partner.partnerId}</td>
 
                     {/* name */}
                     <td className="px-6 py-4">
-                      <span className="line-clamp-1 text-[14px]">{partner.partnerName}</span>
+                      <span className="text-[14px]">{partner.partnerName}</span>
                     </td>
 
                     {/* designation */}
                     <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
                       <span className="text-sm">{partner.partnerDesignation}</span>
-                    </td>
-
-                    <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
-                      <Link
-                        href={`/partner-list/nominee/${partner._id}`}
-                        className="flex cursor-pointer items-center gap-1 text-sm text-blue-600 hover:underline"
-                      >
-                        <AiOutlineUserSwitch /> {partner.nomineeCount || 0} Nominees
-                      </Link>
                     </td>
 
                     {/* contact no */}
@@ -145,23 +131,35 @@ const AllPartnerListTable = () => {
                       <span className="text-sm">{partner.sharePercentage}%</span>
                     </td>
 
-                    {/* attachment */}
+                    {/* bank details */}
                     <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
-                      {partner.attachment ? (
-                        <Link href={partner.attachment} target="_blank" className="underline">
-                          View
-                        </Link>
-                      ) : (
-                        "-"
-                      )}
+                      <span className="text-sm">{partner.bankDetails}</span>
                     </td>
 
-                    {/* joining date */}
+                    {/* active */}
                     <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
-                      <span className="text-sm">{dateUtils.formatDate(partner.joiningDate)}</span>
+                      <span className="text-sm">
+                        {partner.activeStatus ? (
+                          <span className="text-success">Yes</span>
+                        ) : (
+                          <span className="text-danger">No</span>
+                        )}
+                      </span>
                     </td>
+
+                    {/* remarks */}
                     <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
-                      <DeletePartner partner={partner} />
+                      <span className="text-sm">{partner.remarks}</span>
+                    </td>
+
+                    {/* nominee */}
+                    <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-700">
+                      <Link
+                        href={`/partner-list/nominee/${partner._id}`}
+                        className="flex cursor-pointer items-center gap-1 text-sm text-blue-600 hover:underline"
+                      >
+                        <AiOutlineUserSwitch /> {partner.nomineeCount || 0} Nominees
+                      </Link>
                     </td>
                   </tr>
                 ))

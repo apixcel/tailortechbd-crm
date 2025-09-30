@@ -4,9 +4,8 @@ export interface IInvestment {
   _id: string;
   investmentAmount: number;
   investmentDate: string;
-  note: string;
+  description: string;
   remarks: string;
-  attachment?: string;
   transactionMethod?: string;
   partner: IPartner;
   createdAt?: string;
@@ -16,9 +15,8 @@ export interface IInvestment {
 export interface IInvestmentPayload {
   investmentAmount: number;
   investmentDate: string;
-  note: string;
+  description: string;
   partner: string;
   transactionMethod: string;
   remarks: string;
-  attachment?: string;
 }
